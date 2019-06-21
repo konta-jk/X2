@@ -23,12 +23,18 @@ namespace X2
     interface IOperations
     {
         string Operation(Structs.TestStep testStep1);
+        
     }
 
     class Operations : IOperations
     {
-        private List<Structs.Variable> variables = new List<Structs.Variable>();
+        List<Structs.Variable> variables;
 
+        public Operations()
+        {
+            variables = new List<Structs.Variable>();
+        }
+            
         public string Operation(Structs.TestStep testStep1)
         {
             string result = "init";
@@ -67,6 +73,12 @@ namespace X2
                         result = "ok";
                         break;
 
+                    case "SendVariable":
+                        SendVariable(testStep1);
+                        result = "ok";
+                        break;
+
+
                     default:
                         result = "error";
                         break;
@@ -95,17 +107,17 @@ namespace X2
             
         }
 
-        private static void GoToUrl(Structs.TestStep testStep1)
+        private void GoToUrl(Structs.TestStep testStep1)
         {
             Instances.driver.Navigate().GoToUrl(testStep1.operation.text);
         }
 
-        private static void Refresh()
+        private void Refresh()
         {
             Instances.driver.Navigate().Refresh();
         }
 
-        private static void Click(Structs.TestStep testStep1)
+        private void Click(Structs.TestStep testStep1)
         {            
             IWebElement element = Instances.driver.FindElement(By.XPath(testStep1.xpath));
             Actions action = new Actions(Instances.driver); //bo inaczej zdarzają się problemy z click
@@ -113,20 +125,29 @@ namespace X2
             element.Click();            
         }
 
-        private static void MoveToElementPerform(Structs.TestStep testStep1)
+        private void MoveToElementPerform(Structs.TestStep testStep1)
         {
             IWebElement element = Instances.driver.FindElement(By.XPath(testStep1.xpath)); 
             Actions action = new Actions(Instances.driver);
             action.MoveToElement(element).Perform();
         }
 
-        private static Structs.Variable SetVariable(Structs.TestStep testStep1)
+        private Structs.Variable SetVariable(Structs.TestStep testStep1)
         {
             IWebElement element = Instances.driver.FindElement(By.XPath(testStep1.xpath));            
             return new Structs.Variable(testStep1.operation.text, element.GetAttribute("value"));
         }
 
+        private void SendVariable(Structs.TestStep testStep1)
+        {
+            IWebElement element = Instances.driver.FindElement(By.XPath(testStep1.xpath));
+            Actions action = new Actions(Instances.driver); //dla estetyki tylko
+            action.MoveToElement(element).Perform();
+            string value = variables.Where(t => t.name == testStep1.operation.text).SingleOrDefault().value;
+            element.SendKeys(value + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą
 
-        
+        }
+
+
     }
 }
