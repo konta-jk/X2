@@ -93,7 +93,7 @@
   <ItemGroup>
     <Compile Include="CompleteTest.cs" />
     <Compile Include="DeepClone.cs" />
-    <Compile Include="ElementOperation.cs" />
+    <Compile Include="Operations.cs" />
     <Compile Include="ExcellReader.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

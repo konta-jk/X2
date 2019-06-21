@@ -19,7 +19,8 @@ namespace X2
     class Test : ITest
     {
         Structs.TestPlan testPlan;
-        public List<string> Results = new List<string>();        
+        public List<string> results = new List<string>();
+        
 
         public Test(Structs.TestPlan testPlan1)
         {
@@ -29,11 +30,12 @@ namespace X2
         public void Run()
         {
             string currentResult = "";
+            Operations operations = new Operations();
 
             foreach (Structs.TestStep testStep in testPlan.testSteps)
             {
-                currentResult = ElementOperation.Operation(testStep);
-                Results.Add(currentResult);
+                currentResult = operations.Operation(testStep);
+                results.Add(currentResult);
 
                 if(currentResult != "ok")
                 {
@@ -45,9 +47,9 @@ namespace X2
         public string GetResult()
         {
             string s = "-1";
-            if (testPlan.testSteps.Count != Results.Count(t => t == "ok"))
+            if (testPlan.testSteps.Count != results.Count(t => t == "ok"))
             {
-                s = "NIE udało się przejść zaplanowanej ścieżki, wykonano " + Results.Count.ToString() + " (" + Results.Count(t => t == "ok").ToString() + " poprawnie) z " + testPlan.testSteps.Count.ToString() + " kroków.";
+                s = "NIE udało się przejść zaplanowanej ścieżki, wykonano " + results.Count.ToString() + " (" + results.Count(t => t == "ok").ToString() + " poprawnie) z " + testPlan.testSteps.Count.ToString() + " kroków.";
             }
             else
             {
@@ -57,9 +59,9 @@ namespace X2
             for(int i = 0; i < testPlan.testSteps.Count; i++)
             {
                 s += Environment.NewLine + (i+1).ToString() + ") " + testPlan.testSteps[i].stepDescription + ": ";
-                if(i <= Results.Count() - 1)
+                if(i <= results.Count() - 1)
                 {
-                    s += Results[i];
+                    s += results[i];
                 }
             }
 

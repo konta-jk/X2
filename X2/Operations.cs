@@ -1,5 +1,5 @@
 ﻿/*
- * operacja na elemencie
+ * wykonuje operacje na elemencie, instancja dedykowana dla danego testu
  * można by tez utworzyć bardziej złozone operacje, np. wybierz opcję z dropdowna albo kliknij akcję na liście
  */
 
@@ -20,9 +20,16 @@ using System.Text.RegularExpressions;
 
 namespace X2
 {
-    static class ElementOperation
+    interface IOperations
     {
-        public static string Operation(Structs.TestStep testStep1)
+        string Operation(Structs.TestStep testStep1);
+    }
+
+    class Operations : IOperations
+    {
+        List<Structs.Variable> variables = new List<Structs.Variable>();
+
+        public string Operation(Structs.TestStep testStep1)
         {
             string result = "init";
 

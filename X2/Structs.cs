@@ -14,11 +14,11 @@ namespace X2
     {
         public struct TestPlan //zbędne? to mogłaby być lista w Test
         {
-            public List<TestStep> testSteps;
+            public List<TestStep> testSteps;            
 
             public TestPlan(List<TestStep> testSteps1)
             {
-                testSteps = new List<TestStep>();
+                testSteps = new List<TestStep>();                
                 TestStep currentTestStep;
 
                 foreach(TestStep testStep in testSteps1)
@@ -35,14 +35,15 @@ namespace X2
             public string xpath;
             public Operation operation;            
             public string stepDescription;
-            public string operationResult;
+            public string operationResult;                 
 
             public TestStep(string xpath1, Operation operation1, string stepDescription1)
             {
-                xpath = xpath1;                
-                operation = new Operation(operation1.name, operation1.text, operation1.wait);
+                xpath = xpath1;
+                //operation = new Operation(operation1.name, operation1.text, operation1.wait);
+                operation = operation1.DeepClone();
                 stepDescription = stepDescription1;
-                operationResult = "-1";
+                operationResult = "-1";                
             }
         }
 
@@ -65,6 +66,19 @@ namespace X2
                 name = name1;
                 text = "";
                 wait = Settings.sleepAfterOperation;
+            }
+        }
+
+        [Serializable]
+        public struct Variable
+        {
+            public string name;
+            public string value;
+
+            public Variable(string name1, string value1)
+            {
+                name = name1;
+                value = value1;
             }
         }
     }
