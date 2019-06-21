@@ -93,7 +93,7 @@ namespace X2
                 //System.Windows.Forms.MessageBox.Show(result, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
-            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(Settings.sleepAfterOperation));
+            System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(Settings.sleepAfterOperation));
 
             return result;
         }
@@ -118,7 +118,7 @@ namespace X2
         }
 
         private void Click(Structs.TestStep testStep1)
-        {            
+        {
             IWebElement element = Instances.driver.FindElement(By.XPath(testStep1.xpath));
             Actions action = new Actions(Instances.driver); //bo inaczej zdarzają się problemy z click
             action.MoveToElement(element).Perform();
