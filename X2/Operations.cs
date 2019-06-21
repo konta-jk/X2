@@ -27,7 +27,7 @@ namespace X2
 
     class Operations : IOperations
     {
-        List<Structs.Variable> variables = new List<Structs.Variable>();
+        private List<Structs.Variable> variables = new List<Structs.Variable>();
 
         public string Operation(Structs.TestStep testStep1)
         {
@@ -59,6 +59,11 @@ namespace X2
 
                     case "MoveToElementPerform":
                         MoveToElementPerform(testStep1);
+                        result = "ok";
+                        break;
+
+                    case "SetVariable":
+                        variables.Add(SetVariable(testStep1));
                         result = "ok";
                         break;
 
@@ -113,6 +118,12 @@ namespace X2
             IWebElement element = Instances.driver.FindElement(By.XPath(testStep1.xpath)); 
             Actions action = new Actions(Instances.driver);
             action.MoveToElement(element).Perform();
+        }
+
+        private static Structs.Variable SetVariable(Structs.TestStep testStep1)
+        {
+            IWebElement element = Instances.driver.FindElement(By.XPath(testStep1.xpath));            
+            return new Structs.Variable(testStep1.operation.text, element.GetAttribute("value"));
         }
 
 
