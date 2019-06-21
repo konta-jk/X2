@@ -18,3 +18,23 @@ C:\Users\jaroslawk\Documents\Visual Studio 2017\Projects\X2\X2\obj\Debug\X2.cspr
 C:\Users\jaroslawk\Documents\Visual Studio 2017\Projects\X2\X2\obj\Debug\X2.exe
 C:\Users\jaroslawk\Documents\Visual Studio 2017\Projects\X2\X2\obj\Debug\X2.pdb
 C:\Users\jaroslawk\Documents\Visual Studio 2017\Projects\X2\X2\obj\Debug\X2.csprojAssemblyReference.cache
+D:\Git repositories\X2 R1 home\X2\bin\Debug\X2.exe.config
+D:\Git repositories\X2 R1 home\X2\bin\Debug\X2.exe.manifest
+D:\Git repositories\X2 R1 home\X2\bin\Debug\X2.application
+D:\Git repositories\X2 R1 home\X2\bin\Debug\X2.exe
+D:\Git repositories\X2 R1 home\X2\bin\Debug\X2.pdb
+D:\Git repositories\X2 R1 home\X2\bin\Debug\nunit.framework.dll
+D:\Git repositories\X2 R1 home\X2\bin\Debug\WebDriver.dll
+D:\Git repositories\X2 R1 home\X2\bin\Debug\nunit.framework.pdb
+D:\Git repositories\X2 R1 home\X2\bin\Debug\nunit.framework.xml
+D:\Git repositories\X2 R1 home\X2\bin\Debug\WebDriver.xml
+D:\Git repositories\X2 R1 home\X2\obj\Debug\X2.csprojAssemblyReference.cache
+D:\Git repositories\X2 R1 home\X2\obj\Debug\X2.Form1.resources
+D:\Git repositories\X2 R1 home\X2\obj\Debug\X2.Properties.Resources.resources
+D:\Git repositories\X2 R1 home\X2\obj\Debug\X2.csproj.GenerateResource.cache
+D:\Git repositories\X2 R1 home\X2\obj\Debug\X2.csproj.CoreCompileInputs.cache
+D:\Git repositories\X2 R1 home\X2\obj\Debug\X2.exe.manifest
+D:\Git repositories\X2 R1 home\X2\obj\Debug\X2.application
+D:\Git repositories\X2 R1 home\X2\obj\Debug\X2.csproj.CopyComplete
+D:\Git repositories\X2 R1 home\X2\obj\Debug\X2.exe
+D:\Git repositories\X2 R1 home\X2\obj\Debug\X2.pdb
