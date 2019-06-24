@@ -38,3 +38,22 @@ D:\Git repositories\X2 R1 home\X2\obj\Debug\X2.application
 D:\Git repositories\X2 R1 home\X2\obj\Debug\X2.csproj.CopyComplete
 D:\Git repositories\X2 R1 home\X2\obj\Debug\X2.exe
 D:\Git repositories\X2 R1 home\X2\obj\Debug\X2.pdb
+C:\Git repositories\X2 R1\X2\X2\bin\Debug\X2.exe.config
+C:\Git repositories\X2 R1\X2\X2\bin\Debug\X2.exe.manifest
+C:\Git repositories\X2 R1\X2\X2\bin\Debug\X2.application
+C:\Git repositories\X2 R1\X2\X2\bin\Debug\X2.exe
+C:\Git repositories\X2 R1\X2\X2\bin\Debug\X2.pdb
+C:\Git repositories\X2 R1\X2\X2\bin\Debug\nunit.framework.dll
+C:\Git repositories\X2 R1\X2\X2\bin\Debug\WebDriver.dll
+C:\Git repositories\X2 R1\X2\X2\bin\Debug\nunit.framework.pdb
+C:\Git repositories\X2 R1\X2\X2\bin\Debug\nunit.framework.xml
+C:\Git repositories\X2 R1\X2\X2\bin\Debug\WebDriver.xml
+C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.Form1.resources
+C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.Properties.Resources.resources
+C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.csproj.GenerateResource.cache
+C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.csproj.CoreCompileInputs.cache
+C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.exe.manifest
+C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.application
+C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.csproj.CopyComplete
+C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.exe
+C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.pdb

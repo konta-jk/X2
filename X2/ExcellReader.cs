@@ -18,14 +18,17 @@ namespace X2
         {
             DataTable dataSheet = new DataTable();
             //OleDbConnection connection = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + fileName + "; Jet OLEDB:Engine Type=5;Extended Properties=\"Excel 8.0;\"");
-            OleDbConnection connection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fileName + ";Extended Properties=\"Excel 12.0;HDR=YES\"");
+            OleDbConnection connection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fileName + ";Extended Properties=\"Excel 12.0;HDR=NO\"");
             
             connection.Open();
 
             DataTable schema = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, new object[] { null, null, null, "TABLE" });
-            string sheetName = schema.Rows[0].Field<string>("TABLE_NAME");            
+            string sheetName = schema.Rows[0].Field<string>("TABLE_NAME");
 
-            OleDbDataAdapter sheetAdapter = new OleDbDataAdapter("select * from [" + sheetName + "]", connection);
+            string select = "select * from [" + sheetName + "A" + Globals.minRow.ToString() + ":D" + Globals.maxRow.ToString() + "]";
+            Console.WriteLine(select);
+
+            OleDbDataAdapter sheetAdapter = new OleDbDataAdapter(select, connection);
             sheetAdapter.Fill(dataSheet);
             return dataSheet;
         }        

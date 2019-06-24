@@ -3,25 +3,43 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
+using System.ComponentModel;
 
 namespace X2
 {
-    static class CompleteTest
-    {
-        public static string Run()
-        {
-            Instances.Init();
+    class CompleteTest
+    {        
+        object result = null;
 
-            Structs.TestPlan testPlan = TestPlanFromDataTable.GetTestPlan(ExcellReader.ReadExcellSheet(Instances.fileName));
+        public string Run() 
+        {
+            Thread thread = new Thread(ActualRun);
+            thread.IsBackground = true;
+            thread.Start();
+            thread.Join();
+            return result.ToString();
+        }
+
+        void ActualRun()
+        {
+            Globals.Init();
+
+            Structs.TestPlan testPlan = TestPlanFromDataTable.GetTestPlan(ExcellReader.ReadExcellSheet(Globals.fileName));
 
             Test test = new Test(testPlan);
-            test.Run();
+            test.Run();            
 
-            System.Threading.Thread.Sleep(TimeSpan.FromSeconds(3)); //aby uzytkownik mógł sie przyjrzeć zakończeniu przed zamknięciem przeglądarki
-            Instances.TearDownTest();
+            if(Globals.killDriver)
+            {
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(3)); //aby uzytkownik mógł sie przyjrzeć zakończeniu przed zamknięciem przeglądarki
+                Globals.TearDownTest();
+            }            
 
-            return test.GetResult();
-        }
+            result = test.GetResult();
+        }       
+
     }
+
 }
 

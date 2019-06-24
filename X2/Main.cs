@@ -16,6 +16,7 @@
  * - VS PK: da się ustawić warunek w punkcie przerwania
  * - VS PK: jest jakieś szybkie testowanie funkcji - okienko do tego
  * - wtyczki pozwalające, być może, szybciej uzyskac xpath:
+ * -- https://chrome.google.com/webstore/detail/chropath/ljngjbnaijcbncmcnjfhigebomdlkcjo?hl=en
  * -- https://chrome.google.com/webstore/detail/element-locator/pldlfgnilfdheajekfphjkjeooignhkc?hl=en
  * -- https://chrome.google.com/webstore/detail/chropath/ljngjbnaijcbncmcnjfhigebomdlkcjo?hl=en
  * 

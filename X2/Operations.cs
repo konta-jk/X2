@@ -100,8 +100,8 @@ namespace X2
 
         private static void SendKeys(Structs.TestStep testStep1)
         {
-            IWebElement element = Instances.driver.FindElement(By.XPath(testStep1.xpath));
-            Actions action = new Actions(Instances.driver); //dla estetyki tylko
+            IWebElement element = Globals.driver.FindElement(By.XPath(testStep1.xpath));
+            Actions action = new Actions(Globals.driver); //dla estetyki tylko
             action.MoveToElement(element).Perform();
             element.SendKeys(testStep1.operation.text + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą
             
@@ -109,39 +109,39 @@ namespace X2
 
         private void GoToUrl(Structs.TestStep testStep1)
         {
-            Instances.driver.Navigate().GoToUrl(testStep1.operation.text);
+            Globals.driver.Navigate().GoToUrl(testStep1.operation.text);
         }
 
         private void Refresh()
         {
-            Instances.driver.Navigate().Refresh();
+            Globals.driver.Navigate().Refresh();
         }
 
         private void Click(Structs.TestStep testStep1)
         {
-            IWebElement element = Instances.driver.FindElement(By.XPath(testStep1.xpath));
-            Actions action = new Actions(Instances.driver); //bo inaczej zdarzają się problemy z click
+            IWebElement element = Globals.driver.FindElement(By.XPath(testStep1.xpath));
+            Actions action = new Actions(Globals.driver); //bo inaczej zdarzają się problemy z click
             action.MoveToElement(element).Perform();
             element.Click();            
         }
 
         private void MoveToElementPerform(Structs.TestStep testStep1)
         {
-            IWebElement element = Instances.driver.FindElement(By.XPath(testStep1.xpath)); 
-            Actions action = new Actions(Instances.driver);
+            IWebElement element = Globals.driver.FindElement(By.XPath(testStep1.xpath)); 
+            Actions action = new Actions(Globals.driver);
             action.MoveToElement(element).Perform();
         }
 
         private Structs.Variable SetVariable(Structs.TestStep testStep1)
         {
-            IWebElement element = Instances.driver.FindElement(By.XPath(testStep1.xpath));            
+            IWebElement element = Globals.driver.FindElement(By.XPath(testStep1.xpath));            
             return new Structs.Variable(testStep1.operation.text, element.GetAttribute("value"));
         }
 
         private void SendVariable(Structs.TestStep testStep1)
         {
-            IWebElement element = Instances.driver.FindElement(By.XPath(testStep1.xpath));
-            Actions action = new Actions(Instances.driver); //dla estetyki tylko
+            IWebElement element = Globals.driver.FindElement(By.XPath(testStep1.xpath));
+            Actions action = new Actions(Globals.driver); //dla estetyki tylko
             action.MoveToElement(element).Perform();
             string value = variables.Where(t => t.name == testStep1.operation.text).SingleOrDefault().value;
             element.SendKeys(value + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą
