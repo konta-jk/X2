@@ -109,6 +109,7 @@
     <Compile Include="Structs.cs" />
     <Compile Include="Test.cs" />
     <Compile Include="TestPlanFromDataTable.cs" />
+    <Compile Include="TestThread.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
