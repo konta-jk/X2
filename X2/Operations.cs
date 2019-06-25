@@ -89,6 +89,10 @@ namespace X2
                         result = "ok";
                         break;
 
+                    case "RefreshUntil":
+                        RefreshUntil(testStep1);
+                        result = "ok";
+                        break;
 
                     default:
                         result = "error";
@@ -104,12 +108,12 @@ namespace X2
                 //System.Windows.Forms.MessageBox.Show(result, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
-            Sleep();        
+            Sleep(Settings.sleepAfterOperation);        
 
             return result;
         }
 
-        private static void Sleep()
+        private static void Sleep(int duration)
         {
             try
             {
@@ -117,7 +121,48 @@ namespace X2
             }
             catch (NoAlertPresentException)
             {
-                System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(Settings.sleepAfterOperation));
+                System.Threading.Thread.Sleep(duration);
+            }
+        }
+
+        private static void RefreshUntil(Structs.TestStep testStep1)
+        {
+            int duration = 5000;
+            int timeOut = 60; //s, default 300
+            DateTime start = DateTime.Now;
+            float whileDurationS = 0;
+
+            //wystąpienie elementu z xpath i określoną wartością
+            if(testStep1.operation.text != null)
+            {
+                //znajdź elementy z pasującym xpath i wartością
+                List<IWebElement> elements = Globals.driver.FindElements(By.XPath(testStep1.xpath)).
+                        Where(t => t.GetAttribute("value") == testStep1.operation.text).ToList();
+
+                while ((elements.Count() == 0) && (whileDurationS < timeOut))
+                {
+                    //znajdź elementy z pasującym xpath i wartością
+                    elements = Globals.driver.FindElements(By.XPath(testStep1.xpath)).
+                        Where(t => t.GetAttribute("value") == testStep1.operation.text).ToList();
+
+                    Sleep(duration);
+                    whileDurationS = (DateTime.Now - start).Seconds;
+                }                
+            }
+            else
+            //wystąpienie elemetnu z xpath
+            {
+                //znajdź elementy z pasującym xpath
+                List<IWebElement> elements = Globals.driver.FindElements(By.XPath(testStep1.xpath)).ToList();
+
+                while ((elements.Count() == 0) && (whileDurationS < timeOut))
+                {
+                    //znajdź elementy z pasującym xpath i wartością
+                    elements = Globals.driver.FindElements(By.XPath(testStep1.xpath)).ToList();
+
+                    Sleep(duration);
+                    whileDurationS = (DateTime.Now - start).Seconds;
+                }
             }
         }
 
