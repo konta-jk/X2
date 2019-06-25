@@ -22,8 +22,11 @@
  * - dorobić akcję czekaj, bo czasami trzeba poczekac na wygenerowanie zadania; albo jak PK mówił, dodać opcjonalny parametr wait po kroku w excellu
  * - błąd odczytu excella jeżeli w nazwie arkusza są nawiasy
  * - zamykanie alertu na dwa razy - wtf
- * 
- * 
+ * - konieczne do sgb: długie oczekiwanie albo dodatkowy parametr kroku oczekiwanie; wyszukiwanie wiersza bez wyszukiwarki, znając tylko id
+ * - backlog
+ * -- VS unit testing - jakieś fajne narzędzie wbudowane w VS
+ * -- ten quick execute (nazwa??) gówno daje, bo nie ma na czym operować - sprawdzić, czy da się używać w przerwaniu!
+ * -- działanie dla innych przeglądarek
  */
 
 using System;
