@@ -60,3 +60,5 @@ C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.pdb
 C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.csprojAssemblyReference.cache
 C:\Git repositories\X2 R1\X2\X2\bin\Debug\WebDriver.Support.dll
 C:\Git repositories\X2 R1\X2\X2\bin\Debug\WebDriver.Support.xml
+D:\Git repositories\X2 R1 home\X2\bin\Debug\WebDriver.Support.dll
+D:\Git repositories\X2 R1 home\X2\bin\Debug\WebDriver.Support.xml
