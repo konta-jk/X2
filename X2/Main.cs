@@ -16,9 +16,11 @@
  * - VS PK: da się ustawić warunek w punkcie przerwania
  * - VS PK: jest jakieś szybkie testowanie funkcji - okienko do tego
  * - wtyczki pozwalające, być może, szybciej uzyskac xpath:
- * -- https://chrome.google.com/webstore/detail/chropath/ljngjbnaijcbncmcnjfhigebomdlkcjo?hl=en
- * -- https://chrome.google.com/webstore/detail/element-locator/pldlfgnilfdheajekfphjkjeooignhkc?hl=en
- * -- https://chrome.google.com/webstore/detail/chropath/ljngjbnaijcbncmcnjfhigebomdlkcjo?hl=en
+ * -- https://chrome.google.com/webstore/detail/xpath-finder/ihnknokegkbpmofmafnkoadfjkhlogph?hl=en
+ * - straszliwe lamerstwo z przekazywaniem rezultatu do wątku z ui
+ * -- zastąpić eventem (wątek z selenium ma poinformować, że skończyl i przekazać result w params, od biedy results brane z instancji complete test)
+ * - dorobić akcję czekaj, bo czasami trzeba poczekac na wygenerowanie zadania; albo jak PK mówił, dodać opcjonalny parametr wait po kroku w excellu
+ * 
  * 
  * 
  */

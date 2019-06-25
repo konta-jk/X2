@@ -9,16 +9,17 @@ using System.ComponentModel;
 namespace X2
 {
     class CompleteTest
-    {        
-        object result = null;
+    {
+        //object result = null;
+        Form1 form;
 
-        public string Run() 
+        public void Run(Form1 form1) 
         {
-            Thread thread = new Thread(ActualRun);
-            thread.IsBackground = true;
-            thread.Start();
-            thread.Join();
-            return result.ToString();
+            form = form1;
+            Globals.seleniumThread = new Thread(ActualRun);
+            Globals.seleniumThread.IsBackground = true;
+            Globals.seleniumThread.Start();
+            //thread.Join();            
         }
 
         void ActualRun()
@@ -34,9 +35,10 @@ namespace X2
             {
                 System.Threading.Thread.Sleep(TimeSpan.FromSeconds(3)); //aby uzytkownik mógł sie przyjrzeć zakończeniu przed zamknięciem przeglądarki
                 Globals.TearDownTest();
-            }            
+            }
 
-            result = test.GetResult();
+            //result = test.GetResult();
+            Globals.testResult = test.GetResult();
         }       
 
     }

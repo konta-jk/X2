@@ -13,6 +13,6 @@ namespace X2
     class Settings
     {
         public static readonly int sleepAfterOperation = 300; //ms, default: 300
-        public static readonly int implicitWait = 20; //seconds
+        public static readonly int implicitWait = 15; //seconds
     }
 }

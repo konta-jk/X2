@@ -31,13 +31,15 @@ namespace X2
             InitializeComponent();
             numericUpDown1.Value = Globals.minRow;
             numericUpDown2.Value = Globals.maxRow;
-            checkBox1.Checked = Globals.killDriver;
+            checkBox1.Checked = Globals.killDriver;            
         }
         
         private void button1_Click(object sender, EventArgs e)
         {
-            openFileDialog1.ShowDialog();
-        }       
+            openFileDialog1.ShowDialog();            
+        }
+
+        
 
         private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
@@ -46,8 +48,8 @@ namespace X2
         }
 
         private void button4_Click(object sender, EventArgs e)
-        {            
-            textBox2.Text = new CompleteTest().Run();
+        {
+            new CompleteTest().Run(this);
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -83,6 +85,21 @@ namespace X2
         {
             Globals.killDriver = checkBox1.Checked;
         }
+
+        private void UpdateResult(object sender, EventArgs e)
+        {
+            if(textBox2.Text != Globals.testResult)
+            {
+                textBox2.Text = Globals.testResult;
+            }
+        }
+
+        protected override void OnFormClosing(FormClosingEventArgs e)
+        {            
+            base.OnFormClosing(e);                        
+            Globals.TearDownTest(); //powoduje błędy, bo druwi wątek próbuje uzywać drivera, a pierwszy go zabija
+        }
+
     }
 }
 
