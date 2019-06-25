@@ -58,6 +58,7 @@ namespace X2
             {
                 numericUpDown1.Enabled = true;
                 numericUpDown2.Enabled = true;
+                button4.Enabled = true;
             }
         }
 
@@ -97,9 +98,13 @@ namespace X2
         protected override void OnFormClosing(FormClosingEventArgs e)
         {            
             base.OnFormClosing(e);                        
-            Globals.TearDownTest(); //powoduje błędy, bo druwi wątek próbuje uzywać drivera, a pierwszy go zabija
+            //Globals.TearDownTest(); //powoduje błędy, bo druwi wątek próbuje uzywać drivera, a pierwszy go zabija
         }
 
+        private void textBox2_TextChanged(object sender, EventArgs e)
+        {
+            BringToFront();
+        }
     }
 }
 

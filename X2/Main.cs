@@ -20,7 +20,8 @@
  * - straszliwe lamerstwo z przekazywaniem rezultatu do wątku z ui
  * -- zastąpić eventem (wątek z selenium ma poinformować, że skończyl i przekazać result w params, od biedy results brane z instancji complete test)
  * - dorobić akcję czekaj, bo czasami trzeba poczekac na wygenerowanie zadania; albo jak PK mówił, dodać opcjonalny parametr wait po kroku w excellu
- * 
+ * - błąd odczytu excella jeżeli w nazwie arkusza są nawiasy
+ * - zamykanie alertu na dwa razy - wtf
  * 
  * 
  */

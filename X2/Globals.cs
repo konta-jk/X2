@@ -28,6 +28,7 @@ namespace X2
 
             driver.Manage().Window.Maximize();
             driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(Settings.implicitWait);
+
         }
 
         public static void TearDownTest()
@@ -35,10 +36,12 @@ namespace X2
             if(seleniumThread != null)
             {
                 seleniumThread.Interrupt();
+                /*
                 if (!seleniumThread.Join(100))
                 { // or an agreed resonable time
                     seleniumThread.Abort();
                 }
+                */
             }
 
             if(driver != null)

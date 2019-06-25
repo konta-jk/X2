@@ -11,6 +11,7 @@ using System.Threading.Tasks;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Support.UI;
+using OpenQA.Selenium.Support;
 using System.Windows.Forms;
 using OpenQA.Selenium.Interactions;
 using System.Text.RegularExpressions;
@@ -78,6 +79,16 @@ namespace X2
                         result = "ok";
                         break;
 
+                    case "CloseAlert":
+                        CloseAlert();
+                        result = "ok";
+                        break;
+
+                    case "SelectOption":
+                        SelectOption(testStep1);
+                        result = "ok";
+                        break;
+
 
                     default:
                         result = "error";
@@ -93,9 +104,21 @@ namespace X2
                 //System.Windows.Forms.MessageBox.Show(result, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
-            System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(Settings.sleepAfterOperation));
+            Sleep();        
 
             return result;
+        }
+
+        private static void Sleep()
+        {
+            try
+            {
+                Globals.driver.SwitchTo().Alert().Accept();
+            }
+            catch (NoAlertPresentException)
+            {
+                System.Threading.Thread.Sleep(TimeSpan.FromMilliseconds(Settings.sleepAfterOperation));
+            }
         }
 
         private static void SendKeys(Structs.TestStep testStep1)
@@ -103,8 +126,8 @@ namespace X2
             IWebElement element = Globals.driver.FindElement(By.XPath(testStep1.xpath));
             Actions action = new Actions(Globals.driver); //dla estetyki tylko
             action.MoveToElement(element).Perform();
-            element.SendKeys(testStep1.operation.text + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą
-            
+            string text = testStep1.operation.text;
+            element.SendKeys(testStep1.operation.text + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą            
         }
 
         private void GoToUrl(Structs.TestStep testStep1)
@@ -127,7 +150,7 @@ namespace X2
 
         private void MoveToElementPerform(Structs.TestStep testStep1)
         {
-            IWebElement element = Globals.driver.FindElement(By.XPath(testStep1.xpath)); 
+            IWebElement element = Globals.driver.FindElement(By.XPath(testStep1.xpath));
             Actions action = new Actions(Globals.driver);
             action.MoveToElement(element).Perform();
         }
@@ -148,6 +171,26 @@ namespace X2
 
         }
 
+        private void CloseAlert()
+        {
+            try
+            {
+                Globals.driver.SwitchTo().Alert().Accept();
+            }
+            catch (NoAlertPresentException)
+            {
+                //
+            }            
+        }
 
+        private void SelectOption(Structs.TestStep testStep1)
+        {
+            IWebElement element = Globals.driver.FindElement(By.XPath(testStep1.xpath));
+            SelectElement option = new SelectElement(element);
+            int i;
+            Int32.TryParse(testStep1.operation.text, out i);
+            option.SelectByIndex(i);            
+            element.Click();
+        }
     }
 }
