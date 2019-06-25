@@ -27,6 +27,7 @@
  * -- VS unit testing - jakieś fajne narzędzie wbudowane w VS
  * -- ten quick execute (nazwa??) gówno daje, bo nie ma na czym operować - sprawdzić, czy da się używać w przerwaniu!
  * -- działanie dla innych przeglądarek
+ * 
  */
 
 using System;

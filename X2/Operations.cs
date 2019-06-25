@@ -125,6 +125,13 @@ namespace X2
             }
         }
 
+        //uwagi: aby dobrać się do tekstu nie w polu formularza użyć .GetAttribute("innerText")
+        //problemy:
+        //[solved?]jaki xpath? teraz wskazuję xpath jednego wiersza, a powinienem badać wszystkie
+        //to oznacza też, że setvalue będzie działać tylko dla okienek
+        //...i jeśli ma być solidne, musi być rozbite na setvalue from field, set value from other shit (innerText)
+        //todo sprawdzić czy RefreshUntil radzi sobie z polami
+        //to się tak różnie stosuje (z argumentem text lub bez), że można by rozbić na refresh until text i refresh until element
         private static void RefreshUntil(Structs.TestStep testStep1)
         {
             int duration = 5000;
@@ -133,19 +140,24 @@ namespace X2
             float whileDurationS = 0;
 
             //wystąpienie elementu z xpath i określoną wartością
-            if(testStep1.operation.text != null)
+            if(testStep1.operation.text.Length > 0) // != "" powinno być?
             {
-                //znajdź elementy z pasującym xpath i wartością
-                List<IWebElement> elements = Globals.driver.FindElements(By.XPath(testStep1.xpath)).
-                        Where(t => t.GetAttribute("value") == testStep1.operation.text).ToList();
+                //znajdź elementy z pasującym xpath i wartością (w 3 krokach)
+                //1. nadrzędny element, np. tabela rejestru
+                List<IWebElement> elements = Globals.driver.FindElements(By.XPath(testStep1.xpath)).ToList();
+                //2. dodaj dzieciaki, np. komórki tabeli rejestru
+                elements.AddRange(elements[0].FindElements(By.XPath(".//*")).ToList());
+                //3. wyjeb co nie spełnia warunku 
+                elements = elements.Where(t => t.GetAttribute("innerText") == testStep1.operation.text).ToList();
 
                 while ((elements.Count() == 0) && (whileDurationS < timeOut))
                 {
                     //znajdź elementy z pasującym xpath i wartością
                     elements = Globals.driver.FindElements(By.XPath(testStep1.xpath)).
-                        Where(t => t.GetAttribute("value") == testStep1.operation.text).ToList();
+                        Where(t => t.GetAttribute("innerText") == testStep1.operation.text).ToList();
 
                     Sleep(duration);
+                    Globals.driver.Navigate().Refresh();
                     whileDurationS = (DateTime.Now - start).Seconds;
                 }                
             }
@@ -161,6 +173,7 @@ namespace X2
                     elements = Globals.driver.FindElements(By.XPath(testStep1.xpath)).ToList();
 
                     Sleep(duration);
+                    Globals.driver.Navigate().Refresh();
                     whileDurationS = (DateTime.Now - start).Seconds;
                 }
             }
