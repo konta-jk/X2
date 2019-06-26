@@ -25,8 +25,7 @@ namespace X2
             DataTable schema = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, new object[] { null, null, null, "TABLE" });
             string sheetName = schema.Rows[0].Field<string>("TABLE_NAME");
 
-            string select = "select * from [" + sheetName + "A" + Globals.minRow.ToString() + ":D" + Globals.maxRow.ToString() + "]";
-            Console.WriteLine(select);
+            string select = "select * from [" + sheetName + "A" + Globals.minRow.ToString() + ":D" + Globals.maxRow.ToString() + "]";            
 
             OleDbDataAdapter sheetAdapter = new OleDbDataAdapter(select, connection);
             sheetAdapter.Fill(dataSheet);

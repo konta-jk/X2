@@ -89,8 +89,12 @@ namespace X2
                         result = "ok";
                         break;
 
-                    case "RefreshUntil":
-                        RefreshUntil(testStep1);
+                    case "RefreshUntil":                                                
+                        result = RefreshUntil(testStep1);
+                        break;
+
+                    case "ScrollDown":
+                        ScrollDown();
                         result = "ok";
                         break;
 
@@ -125,61 +129,9 @@ namespace X2
             }
         }
 
-        //uwagi: aby dobrać się do tekstu nie w polu formularza użyć .GetAttribute("innerText")
-        //problemy:
-        //[solved?]jaki xpath? teraz wskazuję xpath jednego wiersza, a powinienem badać wszystkie
-        //to oznacza też, że setvalue będzie działać tylko dla okienek
-        //...i jeśli ma być solidne, musi być rozbite na setvalue from field, set value from other shit (innerText)
-        //todo sprawdzić czy RefreshUntil radzi sobie z polami
-        //to się tak różnie stosuje (z argumentem text lub bez), że można by rozbić na refresh until text i refresh until element
-        private static void RefreshUntil(Structs.TestStep testStep1)
-        {
-            int duration = 5000;
-            int timeOut = 60; //s, default 300
-            DateTime start = DateTime.Now;
-            float whileDurationS = 0;
+        
 
-            //wystąpienie elementu z xpath i określoną wartością
-            if(testStep1.operation.text.Length > 0) // != "" powinno być?
-            {
-                //znajdź elementy z pasującym xpath i wartością (w 3 krokach)
-                //1. nadrzędny element, np. tabela rejestru
-                List<IWebElement> elements = Globals.driver.FindElements(By.XPath(testStep1.xpath)).ToList();
-                //2. dodaj dzieciaki, np. komórki tabeli rejestru
-                elements.AddRange(elements[0].FindElements(By.XPath(".//*")).ToList());
-                //3. wyjeb co nie spełnia warunku 
-                elements = elements.Where(t => t.GetAttribute("innerText") == testStep1.operation.text).ToList();
-
-                while ((elements.Count() == 0) && (whileDurationS < timeOut))
-                {
-                    //znajdź elementy z pasującym xpath i wartością
-                    elements = Globals.driver.FindElements(By.XPath(testStep1.xpath)).
-                        Where(t => t.GetAttribute("innerText") == testStep1.operation.text).ToList();
-
-                    Sleep(duration);
-                    Globals.driver.Navigate().Refresh();
-                    whileDurationS = (DateTime.Now - start).Seconds;
-                }                
-            }
-            else
-            //wystąpienie elemetnu z xpath
-            {
-                //znajdź elementy z pasującym xpath
-                List<IWebElement> elements = Globals.driver.FindElements(By.XPath(testStep1.xpath)).ToList();
-
-                while ((elements.Count() == 0) && (whileDurationS < timeOut))
-                {
-                    //znajdź elementy z pasującym xpath i wartością
-                    elements = Globals.driver.FindElements(By.XPath(testStep1.xpath)).ToList();
-
-                    Sleep(duration);
-                    Globals.driver.Navigate().Refresh();
-                    whileDurationS = (DateTime.Now - start).Seconds;
-                }
-            }
-        }
-
-        private static void SendKeys(Structs.TestStep testStep1)
+        private void SendKeys(Structs.TestStep testStep1)
         {
             IWebElement element = Globals.driver.FindElement(By.XPath(testStep1.xpath));
             Actions action = new Actions(Globals.driver); //dla estetyki tylko
@@ -226,7 +178,6 @@ namespace X2
             action.MoveToElement(element).Perform();
             string value = variables.Where(t => t.name == testStep1.operation.text).SingleOrDefault().value;
             element.SendKeys(value + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą
-
         }
 
         private void CloseAlert()
@@ -244,11 +195,131 @@ namespace X2
         private void SelectOption(Structs.TestStep testStep1)
         {
             IWebElement element = Globals.driver.FindElement(By.XPath(testStep1.xpath));
+
+            Actions action = new Actions(Globals.driver); //bo inaczej zdarzają się problemy z click??
+            action.MoveToElement(element).Perform();
+
             SelectElement option = new SelectElement(element);
             int i;
             Int32.TryParse(testStep1.operation.text, out i);
             option.SelectByIndex(i);            
             element.Click();
         }
+
+        //odświeża stronę aż znajdzie wiersz, w którym są teksty określone w texts
+        //w kroku jako xpath należy podać bezpośredniego rodzica wierszy <tr>, zazwyczaj body
+        //w kroku jako text należy podać stałe teksty odzielone podwójnymi przecinkami albo zmienne obramowane podwójnymi nawiasami kwadratowymi
+        private string RefreshUntil(Structs.TestStep testStep1)
+        {
+            //Console.WriteLine("* RefreshUntil: start");
+
+            int duration = 5000;
+            int timeOut = 300; //s, default 300
+            DateTime start = DateTime.Now;
+            TimeSpan whileDuration = new TimeSpan(0, 0, 0);
+
+            while (
+                (!GetIsMatchForRefreshUntil(testStep1.xpath, GetTextsForRefreshUntil(testStep1))) 
+                && (whileDuration.TotalSeconds < timeOut))
+            {
+                Sleep(duration);
+                Globals.driver.Navigate().Refresh();
+                whileDuration = DateTime.Now - start;
+
+                //debug
+                //Console.WriteLine("* RefreshUntil whileDurationS: " + whileDuration.TotalSeconds.ToString());
+            }
+
+            if(whileDuration.TotalSeconds >= timeOut)
+            {
+                return "timeout";
+            }
+            else
+            {
+                return "ok";
+            }
+
+            //Console.WriteLine("* RefreshUntil: koniec");
+        }
+
+
+        private List<string> GetTextsForRefreshUntil(Structs.TestStep testStep1)
+        {            
+            List<string> texts0 = new List<string>();
+            List<string> texts = new List<string>();
+            
+            texts0 = Regex.Split(testStep1.operation.text, @",,").ToList();
+            
+            foreach(string s in texts0)
+            {                
+                string s1 = s;
+                s1 = Regex.Replace(s1, @"^\s+", "");
+                s1 = Regex.Replace(s1, @"\s+$", "");
+
+                if(Regex.IsMatch(s1, @"\[\[(.*?)\]\]"))
+                {
+                    s1 = Regex.Replace(s1, @"^\s+", "");
+                    s1 = Regex.Replace(s1, @"\s+$", "");
+                    s1 = s1.Substring(2);
+                    s1 = s1.Substring(0, s1.Length - 2);
+                    texts.Add(variables.Where(t => t.name == s1).First().value);
+                }
+                else
+                {
+                    texts.Add(s1);
+                }                
+            }
+
+            //debug
+            /*
+            foreach(string s in texts)
+            {
+                Console.WriteLine("* GetTextsForRefreshUntil: " + s);
+            }
+            */
+
+            return texts;            
+        }
+
+        private bool GetIsMatchForRefreshUntil(string xpath, List<string> texts)
+        {
+            IWebElement parent = Globals.driver.FindElement(By.XPath(xpath));
+
+            //bezpośrednie dzieci
+            List<IWebElement> children = parent.FindElements(By.XPath("./*")).ToList();
+
+            bool existsFit = false;
+            foreach(IWebElement elem in children)
+            {
+                string s = elem.Text;
+                bool thisFits = true;
+
+                foreach (string text in texts)
+                {
+                    if(!s.Contains(text))
+                    {
+                        thisFits = false;
+                    }
+                }
+                if (thisFits == true)
+                {
+                    existsFit = true;
+                }
+            }
+
+            //debug
+            //Console.WriteLine("* GetIsMatchForRefreshUntil: " + existsFit.ToString());
+
+            return existsFit;
+        }
+
+        private void ScrollDown() //może potrzebna??
+        {
+            Sleep(3000);
+            IJavaScriptExecutor js = (IJavaScriptExecutor)Globals.driver;
+            js.ExecuteScript("window.scrollTo(0, document.body.scrollHeight);");
+        }
+
+
     }
 }
