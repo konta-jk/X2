@@ -79,14 +79,14 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="X2.exe" size="388040">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="X2.exe" size="389064">
       <assemblyIdentity name="X2" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>sVlgXUZf0kyFJoTJ2asbjZzll9M6ndpLzQlhQGSB2VY=</dsig:DigestValue>
+        <dsig:DigestValue>VVSh2BgN5sTpVctvbwXLDwKr4+eNxOX2/yRc/Fepwms=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>

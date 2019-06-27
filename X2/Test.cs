@@ -20,7 +20,7 @@ namespace X2
     {
         Structs.TestPlan testPlan;
         public List<string> results = new List<string>();
-        
+        Operations operations;
 
         public Test(Structs.TestPlan testPlan1)
         {
@@ -30,7 +30,7 @@ namespace X2
         public void Run()
         {
             string currentResult = "";
-            Operations operations = new Operations();
+            operations = new Operations();
 
             foreach (Structs.TestStep testStep in testPlan.testSteps)
             {
@@ -49,24 +49,33 @@ namespace X2
             string s = "-1";
             if (testPlan.testSteps.Count != results.Count(t => t == "ok"))
             {
-                s = "NIE udało się przejść zaplanowanej ścieżki, wykonano " + results.Count.ToString() + " (" + results.Count(t => t == "ok").ToString() + " poprawnie) z " + testPlan.testSteps.Count.ToString() + " kroków.";
+                s = "FAIL\r\nTest failed, " + results.Count(t => t == "ok").ToString() + " test steps passed out of " + testPlan.testSteps.Count.ToString() +".";
             }
             else
             {
-                s = "TAK - udało się przejść zaplanowaną ścieżkę.";
+                s = "PASS\r\nTest passed (" + testPlan.testSteps.Count.ToString() + " test steps).";
             }
 
             for(int i = 0; i < testPlan.testSteps.Count; i++)
             {
-                s += Environment.NewLine + (i+1).ToString() + ") " + testPlan.testSteps[i].stepDescription + ": ";
+                s += "\r\n"+ (i+1).ToString() + ") " + testPlan.testSteps[i].stepDescription + ": ";
                 if(i <= results.Count() - 1)
                 {
                     s += results[i];
                 }
             }
 
+            string v = "";
+            foreach(Structs.Variable v1 in operations.GetVariables())
+            {
+                v += v1.name + " = " + v1.value + "\r\n";
+            }            
+            if(v.Length > 0)
+            {
+                s += "\r\n\r\nVariables: \r\n" + v;
+            }            
+
             return s;
         }
-
     }
 }

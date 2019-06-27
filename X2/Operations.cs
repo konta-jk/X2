@@ -24,7 +24,7 @@ namespace X2
     interface IOperations
     {
         string Operation(Structs.TestStep testStep1);
-        
+        List<Structs.Variable> GetVariables();
     }
 
     class Operations : IOperations
@@ -93,13 +93,12 @@ namespace X2
                         result = RefreshUntil(testStep1);
                         break;
 
-                    case "ScrollDown":
-                        ScrollDown();
-                        result = "ok";
+                    case "Scroll":                        
+                        result = Scroll(testStep1);
                         break;
 
                     default:
-                        result = "error";
+                        result = "Error: can't recognize operation \"" + testStep1.operation.name + "\".";
                         break;
 
                 }
@@ -108,7 +107,7 @@ namespace X2
             }
             catch (Exception e)
             {
-                result = "Błąd w kroku o nazwie: \"" + testStep1.stepDescription + "\", operacja: \"" + testStep1.operation.name + "\", wyjątek: " + Environment.NewLine  + e;
+                result = "Error in step named: \"" + testStep1.stepDescription + "\". Operation: \"" + testStep1.operation.name + "\". Exception: \r\n"  + e;
                 //System.Windows.Forms.MessageBox.Show(result, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }
 
@@ -214,7 +213,7 @@ namespace X2
             //Console.WriteLine("* RefreshUntil: start");
 
             int duration = 5000;
-            int timeOut = 300; //s, default 300
+            int timeOut = 600; //s, default 300
             DateTime start = DateTime.Now;
             TimeSpan whileDuration = new TimeSpan(0, 0, 0);
 
@@ -313,13 +312,28 @@ namespace X2
             return existsFit;
         }
 
-        private void ScrollDown() //może potrzebna??
+        private string Scroll(Structs.TestStep testStep1) 
         {
             Sleep(3000);
             IJavaScriptExecutor js = (IJavaScriptExecutor)Globals.driver;
-            js.ExecuteScript("window.scrollTo(0, document.body.scrollHeight);");
+            string destination = testStep1.operation.text;
+
+            switch (destination)
+            {
+                case "Top":
+                    js.ExecuteScript("window.scrollTo(0, 0);");
+                    return "ok";
+                case "Bottom":
+                    js.ExecuteScript("window.scrollTo(0, document.body.scrollHeight);");
+                    return "ok";                    
+                default:
+                    return "Error: can't recognize scroll destination \"" + destination +"\"; use \"Top\" or \"Bottom\"";
+            }
         }
 
-
+        public List<Structs.Variable> GetVariables()
+        {
+            return variables;
+        }
     }
 }
