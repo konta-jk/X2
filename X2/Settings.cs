@@ -14,5 +14,6 @@ namespace X2
     {
         public static readonly int sleepAfterOperation = 400; //ms, default: 300
         public static readonly int implicitWait = 45; //seconds, default: 15
+        public static readonly bool disableNotifications = false;
     }
 }

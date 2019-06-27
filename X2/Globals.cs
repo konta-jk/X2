@@ -9,6 +9,8 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
 using System.Threading;
+using System.Diagnostics;
+using System.ComponentModel;
 
 namespace X2
 {
@@ -21,14 +23,22 @@ namespace X2
         public static bool killDriver = true;
         public static string testResult; //brzydkie tymczasowe
         public static Thread seleniumThread;
-
+        
         public static void Init()
         {
-            driver = new ChromeDriver();                      
+            try
+            {
+                
+                Console.WriteLine("START: " + DateTime.Now.ToString());
 
-            driver.Manage().Window.Maximize();
-            driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(Settings.implicitWait);
-
+                driver = new ChromeDriver();
+                driver.Manage().Window.Maximize();
+                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(Settings.implicitWait);
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Init failed\r\n" + e.ToString());
+            }
         }
 
         public static void TearDownTest()

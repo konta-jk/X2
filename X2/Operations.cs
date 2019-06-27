@@ -42,93 +42,106 @@ namespace X2
 
             try
             {
-                switch (testStep1.operation.name)
-                {
-                    case "SendKeys":
-                        SendKeys(testStep1);
-                        result = "ok";
-                        break;
-
-                    case "GoToUrl":
-                        GoToUrl(testStep1);
-                        result = "ok";
-                        break;
-
-                    case "Click":
-                        Click(testStep1);
-                        result = "ok";
-                        break;
-
-                    case "Refresh":
-                        Refresh();
-                        result = "ok";
-                        break;
-
-                    case "MoveToElementPerform":
-                        MoveToElementPerform(testStep1);
-                        result = "ok";
-                        break;
-
-                    case "SetVariable":
-                        variables.Add(SetVariable(testStep1));
-                        result = "ok";
-                        break;
-
-                    case "SendVariable":
-                        SendVariable(testStep1);
-                        result = "ok";
-                        break;
-
-                    case "CloseAlert":
-                        CloseAlert();
-                        result = "ok";
-                        break;
-
-                    case "SelectOption":
-                        SelectOption(testStep1);
-                        result = "ok";
-                        break;
-
-                    case "RefreshUntil":                                                
-                        result = RefreshUntil(testStep1);
-                        break;
-
-                    case "Scroll":                        
-                        result = Scroll(testStep1);
-                        break;
-
-                    default:
-                        result = "Error: can't recognize operation \"" + testStep1.operation.name + "\".";
-                        break;
-
-                }
-
-                
+                result = PerformOperation(testStep1);
+                Sleep(Settings.sleepAfterOperation);
+            }
+            catch (NoAlertPresentException)
+            {
+                Console.WriteLine("Exception caught \"NoAlertPresentException\" in testStep " + testStep1.stepDescription);
+            }
+            catch (UnhandledAlertException)
+            {
+                Console.WriteLine("Exception caught \"UnhandledAlertException\" in testStep " + testStep1.stepDescription);
+                CloseAlert();
+                result = PerformOperation(testStep1);
+            }
+            catch (StaleElementReferenceException)
+            {
+                Console.WriteLine("Exception caught \"StaleElementReferenceException\" in testStep " + testStep1.stepDescription);
+                result = PerformOperation(testStep1);
+            }
+            catch (ElementNotInteractableException)
+            {
+                Console.WriteLine("Exception caught \"ElementNotInteractableException\" in testStep " + testStep1.stepDescription);
+                Sleep(1000);
+                result = PerformOperation(testStep1);
             }
             catch (Exception e)
             {
                 result = "Error in step named: \"" + testStep1.stepDescription + "\". Operation: \"" + testStep1.operation.name + "\". Exception: \r\n"  + e;
                 //System.Windows.Forms.MessageBox.Show(result, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Warning);
-            }
-
-            Sleep(Settings.sleepAfterOperation);        
+            }              
 
             return result;
         }
 
-        private static void Sleep(int duration)
-        {
-            try
-            {
-                Globals.driver.SwitchTo().Alert().Accept();
-            }
-            catch (NoAlertPresentException)
-            {
-                System.Threading.Thread.Sleep(duration);
-            }
-        }
 
-        
+        private string PerformOperation(Structs.TestStep testStep1)
+        {
+            string result = "init";
+
+            switch (testStep1.operation.name)
+            {
+                case "SendKeys":
+                    SendKeys(testStep1);
+                    result = "ok";
+                    break;
+
+                case "GoToUrl":
+                    GoToUrl(testStep1);
+                    result = "ok";
+                    break;
+
+                case "Click":
+                    Click(testStep1);
+                    result = "ok";
+                    break;
+
+                case "Refresh":
+                    Refresh();
+                    result = "ok";
+                    break;
+
+                case "MoveToElementPerform":
+                    MoveToElementPerform(testStep1);
+                    result = "ok";
+                    break;
+
+                case "SetVariable":
+                    variables.Add(SetVariable(testStep1));
+                    result = "ok";
+                    break;
+
+                case "SendVariable":
+                    SendVariable(testStep1);
+                    result = "ok";
+                    break;
+
+                case "CloseAlert":
+                    CloseAlert();
+                    result = "ok";
+                    break;
+
+                case "SelectOption":
+                    SelectOption(testStep1);
+                    result = "ok";
+                    break;
+
+                case "RefreshUntil":
+                    result = RefreshUntil(testStep1);
+                    break;
+
+                case "Scroll":
+                    result = Scroll(testStep1);
+                    break;
+
+                default:
+                    result = "Error: can't recognize operation \"" + testStep1.operation.name + "\".";
+                    break;
+            }
+
+            return result;
+        }
 
         private void SendKeys(Structs.TestStep testStep1)
         {
@@ -183,11 +196,11 @@ namespace X2
         {
             try
             {
-                Globals.driver.SwitchTo().Alert().Accept();
+                Globals.driver.SwitchTo().Alert().Accept();                
             }
             catch (NoAlertPresentException)
             {
-                //
+                Console.WriteLine("CloseAlert(): exception caught \"NoAlertPresentException\".");
             }            
         }
 
@@ -203,6 +216,25 @@ namespace X2
             Int32.TryParse(testStep1.operation.text, out i);
             option.SelectByIndex(i);            
             element.Click();
+        }
+
+        private string Scroll(Structs.TestStep testStep1)
+        {
+            Sleep(3000);
+            IJavaScriptExecutor js = (IJavaScriptExecutor)Globals.driver;
+            string destination = testStep1.operation.text;
+
+            switch (destination)
+            {
+                case "Top":
+                    js.ExecuteScript("window.scrollTo(0, 0);");
+                    return "ok";
+                case "Bottom":
+                    js.ExecuteScript("window.scrollTo(0, document.body.scrollHeight);");
+                    return "ok";
+                default:
+                    return "Error: can't recognize scroll destination \"" + destination + "\"; use \"Top\" or \"Bottom\"";
+            }
         }
 
         //odświeża stronę aż znajdzie wiersz, w którym są teksty określone w texts
@@ -310,25 +342,24 @@ namespace X2
             //Console.WriteLine("* GetIsMatchForRefreshUntil: " + existsFit.ToString());
 
             return existsFit;
-        }
+        }        
 
-        private string Scroll(Structs.TestStep testStep1) 
+        private static void Sleep(int duration)
         {
-            Sleep(3000);
-            IJavaScriptExecutor js = (IJavaScriptExecutor)Globals.driver;
-            string destination = testStep1.operation.text;
-
-            switch (destination)
+            //stan sprzed wrzucenia sleep w try w Operation()
+            /*
+            try
             {
-                case "Top":
-                    js.ExecuteScript("window.scrollTo(0, 0);");
-                    return "ok";
-                case "Bottom":
-                    js.ExecuteScript("window.scrollTo(0, document.body.scrollHeight);");
-                    return "ok";                    
-                default:
-                    return "Error: can't recognize scroll destination \"" + destination +"\"; use \"Top\" or \"Bottom\"";
+                Globals.driver.SwitchTo().Alert().Accept();
             }
+            catch (NoAlertPresentException)
+            {
+                Console.WriteLine("Sleep(): exception caught \"NoAlertPresentException\".");
+                System.Threading.Thread.Sleep(duration);
+            }
+            */
+
+            System.Threading.Thread.Sleep(duration);
         }
 
         public List<Structs.Variable> GetVariables()

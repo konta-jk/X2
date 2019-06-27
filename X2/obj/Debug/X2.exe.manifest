@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <asmv1:assembly xsi:schemaLocation="urn:schemas-microsoft-com:asm.v1 assembly.adaptive.xsd" manifestVersion="1.0" xmlns:asmv1="urn:schemas-microsoft-com:asm.v1" xmlns="urn:schemas-microsoft-com:asm.v2" xmlns:asmv2="urn:schemas-microsoft-com:asm.v2" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:co.v1="urn:schemas-microsoft-com:clickonce.v1" xmlns:asmv3="urn:schemas-microsoft-com:asm.v3" xmlns:dsig="http://www.w3.org/2000/09/xmldsig#" xmlns:co.v2="urn:schemas-microsoft-com:clickonce.v2">
   <asmv1:assemblyIdentity name="X2.exe" version="1.0.0.3" publicKeyToken="0000000000000000" language="neutral" processorArchitecture="msil" type="win32" />
-  <description asmv2:iconFile="chicken.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
+  <description asmv2:iconFile="Cat.ico" xmlns="urn:schemas-microsoft-com:asm.v1" />
   <application />
   <entryPoint>
     <assemblyIdentity name="X2" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
@@ -79,17 +79,26 @@
     </dependentAssembly>
   </dependency>
   <dependency>
-    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="X2.exe" size="389064">
+    <dependentAssembly dependencyType="install" allowDelayedBinding="true" codebase="X2.exe" size="382408">
       <assemblyIdentity name="X2" version="1.0.0.0" language="neutral" processorArchitecture="msil" />
       <hash>
         <dsig:Transforms>
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>VVSh2BgN5sTpVctvbwXLDwKr4+eNxOX2/yRc/Fepwms=</dsig:DigestValue>
+        <dsig:DigestValue>MNdM7KNfW5/EmJ1UkmsNBh1jpNDHtYoCA97la0KB7Q8=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
+  <file name="Cat.ico" size="178066">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>a2ICi8XcydsCTaAE19nbnb5J0GATVfzcva8/ad8ZXVk=</dsig:DigestValue>
+    </hash>
+  </file>
   <file name="chicken.ico" size="181546">
     <hash>
       <dsig:Transforms>
@@ -97,6 +106,15 @@
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
       <dsig:DigestValue>IpQZw/dqilBjeXiWS2SiBh4iRP33TIl8c6fUrPVjKZs=</dsig:DigestValue>
+    </hash>
+  </file>
+  <file name="Squirrel.ico" size="175167">
+    <hash>
+      <dsig:Transforms>
+        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
+      </dsig:Transforms>
+      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
+      <dsig:DigestValue>4VxV5mUHYCeBp+egH6VAXENs9UYOoosp9yEtuQ0FvX0=</dsig:DigestValue>
     </hash>
   </file>
   <file name="X2.exe.config" size="189">

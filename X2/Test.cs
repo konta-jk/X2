@@ -7,6 +7,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Diagnostics;
+using System.IO;
+using System.ComponentModel;
 
 namespace X2
 {
@@ -73,6 +76,14 @@ namespace X2
             if(v.Length > 0)
             {
                 s += "\r\n\r\nVariables: \r\n" + v;
+            }
+                        
+            //tu ma się znaleźć output
+            string c = "todo: tu ma się znaleźć process standard output";
+
+            if(c.Length > 0)
+            {
+                s += "\r\n\r\nOutput: \r\n" + c;
             }            
 
             return s;
