@@ -95,15 +95,22 @@ namespace X2
             }
         }
 
+        /*
         protected override void OnFormClosing(FormClosingEventArgs e)
         {            
             base.OnFormClosing(e);                        
             //Globals.TearDownTest(); //powoduje błędy, bo druwi wątek próbuje uzywać drivera, a pierwszy go zabija
         }
+        */
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             BringToFront();
+        }
+
+        private void textBox1_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.ShowDialog();
         }
     }
 }

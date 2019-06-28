@@ -79,7 +79,7 @@ namespace X2
             }
                         
             //tu ma się znaleźć output
-            string c = "todo: tu ma się znaleźć process standard output";
+            string c = "todo: dodać \"process standard output\"";
 
             if(c.Length > 0)
             {

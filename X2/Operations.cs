@@ -15,8 +15,7 @@ using OpenQA.Selenium.Support;
 using System.Windows.Forms;
 using OpenQA.Selenium.Interactions;
 using System.Text.RegularExpressions;
-
-
+using OpenQA.Selenium.Remote;
 
 
 namespace X2
@@ -69,7 +68,6 @@ namespace X2
             catch (Exception e)
             {
                 result = "Error in step named: \"" + testStep1.stepDescription + "\". Operation: \"" + testStep1.operation.name + "\". Exception: \r\n"  + e;
-                //System.Windows.Forms.MessageBox.Show(result, "Błąd", MessageBoxButtons.OK, MessageBoxIcon.Warning);
             }              
 
             return result;
@@ -93,8 +91,7 @@ namespace X2
                     break;
 
                 case "Click":
-                    Click(testStep1);
-                    result = "ok";
+                    result = Click(testStep1);
                     break;
 
                 case "Refresh":
@@ -155,6 +152,7 @@ namespace X2
         private void GoToUrl(Structs.TestStep testStep1)
         {
             Globals.driver.Navigate().GoToUrl(testStep1.operation.text);
+
         }
 
         private void Refresh()
@@ -162,12 +160,31 @@ namespace X2
             Globals.driver.Navigate().Refresh();
         }
 
-        private void Click(Structs.TestStep testStep1)
+        private string Click(Structs.TestStep testStep1)
         {
             IWebElement element = Globals.driver.FindElement(By.XPath(testStep1.xpath));
             Actions action = new Actions(Globals.driver); //bo inaczej zdarzają się problemy z click
             action.MoveToElement(element).Perform();
-            element.Click();            
+            element.Click();
+
+            //sprawdzenie wystąpienia błędu zdefiniowanego przez uzytkownika (jako fragment html)            
+            if ((Settings.customErrors.Count > 0) && (testStep1.operation.text == "Err"))
+            {
+                Sleep(Settings.sleepAfterOperation);
+                string customError = CustomErrorDetected();
+                if (customError != "no")
+                {
+                    return "Custom error detected: " + customError; 
+                }
+                else
+                {
+                    return "ok";
+                }
+            }
+            else
+            {
+                return "ok";
+            }
         }
 
         private void MoveToElementPerform(Structs.TestStep testStep1)
@@ -179,8 +196,16 @@ namespace X2
 
         private Structs.Variable SetVariable(Structs.TestStep testStep1)
         {
-            IWebElement element = Globals.driver.FindElement(By.XPath(testStep1.xpath));            
-            return new Structs.Variable(testStep1.operation.text, element.GetAttribute("value"));
+            IWebElement element = Globals.driver.FindElement(By.XPath(testStep1.xpath));
+
+            if((element.Text != null) && (element.Text != ""))
+            {
+                return new Structs.Variable(testStep1.operation.text, element.Text);
+            }
+            else
+            {
+                return new Structs.Variable(testStep1.operation.text, element.GetAttribute("value"));
+            }
         }
 
         private void SendVariable(Structs.TestStep testStep1)
@@ -242,8 +267,6 @@ namespace X2
         //w kroku jako text należy podać stałe teksty odzielone podwójnymi przecinkami albo zmienne obramowane podwójnymi nawiasami kwadratowymi
         private string RefreshUntil(Structs.TestStep testStep1)
         {
-            //Console.WriteLine("* RefreshUntil: start");
-
             int duration = 5000;
             int timeOut = 600; //s, default 300
             DateTime start = DateTime.Now;
@@ -256,9 +279,6 @@ namespace X2
                 Sleep(duration);
                 Globals.driver.Navigate().Refresh();
                 whileDuration = DateTime.Now - start;
-
-                //debug
-                //Console.WriteLine("* RefreshUntil whileDurationS: " + whileDuration.TotalSeconds.ToString());
             }
 
             if(whileDuration.TotalSeconds >= timeOut)
@@ -269,8 +289,6 @@ namespace X2
             {
                 return "ok";
             }
-
-            //Console.WriteLine("* RefreshUntil: koniec");
         }
 
 
@@ -300,15 +318,6 @@ namespace X2
                     texts.Add(s1);
                 }                
             }
-
-            //debug
-            /*
-            foreach(string s in texts)
-            {
-                Console.WriteLine("* GetTextsForRefreshUntil: " + s);
-            }
-            */
-
             return texts;            
         }
 
@@ -337,29 +346,26 @@ namespace X2
                     existsFit = true;
                 }
             }
-
-            //debug
-            //Console.WriteLine("* GetIsMatchForRefreshUntil: " + existsFit.ToString());
-
             return existsFit;
         }        
 
         private static void Sleep(int duration)
         {
-            //stan sprzed wrzucenia sleep w try w Operation()
-            /*
-            try
-            {
-                Globals.driver.SwitchTo().Alert().Accept();
-            }
-            catch (NoAlertPresentException)
-            {
-                Console.WriteLine("Sleep(): exception caught \"NoAlertPresentException\".");
-                System.Threading.Thread.Sleep(duration);
-            }
-            */
-
             System.Threading.Thread.Sleep(duration);
+        }
+
+        private string CustomErrorDetected()
+        {
+            string pageSource = Globals.driver.PageSource;
+
+            foreach(KeyValuePair<string, string> s in Settings.customErrors)
+            {
+                if(pageSource.Contains(s.Value))
+                {
+                    return s.Key;// + "\r\n\r\n" + pageSource + "\r\n\r\n"; //debug
+                }
+            }
+            return "no";
         }
 
         public List<Structs.Variable> GetVariables()

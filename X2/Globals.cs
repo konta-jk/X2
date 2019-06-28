@@ -5,6 +5,7 @@
 using System;
 using System.Windows.Forms;
 using OpenQA.Selenium;
+using OpenQA.Selenium.Remote;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Interactions;
 using OpenQA.Selenium.Support.UI;
@@ -31,7 +32,14 @@ namespace X2
                 
                 Console.WriteLine("START: " + DateTime.Now.ToString());
 
-                driver = new ChromeDriver();
+                ChromeOptions chromeOptions = new ChromeOptions();
+                chromeOptions.AddArgument("--ignore-certificate-errors");
+                chromeOptions.AddArgument("--ignore-ssl-errors");
+                chromeOptions.AddAdditionalCapability(CapabilityType.AcceptSslCertificates, true, true);
+                
+
+
+                driver = new ChromeDriver(chromeOptions);
                 driver.Manage().Window.Maximize();
                 driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(Settings.implicitWait);
             }

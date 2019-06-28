@@ -33,7 +33,7 @@ namespace X2
 
             if(Globals.killDriver)
             {
-                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(3)); //aby uzytkownik mógł sie przyjrzeć zakończeniu przed zamknięciem przeglądarki
+                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2)); //aby uzytkownik mógł sie przyjrzeć zakończeniu przed zamknięciem przeglądarki; do settingsów
                 Globals.TearDownTest();
             }
 
