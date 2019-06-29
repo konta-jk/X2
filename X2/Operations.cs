@@ -38,32 +38,60 @@ namespace X2
         public string Operation(Structs.TestStep testStep1)
         {
             string result = "init";
+            int catchLimit = 20;
+            int catchCount = 0;
 
             try
             {
                 result = PerformOperation(testStep1);
                 Sleep(Settings.sleepAfterOperation);
+                catchCount = 0;
             }
             catch (NoAlertPresentException)
             {
-                Console.WriteLine("Exception caught \"NoAlertPresentException\" in testStep " + testStep1.stepDescription);
+                catchCount++;
+                Console.WriteLine("Exception caught \"NoAlertPresentException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: none.");
             }
             catch (UnhandledAlertException)
             {
-                Console.WriteLine("Exception caught \"UnhandledAlertException\" in testStep " + testStep1.stepDescription);
+                catchCount++;
+                Console.WriteLine("Exception caught \"UnhandledAlertException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: close alert, retry.");
                 CloseAlert();
-                result = PerformOperation(testStep1);
+                if(catchCount < catchLimit)
+                {
+                    result = Operation(testStep1);
+                }
+                else
+                {
+                    result = "Catch limit exceeded: \"UnhandledAlertException\" in test step " + testStep1.stepDescription + ".";
+                }
             }
             catch (StaleElementReferenceException)
             {
-                Console.WriteLine("Exception caught \"StaleElementReferenceException\" in testStep " + testStep1.stepDescription);
-                result = PerformOperation(testStep1);
+                catchCount++;
+                Console.WriteLine("Exception caught \"StaleElementReferenceException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next action: sleep, then retry.");
+                if (catchCount < catchLimit)
+                {
+                    result = Operation(testStep1);
+                }
+                else
+                {
+                    result = "Catch limit exceeded: \"StaleElementReferenceException\" in test step " + testStep1.stepDescription + ".";
+                }
             }
             catch (ElementNotInteractableException)
             {
-                Console.WriteLine("Exception caught \"ElementNotInteractableException\" in testStep " + testStep1.stepDescription);
+                catchCount++;
+                Console.WriteLine("Exception caught \"ElementNotInteractableException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: sleep, retry.");
                 Sleep(1000);
-                result = PerformOperation(testStep1);
+                if (catchCount < catchLimit)
+                {
+                    result = Operation(testStep1);
+                }
+                else
+                {
+                    result = "Catch limit exceeded. \"ElementNotInteractableException\" in test step " + testStep1.stepDescription + ".";
+                }
             }
             catch (Exception e)
             {
@@ -105,7 +133,7 @@ namespace X2
                     break;
 
                 case "SetVariable":
-                    variables.Add(SetVariable(testStep1));
+                    SetVariable(testStep1);
                     result = "ok";
                     break;
 
@@ -194,17 +222,29 @@ namespace X2
             action.MoveToElement(element).Perform();
         }
 
-        private Structs.Variable SetVariable(Structs.TestStep testStep1)
+        private void SetVariable(Structs.TestStep testStep1)
         {
             IWebElement element = Globals.driver.FindElement(By.XPath(testStep1.xpath));
 
+            Structs.Variable v;
+
             if((element.Text != null) && (element.Text != ""))
             {
-                return new Structs.Variable(testStep1.operation.text, element.Text);
+                v = new Structs.Variable(testStep1.operation.text, element.Text);
             }
             else
             {
-                return new Structs.Variable(testStep1.operation.text, element.GetAttribute("value"));
+                v = new Structs.Variable(testStep1.operation.text, element.GetAttribute("value"));
+            }            
+
+            if(variables.Where(t => t.name == v.name).Count() == 0)
+            {
+                variables.Add(v);
+            }
+            else
+            {                
+                variables.Remove(variables.Where(t => t.name == v.name).First());
+                variables.Add(v);
             }
         }
 
@@ -267,8 +307,8 @@ namespace X2
         //w kroku jako text należy podać stałe teksty odzielone podwójnymi przecinkami albo zmienne obramowane podwójnymi nawiasami kwadratowymi
         private string RefreshUntil(Structs.TestStep testStep1)
         {
-            int duration = 5000;
-            int timeOut = 600; //s, default 300
+            int duration = 4000;
+            int timeOut = 180; //s, default 300
             DateTime start = DateTime.Now;
             TimeSpan whileDuration = new TimeSpan(0, 0, 0);
 
@@ -321,9 +361,21 @@ namespace X2
             return texts;            
         }
 
+
+
         private bool GetIsMatchForRefreshUntil(string xpath, List<string> texts)
         {
-            IWebElement parent = Globals.driver.FindElement(By.XPath(xpath));
+            IWebElement parent;
+
+            try
+            {
+                parent = Globals.driver.FindElement(By.XPath(xpath)); //nie zakładać, że istnieje
+            }
+            catch(NoSuchElementException)
+            {
+                Console.WriteLine("GetIsMatchForRefreshUntil(): exception caught \"NoSuchElementException\".");
+                return false;
+            }
 
             //bezpośrednie dzieci
             List<IWebElement> children = parent.FindElements(By.XPath("./*")).ToList();
@@ -362,7 +414,11 @@ namespace X2
             {
                 if(pageSource.Contains(s.Value))
                 {
-                    return s.Key;// + "\r\n\r\n" + pageSource + "\r\n\r\n"; //debug
+                    int i = pageSource.IndexOf(s.Value, 0);
+                    int leftDelta = 0;
+                    int rightDelta = 500;
+
+                    return s.Key + ". Source fragment:\r\n" + pageSource.Substring(Math.Max(i - leftDelta, 0), Math.Min(rightDelta, pageSource.Length - i));
                 }
             }
             return "no";

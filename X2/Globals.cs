@@ -20,7 +20,7 @@ namespace X2
         public static IWebDriver driver;        
         public static string fileName;
         public static int minRow = 2;
-        public static int maxRow = 1000;
+        public static int maxRow = 5000;
         public static bool killDriver = true;
         public static string testResult; //brzydkie tymczasowe
         public static Thread seleniumThread;

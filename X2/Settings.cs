@@ -13,8 +13,8 @@ namespace X2
     //docelowo powinny być ładowane z pliku
     class Settings
     {
-        public static readonly int sleepAfterOperation = 300; //ms, default: 300
-        public static readonly int implicitWait = 20; //seconds, default: 15
+        public static readonly int sleepAfterOperation = 400; //ms, default: 300
+        public static readonly int implicitWait = 40; //seconds, default: 15
         public static readonly bool disableNotifications = false;
         
         //wystapienie tych fragmentów html-a ma przerwać test i wyrzucić komunikat "custom error"; przerwanie w operacji Click z tekstem Err

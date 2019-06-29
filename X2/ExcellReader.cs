@@ -29,6 +29,9 @@ namespace X2
 
             OleDbDataAdapter sheetAdapter = new OleDbDataAdapter(select, connection);
             sheetAdapter.Fill(dataSheet);
+
+            connection.Close();
+
             return dataSheet;
         }        
     }

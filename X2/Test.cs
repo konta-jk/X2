@@ -61,7 +61,7 @@ namespace X2
 
             for(int i = 0; i < testPlan.testSteps.Count; i++)
             {
-                s += "\r\n"+ (i+1).ToString() + ") " + testPlan.testSteps[i].stepDescription + ": ";
+                s += "\r\n"+ testPlan.testSteps[i].stepDescription + ": ";
                 if(i <= results.Count() - 1)
                 {
                     s += results[i];
