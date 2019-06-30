@@ -15,9 +15,7 @@ using System.Data;
 //using System.Threading.Tasks;
 using System.Windows.Forms;
 using OpenQA.Selenium;
-//using NUnit.Framework;
 using OpenQA.Selenium.Chrome;
-//using OpenQA.Selenium.Support.UI;
 using OpenQA.Selenium.Interactions;
 
 
@@ -39,8 +37,6 @@ namespace X2
             openFileDialog1.ShowDialog();            
         }
 
-        
-
         private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
             Globals.fileName = openFileDialog1.FileName;
@@ -49,8 +45,21 @@ namespace X2
 
         private void button4_Click(object sender, EventArgs e)
         {
-            new CompleteTest().Run(this);
+            new QATestLauncher(this).Run(this);
         }
+
+        //wystawione dla QATestLauncher, który odpala to przez delegata
+        public void UpdateResult()
+        {
+            textBox2.Text = Globals.testResult;
+            Console.WriteLine("KURWA MAC");
+        }
+        
+        //wystawione dla QATestLauncher, który odpala to przez delegata
+        public void UpdateProgress(object sender, EventArgs e)
+        {
+            //
+        }        
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
@@ -87,22 +96,6 @@ namespace X2
             Globals.killDriver = checkBox1.Checked;
         }
 
-        private void UpdateResult(object sender, EventArgs e)
-        {
-            if(textBox2.Text != Globals.testResult)
-            {
-                textBox2.Text = Globals.testResult;
-            }
-        }
-
-        /*
-        protected override void OnFormClosing(FormClosingEventArgs e)
-        {            
-            base.OnFormClosing(e);                        
-            //Globals.TearDownTest(); //powoduje błędy, bo druwi wątek próbuje uzywać drivera, a pierwszy go zabija
-        }
-        */
-
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             BringToFront();
@@ -112,6 +105,7 @@ namespace X2
         {
             openFileDialog1.ShowDialog();
         }
+
     }
 }
 

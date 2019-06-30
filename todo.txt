@@ -1,0 +1,49 @@
+nie dzia³a kiedy na komputerze nie ma excella
+czytanie z csv
+vs po angielsku
+dodaæ publiczny rezultat - obiekt/struktura
+potrzebny scroll o y (nie tylko top i bottom)
+
+
+
+dziwny problem:
+
+qa test ³adnie publikuje eventy a qa launcher je ³apie
+ale ³apaæ je te¿ powinien form
+albo ³apaæ jakieœ inne, publikowane przez launcher?? to by by³o dziwaczne
+tymczasem form trzeba do tego karko³omnie subskrybowaæ (ale ok)
+a potem jeszcze robiæ jakiœ invoke, aby unikn¹æ b³êdu z dostêpem do text boxa z innego w¹tku (i tu siê ró¿ni od komunikacji qa test - qa launcher)
+update textboxa nie idzie (brak b³êdów)
+
+
+
+trzeba zrobiæ inaczej: 
+
+- biæ siê z tym dalej kieruj¹c siê stack overflow
+-- https://stackoverflow.com/questions/661561/how-do-i-update-the-gui-from-another-thread
+textBox1.Invoke
+https://visualstudiomagazine.com/Articles/2010/11/18/Multithreading-in-WinForms.aspx?Page=2
+https://docs.microsoft.com/en-us/dotnet/api/system.windows.forms.control.invoke?view=netframework-4.8#System_Windows_Forms_Control_Invoke_System_Delegate_
+
+- coœ z u¿yciem blockingcollection 
+-- po otrzymaniu wyników od qa test przez qa test launcher, ma on zaktualizowaæ w globals blocking collection przechowuj¹c¹ wyniki
+--- i co z tego wynika??
+
+- lamerski timer obserwuj¹cy zmienn¹ na wyniki i aktualizuj¹cy textbox
+-- i to jest chyba ok. przekazywanie danych miêdzy w¹tkami to jakieœ ciê¿kie gówno
+
+
+ogólnie stykam siê z problemem takim, ¿e jest du¿a kaskada(?) wywo³añ, np: 
+qa test publikuje ciekawy ewent
+jego rodzic qa test launcher ma w dupie ten event
+ale jego dziadek form chce subskrybowaæ event
+i do tego chyba stosuje siê wzorzec fasady
+
+czyli jakby jest jakieœ centrum i najdalsza œcie¿ka komunikacji jest A -> centrum -> B
+- komunikacja: eventy, parametry itp.
+
+
+
+
+niech qa laucher zarzadxza tylko stanem forma: invoke delegate update state (state key)
+a reszte w reakcji zrobi sobie sam form 

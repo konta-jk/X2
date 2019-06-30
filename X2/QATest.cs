@@ -19,15 +19,38 @@ namespace X2
         string GetResult();
     }
 
-    class Test : ITest
+    class QATest : ITest
     {
         Structs.TestPlan testPlan;
         public List<string> results = new List<string>();
         Operations operations;
 
-        public Test(Structs.TestPlan testPlan1)
+        public QATest(Structs.TestPlan testPlan1)
         {
             testPlan = new Structs.TestPlan(testPlan1.testSteps);
+        }
+
+        public event EventHandler RunFinishedEvent;
+        public event EventHandler StepFinishedEvent;
+
+        protected virtual void OnRunFinished()
+        {
+            EventHandler handler = RunFinishedEvent;
+            EventArgs e = new EventArgs();
+            if(handler != null)
+            {
+                handler(this, e);
+            }
+        }
+
+        protected virtual void OnStepFinished()
+        {
+            EventHandler handler =StepFinishedEvent;
+            EventArgs e = new EventArgs();
+            if (handler != null)
+            {
+                handler(this, e);
+            }
         }
 
         public void Run()
@@ -39,12 +62,16 @@ namespace X2
             {
                 currentResult = operations.Operation(testStep);
                 results.Add(currentResult);
+                OnStepFinished();
 
                 if(currentResult != "ok")
                 {
+                    OnRunFinished();
                     break;
                 }
             }
+
+            OnRunFinished();
         }
 
         public string GetResult()

@@ -94,10 +94,11 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CompleteTest.cs" />
+    <Compile Include="CsvReader.cs" />
+    <Compile Include="QATestLauncher.cs" />
     <Compile Include="DeepClone.cs" />
     <Compile Include="Operations.cs" />
-    <Compile Include="ExcellReader.cs" />
+    <Compile Include="XlsxReader.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -109,7 +110,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Settings.cs" />
     <Compile Include="Structs.cs" />
-    <Compile Include="Test.cs" />
+    <Compile Include="QATest.cs" />
     <Compile Include="TestPlanFromDataTable.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
@@ -153,7 +154,6 @@
   <ItemGroup>
     <Content Include="Cat.ico" />
     <Content Include="chicken.ico" />
-    <Content Include="Squirrel.ico" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

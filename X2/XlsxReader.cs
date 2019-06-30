@@ -12,12 +12,12 @@ using System.Data.OleDb;
 
 namespace X2
 {
-    static class ExcellReader
+    static class XlsxReader
     {
         public static DataTable ReadExcellSheet(string fileName)
         {
             DataTable dataSheet = new DataTable();
-            //OleDbConnection connection = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + fileName + "; Jet OLEDB:Engine Type=5;Extended Properties=\"Excel 8.0;\"");
+            //OleDbConnection connection = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + fileName + "; Jet OLEDB:Engine Type=5;Extended Properties=\"Excel 8.0;HDR=NO\"");
             OleDbConnection connection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + fileName + ";Extended Properties=\"Excel 12.0;HDR=NO\"");
             
             connection.Open();

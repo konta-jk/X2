@@ -1,0 +1,56 @@
+obecnie coœ jest rozjebane, ale nie ma sensu ³ataæ, bo docelowo bêdzie inaczej
+
+zlaæ w jedno QATest i QATestLauncher
+
+# Form1 ma metody
+
+RunQATestFromFile
+- czyta z pliku i przygotowuje settingsy
+- czyta z ui inne settingsy
+- wczytuje plik
+- t³umaczy plik
+- waliduje plik
+- produkuje datatable
+- tworzy instancjê QATest
+- subskrybuje siê do jej eventów
+UpdateOnProgressGUI
+UpdateOnFinishGUI
+- uruchamiane metod¹ z nas³uchem na event
+- pobiera wynik z instancji QATest
+- ewentualnie pobiera stan
+- odblokowuje/blokuje kontrolki
+- przetwarza wynik na wydruk
+- ustawia pola tekstowe
+
+RunQATestFromDB
+- ...
+
+# QATest
+
+bierze na wejœciu DataTable, w której jest test plan
+bierze na wejœciu parametry drivera
+bierze na wejœciu settingsy
+przetwarza datatable na TestPlan
+konfiguruje i uruchamia driver
+robi test i przygotowuje wyniki: DataTable i dodatki
+publikuje zdarzenia o progresie i zakoñczeniu
+ma publiczn¹ metodê GetState() - before, in_progress, pass, fail, error
+
+
+
+# Globals wylatuje
+
+
+# pisaæ na czysto nowe wersje klas, po skoñczeniu i testach kasowaæ stare
+
+# Structs.Operations wylatuje, wch³oniête przez Structs.TestStept
+
+
+
+# Inne
+
+spróbowaæ zast¹piæ wywo³anie i obs³ugê w¹tku, zdarzenia itp. mechanizmem Task (wywo³uje funkcjê w w¹tku, jak skoñczy, zwraca delegat i go odpala)
+
+nie ma za bardzo miejsca na dziedziczenie, ale do rozbicia du¿ycj klas jak qa test (sklejone z launcherem) poczytaæ o composition
+
+zrobiæ uniwersaln¹ klasê z metodami, które by³by w form wg. "wizji", ale s¹ uniwersalne; interfejs, Form1 dziedziczy po Form i tym interfejsie
