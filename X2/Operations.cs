@@ -337,7 +337,7 @@ namespace X2
             List<string> texts0 = new List<string>();
             List<string> texts = new List<string>();
             
-            texts0 = Regex.Split(testStep1.operationText, @",,").ToList();
+            texts0 = Regex.Split(testStep1.operationText, @";").ToList();
             
             foreach(string s in texts0)
             {                
@@ -345,13 +345,13 @@ namespace X2
                 s1 = Regex.Replace(s1, @"^\s+", "");
                 s1 = Regex.Replace(s1, @"\s+$", "");
 
-                if(Regex.IsMatch(s1, @"\[\[(.*?)\]\]"))
+                if(Regex.IsMatch(s1, @"{(.*?)}"))
                 {
                     s1 = Regex.Replace(s1, @"^\s+", "");
                     s1 = Regex.Replace(s1, @"\s+$", "");
                     s1 = s1.Substring(2);
                     s1 = s1.Substring(0, s1.Length - 2);
-                    texts.Add(testSetup.variables.Where(t => t.name == s1).First().value);
+                    texts.Add(testSetup.variables.Where(t => t.name == s1).First().value); //opatrzyć wyjątkiem w razie braku setvariable przed uzyciem variable albo rozbudować walidację data table
                 }
                 else
                 {

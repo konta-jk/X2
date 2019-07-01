@@ -9,6 +9,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Data;
 using System.Data.OleDb;
+using System.Windows.Forms;
 
 namespace X2
 {
@@ -16,23 +17,31 @@ namespace X2
     {
         public static DataTable ReadExcellSheet(QATestSetup testSetup)
         {
-            DataTable dataSheet = new DataTable();
-            //OleDbConnection connection = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + fileName + "; Jet OLEDB:Engine Type=5;Extended Properties=\"Excel 8.0;HDR=NO\"");
-            OleDbConnection connection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + testSetup.fileName + ";Extended Properties=\"Excel 12.0;HDR=NO\"");
-            
-            connection.Open();
+            try
+            {
+                DataTable dataSheet = new DataTable();
+                //OleDbConnection connection = new OleDbConnection("Provider=Microsoft.Jet.OLEDB.4.0;Data Source=" + fileName + "; Jet OLEDB:Engine Type=5;Extended Properties=\"Excel 8.0;HDR=NO\"");
+                OleDbConnection connection = new OleDbConnection("Provider=Microsoft.ACE.OLEDB.12.0;Data Source=" + testSetup.fileName + ";Extended Properties=\"Excel 12.0;HDR=NO\"");
 
-            DataTable schema = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, new object[] { null, null, null, "TABLE" });
-            string sheetName = schema.Rows[0].Field<string>("TABLE_NAME");
+                connection.Open();
 
-            string select = "select * from [" + sheetName + "A" + testSetup.minRow.ToString() + ":D" + testSetup.maxRow.ToString() + "]";            
+                DataTable schema = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, new object[] { null, null, null, "TABLE" });
+                string sheetName = schema.Rows[0].Field<string>("TABLE_NAME");
 
-            OleDbDataAdapter sheetAdapter = new OleDbDataAdapter(select, connection);
-            sheetAdapter.Fill(dataSheet);
+                string select = "select * from [" + sheetName + "A" + testSetup.minRow.ToString() + ":D" + testSetup.maxRow.ToString() + "]";
 
-            connection.Close();
+                OleDbDataAdapter sheetAdapter = new OleDbDataAdapter(select, connection);
+                sheetAdapter.Fill(dataSheet);
 
-            return dataSheet;
+                connection.Close();
+
+                return dataSheet;
+            }
+            catch (Exception e)
+            {
+                MessageBox.Show("Can't read this file. Try using *.csv file. Exception:\r\n" + e.ToString());
+                return null;
+            }            
         }        
     }
 }

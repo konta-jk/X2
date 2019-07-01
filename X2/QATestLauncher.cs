@@ -14,6 +14,7 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
+using System.Data;
 
 namespace X2
 {
@@ -28,32 +29,41 @@ namespace X2
             form = form1;
 
             string extension = Regex.Match(form.testSetup.fileName, "\\.[0-9a-z]+$").Value;
-            Structs.TestPlan testPlan;
+            //Structs.TestPlan testPlan;
+            DataTable dataTable;
+
             switch (extension)
             {
                 case ".xlsx":
-                    testPlan = TestPlanFromDataTable.GetTestPlan(XlsxReader.ReadExcellSheet(form.testSetup));
+                    dataTable = XlsxReader.ReadExcellSheet(form.testSetup);                    
                     break;
 
                 case ".csv":
-                    testPlan = TestPlanFromDataTable.GetTestPlan(CsvReader.ReadCsv(form.testSetup));
+                    dataTable = CsvReader.ReadCsv(form.testSetup);
                     break;
 
                 default:
-                    testPlan = TestPlanFromDataTable.GetTestPlan(CsvReader.ReadCsv(form.testSetup));
+                    dataTable = CsvReader.ReadCsv(form.testSetup);
                     break;
             }
 
-            qATest = new QATest(testPlan, form1.testSetup);
-            qATest.RunFinishedEvent += OnRunFinished;
-            qATest.StepFinishedEvent += OnStepFinished;
+            if (TestPlanFromDataTable.IsValid(dataTable))
+            {
+                testPlan = TestPlanFromDataTable.GetTestPlan(dataTable);
+                qATest = new QATest(testPlan, form1.testSetup);
+                qATest.RunFinishedEvent += OnRunFinished;
+                qATest.StepFinishedEvent += OnStepFinished;
+            }            
         }
 
         public void Run() 
         {
-            form.testSetup.seleniumThread = new Thread(ActualRun);
-            form.testSetup.seleniumThread.IsBackground = true;
-            form.testSetup.seleniumThread.Start();
+            if (testPlan.testSteps != null)
+            {
+                form.testSetup.seleniumThread = new Thread(ActualRun);
+                form.testSetup.seleniumThread.IsBackground = true;
+                form.testSetup.seleniumThread.Start();
+            }            
         }
         
         private delegate void UpdateResultDelegate();

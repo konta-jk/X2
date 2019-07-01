@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using System.Data;
+using System.Windows.Forms;
 
 namespace X2
 {
@@ -23,6 +24,26 @@ namespace X2
 
             Structs.TestPlan testPlan = new Structs.TestPlan(testSteps);
             return testPlan;
+        }
+
+        public static bool IsValid(DataTable dataTable)
+        {
+            if ((dataTable != null) && (dataTable.Rows.Count > 0) && (dataTable.Columns.Count == 4))
+            {
+                return true;
+
+                //rozbudować o:
+                ///sprawdzenie, czy przed uzyciem zmiennej jest set variable z taką samą nazwą
+                ///xpath czy obecny, tam gdzie wymagany przez operację
+                ////walidację xpath zostawić selenium, rzuci błędem na liście wyników
+                ///jw. tekst
+            }
+            else
+            {
+                MessageBox.Show("This file is not a valid test plan.");
+                return false;
+            }
+
         }
     }
 }

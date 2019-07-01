@@ -23,10 +23,18 @@ namespace X2
             {
                 dataTable.Columns.Add(s);
             }
+            if (dataTable.Columns.Count != 4) 
+            {
+                return null;
+            }
             while (!streamReader.EndOfStream)
             {
                 string[] cells 
                     = Regex.Split(streamReader.ReadLine(), ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+                if (cells.Count() != 4)
+                {
+                    return null;
+                }
                 lineReads++;
                 DataRow row = dataTable.NewRow();
                 for(int i = 0; i < cells.Length; i++)
