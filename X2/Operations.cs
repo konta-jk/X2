@@ -29,10 +29,12 @@ namespace X2
     class Operations : IOperations
     {
         List<Structs.Variable> variables;
+        QATestSetup testSetup;
 
-        public Operations()
+        public Operations(QATestSetup testSetup1)
         {
             variables = new List<Structs.Variable>();
+            testSetup = testSetup1; //wskaźnik, bez kopiowania blurp hrpfr
         }
             
         public string Operation(Structs.TestStep testStep1)
@@ -50,12 +52,16 @@ namespace X2
             catch (NoAlertPresentException)
             {
                 catchCount++;
-                Console.WriteLine("Exception caught \"NoAlertPresentException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: none.");
+                string s = "Exception caught \"NoAlertPresentException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: none.";
+                Console.WriteLine(s);
+                testSetup.standardOutput += s + "\r\n";
             }
             catch (UnhandledAlertException)
             {
                 catchCount++;
-                Console.WriteLine("Exception caught \"UnhandledAlertException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: close alert, retry.");
+                string s = "Exception caught \"UnhandledAlertException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: close alert, retry.";
+                Console.WriteLine(s);
+                testSetup.standardOutput += s + "\r\n";
                 CloseAlert();
                 if(catchCount < catchLimit)
                 {
@@ -69,7 +75,9 @@ namespace X2
             catch (StaleElementReferenceException)
             {
                 catchCount++;
-                Console.WriteLine("Exception caught \"StaleElementReferenceException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next action: sleep, then retry.");
+                string s = "Exception caught \"StaleElementReferenceException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next action: sleep, then retry.";
+                Console.WriteLine(s);
+                testSetup.standardOutput += s + "\r\n";
                 if (catchCount < catchLimit)
                 {
                     result = Operation(testStep1);
@@ -82,7 +90,9 @@ namespace X2
             catch (ElementNotInteractableException)
             {
                 catchCount++;
-                Console.WriteLine("Exception caught \"ElementNotInteractableException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: sleep, retry.");
+                string s = "Exception caught \"ElementNotInteractableException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: sleep, retry.";
+                Console.WriteLine(s);
+                testSetup.standardOutput += s + "\r\n";
                 Sleep(1000);
                 if (catchCount < catchLimit)
                 {
@@ -95,7 +105,7 @@ namespace X2
             }
             catch (Exception e)
             {
-                result = "Error in step named: \"" + testStep1.stepDescription + "\". Operation: \"" + testStep1.operation.name + "\". Exception: \r\n"  + e;
+                result = "Error in step named: \"" + testStep1.stepDescription + "\". Operation: \"" + testStep1.operationName + "\". Exception: \r\n"  + e;
             }              
 
             return result;
@@ -106,7 +116,7 @@ namespace X2
         {
             string result = "init";
 
-            switch (testStep1.operation.name)
+            switch (testStep1.operationName)
             {
                 case "SendKeys":
                     SendKeys(testStep1);
@@ -161,7 +171,7 @@ namespace X2
                     break;
 
                 default:
-                    result = "Error: can't recognize operation \"" + testStep1.operation.name + "\".";
+                    result = "Error: can't recognize operation \"" + testStep1.operationName + "\".";
                     break;
             }
 
@@ -170,33 +180,33 @@ namespace X2
 
         private void SendKeys(Structs.TestStep testStep1)
         {
-            IWebElement element = Globals.driver.FindElement(By.XPath(testStep1.xpath));
-            Actions action = new Actions(Globals.driver); //dla estetyki tylko
+            IWebElement element = testSetup.driver.FindElement(By.XPath(testStep1.xpath));
+            Actions action = new Actions(testSetup.driver); //dla estetyki tylko
             action.MoveToElement(element).Perform();
-            string text = testStep1.operation.text;
-            element.SendKeys(testStep1.operation.text + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą            
+            string text = testStep1.operationText;
+            element.SendKeys(testStep1.operationText + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą            
         }
 
         private void GoToUrl(Structs.TestStep testStep1)
         {
-            Globals.driver.Navigate().GoToUrl(testStep1.operation.text);
+            testSetup.driver.Navigate().GoToUrl(testStep1.operationText);
 
         }
 
         private void Refresh()
         {
-            Globals.driver.Navigate().Refresh();
+            testSetup.driver.Navigate().Refresh();
         }
 
         private string Click(Structs.TestStep testStep1)
         {
-            IWebElement element = Globals.driver.FindElement(By.XPath(testStep1.xpath));
-            Actions action = new Actions(Globals.driver); //bo inaczej zdarzają się problemy z click
+            IWebElement element = testSetup.driver.FindElement(By.XPath(testStep1.xpath));
+            Actions action = new Actions(testSetup.driver); //bo inaczej zdarzają się problemy z click
             action.MoveToElement(element).Perform();
             element.Click();
 
             //sprawdzenie wystąpienia błędu zdefiniowanego przez uzytkownika (jako fragment html)            
-            if ((Settings.customErrors.Count > 0) && (testStep1.operation.text == "Err"))
+            if ((Settings.customErrors.Count > 0) && (testStep1.operationText == "Err"))
             {
                 Sleep(Settings.sleepAfterOperation);
                 string customError = CustomErrorDetected();
@@ -217,24 +227,24 @@ namespace X2
 
         private void MoveToElementPerform(Structs.TestStep testStep1)
         {
-            IWebElement element = Globals.driver.FindElement(By.XPath(testStep1.xpath));
-            Actions action = new Actions(Globals.driver);
+            IWebElement element = testSetup.driver.FindElement(By.XPath(testStep1.xpath));
+            Actions action = new Actions(testSetup.driver);
             action.MoveToElement(element).Perform();
         }
 
         private void SetVariable(Structs.TestStep testStep1)
         {
-            IWebElement element = Globals.driver.FindElement(By.XPath(testStep1.xpath));
+            IWebElement element = testSetup.driver.FindElement(By.XPath(testStep1.xpath));
 
             Structs.Variable v;
 
             if((element.Text != null) && (element.Text != ""))
             {
-                v = new Structs.Variable(testStep1.operation.text, element.Text);
+                v = new Structs.Variable(testStep1.operationText, element.Text);
             }
             else
             {
-                v = new Structs.Variable(testStep1.operation.text, element.GetAttribute("value"));
+                v = new Structs.Variable(testStep1.operationText, element.GetAttribute("value"));
             }            
 
             if(variables.Where(t => t.name == v.name).Count() == 0)
@@ -250,10 +260,10 @@ namespace X2
 
         private void SendVariable(Structs.TestStep testStep1)
         {
-            IWebElement element = Globals.driver.FindElement(By.XPath(testStep1.xpath));
-            Actions action = new Actions(Globals.driver); //dla estetyki tylko
+            IWebElement element = testSetup.driver.FindElement(By.XPath(testStep1.xpath));
+            Actions action = new Actions(testSetup.driver); //dla estetyki tylko
             action.MoveToElement(element).Perform();
-            string value = variables.Where(t => t.name == testStep1.operation.text).SingleOrDefault().value;
+            string value = variables.Where(t => t.name == testStep1.operationText).SingleOrDefault().value;
             element.SendKeys(value + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą
         }
 
@@ -261,24 +271,26 @@ namespace X2
         {
             try
             {
-                Globals.driver.SwitchTo().Alert().Accept();                
+                testSetup.driver.SwitchTo().Alert().Accept();                
             }
             catch (NoAlertPresentException)
             {
-                Console.WriteLine("CloseAlert(): exception caught \"NoAlertPresentException\".");
+                string s = "CloseAlert(): exception caught \"NoAlertPresentException\".";
+                Console.WriteLine(s);
+                testSetup.standardOutput += s + "\r\n";
             }            
         }
 
         private void SelectOption(Structs.TestStep testStep1)
         {
-            IWebElement element = Globals.driver.FindElement(By.XPath(testStep1.xpath));
+            IWebElement element = testSetup.driver.FindElement(By.XPath(testStep1.xpath));
 
-            Actions action = new Actions(Globals.driver); //bo inaczej zdarzają się problemy z click??
+            Actions action = new Actions(testSetup.driver); //bo inaczej zdarzają się problemy z click??
             action.MoveToElement(element).Perform();
 
             SelectElement option = new SelectElement(element);
             int i;
-            Int32.TryParse(testStep1.operation.text, out i);
+            Int32.TryParse(testStep1.operationText, out i);
             option.SelectByIndex(i);            
             element.Click();
         }
@@ -286,8 +298,8 @@ namespace X2
         private string Scroll(Structs.TestStep testStep1)
         {
             Sleep(3000);
-            IJavaScriptExecutor js = (IJavaScriptExecutor)Globals.driver;
-            string destination = testStep1.operation.text;
+            IJavaScriptExecutor js = (IJavaScriptExecutor)testSetup.driver;
+            string destination = testStep1.operationText;
 
             switch (destination)
             {
@@ -317,7 +329,7 @@ namespace X2
                 && (whileDuration.TotalSeconds < timeOut))
             {
                 Sleep(duration);
-                Globals.driver.Navigate().Refresh();
+                testSetup.driver.Navigate().Refresh();
                 whileDuration = DateTime.Now - start;
             }
 
@@ -337,7 +349,7 @@ namespace X2
             List<string> texts0 = new List<string>();
             List<string> texts = new List<string>();
             
-            texts0 = Regex.Split(testStep1.operation.text, @",,").ToList();
+            texts0 = Regex.Split(testStep1.operationText, @",,").ToList();
             
             foreach(string s in texts0)
             {                
@@ -369,11 +381,13 @@ namespace X2
 
             try
             {
-                parent = Globals.driver.FindElement(By.XPath(xpath)); //nie zakładać, że istnieje
+                parent = testSetup.driver.FindElement(By.XPath(xpath)); //nie zakładać, że istnieje
             }
             catch(NoSuchElementException)
             {
-                Console.WriteLine("GetIsMatchForRefreshUntil(): exception caught \"NoSuchElementException\".");
+                string s = "GetIsMatchForRefreshUntil(): exception caught \"NoSuchElementException\".";
+                Console.WriteLine(s);
+                testSetup.standardOutput += s + "\r\n";
                 return false;
             }
 
@@ -408,7 +422,7 @@ namespace X2
 
         private string CustomErrorDetected()
         {
-            string pageSource = Globals.driver.PageSource;
+            string pageSource = testSetup.driver.PageSource;
 
             foreach(KeyValuePair<string, string> s in Settings.customErrors)
             {

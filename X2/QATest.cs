@@ -13,16 +13,15 @@ using System.ComponentModel;
 
 namespace X2
 {
-    interface ITest
+    interface IQATest
     {
-        void Run();
-        string GetResult();
+        Structs.TestResult Run(Structs.TestPlan testPlan, QATestSetup testSetup);
     }
 
-    class QATest : ITest
+    class QATest : IQATest
     {
         Structs.TestPlan testPlan;
-        public List<string> results = new List<string>();
+        //public List<string> results = new List<string>();
         Operations operations;
 
         public QATest(Structs.TestPlan testPlan1)
@@ -45,7 +44,7 @@ namespace X2
 
         protected virtual void OnStepFinished()
         {
-            EventHandler handler =StepFinishedEvent;
+            EventHandler handler = StepFinishedEvent;
             EventArgs e = new EventArgs();
             if (handler != null)
             {
@@ -53,67 +52,34 @@ namespace X2
             }
         }
 
-        public void Run()
+        public Structs.TestResult Run(Structs.TestPlan testPlan, QATestSetup testSetup)
         {
-            string currentResult = "";
-            operations = new Operations();
+            List<Structs.TestStepResult> testResult = new List<Structs.TestStepResult>();
+            
+            Structs.TestStepResult currentResult;
+
+            operations = new Operations(testSetup);
 
             foreach (Structs.TestStep testStep in testPlan.testSteps)
             {
-                currentResult = operations.Operation(testStep);
-                results.Add(currentResult);
+                currentResult = new Structs.TestStepResult(testStep.stepDescription, DateTime.Now, operations.Operation(testStep));
+                testResult.Add(currentResult);
+
+                //do refaktoryzacji
+                testSetup.testResult = new Structs.TestResult(testResult).DeepClone(); //konieczne przed wywałaniem eventu //tymczasowe brzydactwo
                 OnStepFinished();
 
-                if(currentResult != "ok")
+                if(currentResult.result != "ok")
                 {
+                    testSetup.testResult = new Structs.TestResult(testResult).DeepClone(); //konieczne przed wywałaniem eventu //tymczasowe brzydactwo
                     OnRunFinished();
-                    break;
+                    return new Structs.TestResult(testResult);
                 }
             }
 
+            testSetup.testResult = new Structs.TestResult(testResult).DeepClone(); //konieczne przed wywałaniem eventu //tymczasowe brzydactwo
             OnRunFinished();
-        }
-
-        public string GetResult()
-        {
-            string s = "-1";
-            if (testPlan.testSteps.Count != results.Count(t => t == "ok"))
-            {
-                s = "FAIL\r\nTest failed, " + results.Count(t => t == "ok").ToString() + " test steps passed out of " + testPlan.testSteps.Count.ToString() +".";
-            }
-            else
-            {
-                s = "PASS\r\nTest passed (" + testPlan.testSteps.Count.ToString() + " test steps).";
-            }
-
-            for(int i = 0; i < testPlan.testSteps.Count; i++)
-            {
-                s += "\r\n"+ testPlan.testSteps[i].stepDescription + ": ";
-                if(i <= results.Count() - 1)
-                {
-                    s += results[i];
-                }
-            }
-
-            string v = "";
-            foreach(Structs.Variable v1 in operations.GetVariables())
-            {
-                v += v1.name + " = " + v1.value + "\r\n";
-            }            
-            if(v.Length > 0)
-            {
-                s += "\r\n\r\nVariables: \r\n" + v;
-            }
-                        
-            //tu ma się znaleźć output
-            string c = "todo: dodać \"process standard output\"";
-
-            if(c.Length > 0)
-            {
-                s += "\r\n\r\nOutput: \r\n" + c;
-            }            
-
-            return s;
+            return new Structs.TestResult(testResult);
         }
     }
 }

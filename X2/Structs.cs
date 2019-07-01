@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 
 namespace X2
 {    
-    class Structs
+    public class Structs
     {
-        public struct TestPlan //zbędne? to mogłaby być lista w Test
+        public struct TestPlan
         {
             public List<TestStep> testSteps;            
 
@@ -27,45 +27,75 @@ namespace X2
                     testSteps.Add(currentTestStep);                    
                 }
             }
+
+            public override string ToString()
+            {
+                string s = "[stepDescription], [operationName], [operationText], [xpath]\r\n";
+                foreach(Structs.TestStep step in testSteps)
+                {
+                    s += step.stepDescription + ", " + step.operationName + ", " + step.operationText + ", " + step.xpath + "\r\n";
+                }
+                return s;
+            }
         }
 
         [Serializable]
         public struct TestStep
-        {
-            public string xpath;
-            public Operation operation;            
+        {                        
             public string stepDescription;
-            public string operationResult;                 
+            public string operationName;
+            public string operationText;
+            public string xpath;
 
-            public TestStep(string xpath1, Operation operation1, string stepDescription1)
+            public TestStep(string stepDescription1, string operationName1, string operationText1, string xpath1)
             {
-                xpath = xpath1;
-                //operation = new Operation(operation1.name, operation1.text, operation1.wait);
-                operation = operation1.DeepClone();
                 stepDescription = stepDescription1;
-                operationResult = "-1";                
+                operationName = operationName1;
+                operationText = operationText1;
+                xpath = xpath1;
             }
         }
 
         [Serializable]
-        public struct Operation
+        public struct TestResult
         {
-            public string name;
-            public string text;
-            public int wait; //seconds
+            public List<TestStepResult> testStepResults;
 
-            public Operation(string name1, string text1, int wait1)
+            public TestResult(List<TestStepResult> testStepResults1)
             {
-                name = name1;
-                text = text1;
-                wait = wait1;
+                testStepResults = new List<TestStepResult>();
+                TestStepResult currentTestStepResult;
+
+                foreach (TestStepResult testStepResult in testStepResults1)
+                {
+                    currentTestStepResult = testStepResult.DeepClone();
+                    testStepResults.Add(currentTestStepResult);
+                }
             }
 
-            public Operation(string name1)
+            public string ToCsvString()
             {
-                name = name1;
-                text = "";
-                wait = Settings.sleepAfterOperation;
+                string s = "[timeStamp], [stepDescription], [result]\r\n";
+                foreach (Structs.TestStepResult stepResult in testStepResults)
+                {
+                    s += stepResult.timeStamp.ToString("HH:mm:ss") + ", (" + stepResult.stepDescription + ", " + stepResult.result + "\r\n";
+                }
+                return s;
+            }
+        }
+
+        [Serializable]
+        public struct TestStepResult
+        {
+            public string stepDescription;
+            public DateTime timeStamp;
+            public string result;
+
+            public TestStepResult(string stepDescription1, DateTime timeStamp1, string result1)
+            {
+                stepDescription = stepDescription1;
+                timeStamp = timeStamp1;
+                result = result1;
             }
         }
 

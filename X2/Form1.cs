@@ -1,18 +1,10 @@
 ﻿/*
- * WNIOSKI
- * pomiędzy kolejnymi krokami konieczne są waity, bo inaczej wyścig i błędy ewaluacji; driver ma wait
- * zmiana na formularzu powoduje zmianę xpath, PK: może lepiej jakiś selector css
  * 
  */
 
 using System;
 using System.Collections.Generic;
-//using System.ComponentModel;
 using System.Data;
-//using System.Drawing;
-//using System.Linq;
-//using System.Text;
-//using System.Threading.Tasks;
 using System.Windows.Forms;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
@@ -22,14 +14,15 @@ using OpenQA.Selenium.Interactions;
 namespace X2
 {
     public partial class Form1 : Form
-    {      
+    {
+        public QATestSetup testSetup = new QATestSetup();
 
         public Form1()
         {
             InitializeComponent();
-            numericUpDown1.Value = Globals.minRow;
-            numericUpDown2.Value = Globals.maxRow;
-            checkBox1.Checked = Globals.killDriver;            
+            numericUpDown1.Value = testSetup.minRow;
+            numericUpDown2.Value = testSetup.maxRow;
+            checkBox1.Checked = testSetup.killDriver;            
         }
         
         private void button1_Click(object sender, EventArgs e)
@@ -39,7 +32,8 @@ namespace X2
 
         private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            Globals.fileName = openFileDialog1.FileName;
+            //Globals.fileName = openFileDialog1.FileName; //
+            testSetup.fileName = openFileDialog1.FileName; //nowe
             textBox1.Text = openFileDialog1.FileName;            
         }
 
@@ -51,14 +45,14 @@ namespace X2
         //wystawione dla QATestLauncher, który odpala to przez delegata
         public void UpdateResult()
         {
-            textBox2.Text = Globals.testResult;
-            Console.WriteLine("KURWA MAC");
+            textBox2.Text = testSetup.testResult.ToCsvString();
+            textBox2.Text += "\r\nLog:\r\n" + testSetup.standardOutput;
         }
         
         //wystawione dla QATestLauncher, który odpala to przez delegata
         public void UpdateProgress(object sender, EventArgs e)
         {
-            //
+            textBox2.Text = testSetup.testResult.ToCsvString();            
         }        
 
         private void textBox1_TextChanged(object sender, EventArgs e)
@@ -73,8 +67,9 @@ namespace X2
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
-            Globals.minRow = Decimal.ToInt32(numericUpDown1.Value);
-            Console.WriteLine("min: " + Globals.minRow.ToString() + "max: " + Globals.maxRow.ToString());
+            testSetup.minRow = Decimal.ToInt32(numericUpDown1.Value);
+            //Console.WriteLine("min: " + testSetup.minRow.ToString() + "max: " + testSetup.maxRow.ToString());
+
             if (numericUpDown2.Value <= numericUpDown1.Value)
             {
                 numericUpDown2.Value = numericUpDown1.Value;
@@ -83,8 +78,8 @@ namespace X2
 
         private void numericUpDown2_ValueChanged(object sender, EventArgs e)
         {
-            Globals.maxRow = Decimal.ToInt32(numericUpDown2.Value);
-            Console.WriteLine("min: " + Globals.minRow.ToString() + "max: " + Globals.maxRow.ToString());
+            testSetup.maxRow = Decimal.ToInt32(numericUpDown2.Value);
+            //Console.WriteLine("min: " + testSetup.minRow.ToString() + "max: " + testSetup.maxRow.ToString());
             if(numericUpDown2.Value <= numericUpDown1.Value)
             {
                 numericUpDown1.Value = numericUpDown2.Value;
@@ -93,12 +88,14 @@ namespace X2
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            Globals.killDriver = checkBox1.Checked;
+            testSetup.killDriver = checkBox1.Checked;
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             BringToFront();
+            textBox2.SelectionStart = textBox2.TextLength;
+            textBox2.ScrollToCaret();
         }
 
         private void textBox1_Click(object sender, EventArgs e)

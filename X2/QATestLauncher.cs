@@ -14,21 +14,23 @@ using System.Threading.Tasks;
 using System.Threading;
 using System.ComponentModel;
 
+
 namespace X2
 {
     class QATestLauncher
     {
-        //object result = null;
         Form1 form;
-        public QATest qATest;        
+        public QATest qATest;
+        Structs.TestPlan testPlan;
 
         public QATestLauncher(Form1 form1)
         {
             form = form1;
 
             //* zakomentowane ze względu na niemożliwość obsługi excella
-            //Structs.TestPlan testPlan = TestPlanFromDataTable.GetTestPlan(ExcellReader.ReadExcellSheet(Globals.fileName));
-            Structs.TestPlan testPlan = TestPlanFromDataTable.GetTestPlan(CsvReader.ReadCsv(Globals.fileName));
+            testPlan = TestPlanFromDataTable.GetTestPlan(XlsxReader.ReadExcellSheet(form.testSetup));
+            //* dla csv
+            //Structs.TestPlan testPlan = TestPlanFromDataTable.GetTestPlan(CsvReader.ReadCsv(form.testSetup));
 
             qATest = new QATest(testPlan);
             //* subskrypcja - zbędne; tych informacji potrzebuje form
@@ -39,50 +41,38 @@ namespace X2
         public void Run(Form1 form1) 
         {
             form = form1;
-            Globals.seleniumThread = new Thread(ActualRun);
-            Globals.seleniumThread.IsBackground = true;
-            Globals.seleniumThread.Start();
+            form.testSetup.seleniumThread = new Thread(ActualRun);
+            form.testSetup.seleniumThread.IsBackground = true;
+            form.testSetup.seleniumThread.Start();
         }
-
-
-
-
+        
         private delegate void UpdateResultDelegate();
         private delegate void UpdateProgressDelegate();
 
         void OnRunFinished(object sender, EventArgs e)
         {
-            Console.WriteLine("QATestLauncher: RunFinishedEvent caught");
+            //Console.WriteLine("QATestLauncher: RunFinishedEvent caught");                        
             form.Invoke(new UpdateResultDelegate(form.UpdateResult));
         }
 
         void OnStepFinished(object sender, EventArgs e)
         {
-            Console.WriteLine("QATestLauncher: StepFinishedEvent caught");
+            //Console.WriteLine("QATestLauncher: StepFinishedEvent caught");
             form.Invoke(new UpdateProgressDelegate(form.UpdateResult));
         }
-        
 
         void ActualRun()
         {
-            Globals.Init();
+            form.testSetup.Init();
+   
+            qATest.Run(testPlan, form.testSetup); 
 
-            
-
-            
-            qATest.Run();       
-
-            if(Globals.killDriver)
+            if (form.testSetup.killDriver)
             {
                 System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2)); //aby uzytkownik mógł sie przyjrzeć zakończeniu przed zamknięciem przeglądarki; do settingsów
-                Globals.TearDownTest();
+                form.testSetup.TearDownTest();
             }
-
-            //result = test.GetResult();
-            Globals.testResult = qATest.GetResult();
         }       
-
     }
-
 }
 

@@ -12,10 +12,10 @@ namespace X2
 {
     class CsvReader
     {
-        public static DataTable ReadCsv(string fileName)
+        public static DataTable ReadCsv(QATestSetup testSetup)
         {
             DataTable dataTable = new DataTable();
-            StreamReader streamReader = new StreamReader(fileName);
+            StreamReader streamReader = new StreamReader(testSetup.fileName);
             int lineReads = 0;
             string[] columns = streamReader.ReadLine().Split(',');
             lineReads++;
@@ -33,7 +33,7 @@ namespace X2
                 {
                     row[i] = cells[i];
                 }
-                if((lineReads >= Globals.minRow) && (lineReads <= Globals.maxRow))
+                if((lineReads >= testSetup.minRow) && (lineReads <= testSetup.maxRow))
                 {
                     dataTable.Rows.Add(row);
                 }
