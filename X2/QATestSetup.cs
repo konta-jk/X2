@@ -18,7 +18,8 @@ namespace X2
         //globalsy
         public IWebDriver driver;
         public Thread seleniumThread;
-        public string standardOutput;
+        public string log;
+        public List<Structs.Variable> variables;
 
         //brane z interfejsu + wartości domyslne ładowane do interfejsu
         public string fileName;
@@ -26,23 +27,21 @@ namespace X2
         public int maxRow = 5000;
         public bool killDriver = true;
 
-        //dostępne dla interfejsu
-        public Structs.TestResult testResult;
-        
+        //dostępne dla interfejsu graficznego
+        public Structs.TestResult testResult;       
 
 
         public QATestSetup()
         {
             testResult = new Structs.TestResult();
+            variables = new List<Structs.Variable>();
         }
-
 
         public void Init()
         {
             try
             {
-                Console.WriteLine("Test start: " + DateTime.Now.ToString());
-                standardOutput += "Test start: : " + DateTime.Now.ToString() + "\r\n";
+                Log("Start: " + DateTime.Now.ToString());                
 
                 ChromeOptions chromeOptions = new ChromeOptions();
                 chromeOptions.AddArgument("--ignore-certificate-errors");
@@ -54,15 +53,13 @@ namespace X2
                 driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(Settings.implicitWait);
             }
             catch (Exception e)
-            {
+            {                
                 string s = "";
                 s = "Init failed\r\n" + e.ToString();
-                Console.WriteLine(s);
-                standardOutput += "START: " + DateTime.Now.ToString() + "\r\n";
+                Log(s);                
                 MessageBox.Show(s);
             }
         }
-
 
         public void TearDownTest()
         {
@@ -73,9 +70,23 @@ namespace X2
 
             if (driver != null)
             {
-                driver.Close();
-                driver.Quit();
+                try
+                {
+                    driver.Close();
+                    driver.Quit();
+                }
+                catch (Exception e)
+                {
+                    MessageBox.Show("Failed to kill Selenium driver. Please close it manually. Exception:\r\n" + e.ToString());
+                }                
             }
         }
+
+        public void Log(string text)
+        {
+            Console.WriteLine(text);
+            log += text + "\r\n";
+        }
+            
     }
 }

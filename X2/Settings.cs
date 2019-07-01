@@ -16,6 +16,7 @@ namespace X2
         public static readonly int sleepAfterOperation = 400; //ms, default: 400
         public static readonly int implicitWait = 40; //seconds, default: 40
         public static readonly bool disableNotifications = false;
+        //dołożyć settingsy operacji
         
         //wystapienie tych fragmentów html-a ma przerwać test i wyrzucić komunikat "custom error"; przerwanie w operacji Click z tekstem Err
         public static readonly Dictionary<string, string> customErrors = new Dictionary<string, string>()

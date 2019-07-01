@@ -23,17 +23,15 @@ namespace X2
     interface IOperations
     {
         string Operation(Structs.TestStep testStep1);
-        List<Structs.Variable> GetVariables();
     }
 
     class Operations : IOperations
     {
-        List<Structs.Variable> variables;
+        
         QATestSetup testSetup;
 
         public Operations(QATestSetup testSetup1)
         {
-            variables = new List<Structs.Variable>();
             testSetup = testSetup1; //wskaźnik, bez kopiowania blurp hrpfr
         }
             
@@ -52,16 +50,12 @@ namespace X2
             catch (NoAlertPresentException)
             {
                 catchCount++;
-                string s = "Exception caught \"NoAlertPresentException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: none.";
-                Console.WriteLine(s);
-                testSetup.standardOutput += s + "\r\n";
+                testSetup.Log("Exception caught \"NoAlertPresentException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: none.");                
             }
             catch (UnhandledAlertException)
             {
                 catchCount++;
-                string s = "Exception caught \"UnhandledAlertException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: close alert, retry.";
-                Console.WriteLine(s);
-                testSetup.standardOutput += s + "\r\n";
+                testSetup.Log("Exception caught \"UnhandledAlertException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: close alert, retry.");                
                 CloseAlert();
                 if(catchCount < catchLimit)
                 {
@@ -75,9 +69,7 @@ namespace X2
             catch (StaleElementReferenceException)
             {
                 catchCount++;
-                string s = "Exception caught \"StaleElementReferenceException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next action: sleep, then retry.";
-                Console.WriteLine(s);
-                testSetup.standardOutput += s + "\r\n";
+                testSetup.Log("Exception caught \"StaleElementReferenceException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next action: sleep, then retry.");
                 if (catchCount < catchLimit)
                 {
                     result = Operation(testStep1);
@@ -90,9 +82,7 @@ namespace X2
             catch (ElementNotInteractableException)
             {
                 catchCount++;
-                string s = "Exception caught \"ElementNotInteractableException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: sleep, retry.";
-                Console.WriteLine(s);
-                testSetup.standardOutput += s + "\r\n";
+                testSetup.Log("Exception caught \"ElementNotInteractableException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: sleep, retry.");
                 Sleep(1000);
                 if (catchCount < catchLimit)
                 {
@@ -247,14 +237,14 @@ namespace X2
                 v = new Structs.Variable(testStep1.operationText, element.GetAttribute("value"));
             }            
 
-            if(variables.Where(t => t.name == v.name).Count() == 0)
+            if(testSetup.variables.Where(t => t.name == v.name).Count() == 0)
             {
-                variables.Add(v);
+                testSetup.variables.Add(v);
             }
             else
-            {                
-                variables.Remove(variables.Where(t => t.name == v.name).First());
-                variables.Add(v);
+            {
+                testSetup.variables.Remove(testSetup.variables.Where(t => t.name == v.name).First());
+                testSetup.variables.Add(v);
             }
         }
 
@@ -263,7 +253,7 @@ namespace X2
             IWebElement element = testSetup.driver.FindElement(By.XPath(testStep1.xpath));
             Actions action = new Actions(testSetup.driver); //dla estetyki tylko
             action.MoveToElement(element).Perform();
-            string value = variables.Where(t => t.name == testStep1.operationText).SingleOrDefault().value;
+            string value = testSetup.variables.Where(t => t.name == testStep1.operationText).SingleOrDefault().value;
             element.SendKeys(value + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą
         }
 
@@ -275,9 +265,7 @@ namespace X2
             }
             catch (NoAlertPresentException)
             {
-                string s = "CloseAlert(): exception caught \"NoAlertPresentException\".";
-                Console.WriteLine(s);
-                testSetup.standardOutput += s + "\r\n";
+                testSetup.Log("CloseAlert(): exception caught \"NoAlertPresentException\".");                
             }            
         }
 
@@ -363,7 +351,7 @@ namespace X2
                     s1 = Regex.Replace(s1, @"\s+$", "");
                     s1 = s1.Substring(2);
                     s1 = s1.Substring(0, s1.Length - 2);
-                    texts.Add(variables.Where(t => t.name == s1).First().value);
+                    texts.Add(testSetup.variables.Where(t => t.name == s1).First().value);
                 }
                 else
                 {
@@ -385,9 +373,7 @@ namespace X2
             }
             catch(NoSuchElementException)
             {
-                string s = "GetIsMatchForRefreshUntil(): exception caught \"NoSuchElementException\".";
-                Console.WriteLine(s);
-                testSetup.standardOutput += s + "\r\n";
+                testSetup.Log("GetIsMatchForRefreshUntil(): exception caught \"NoSuchElementException\".");                
                 return false;
             }
 
@@ -438,9 +424,5 @@ namespace X2
             return "no";
         }
 
-        public List<Structs.Variable> GetVariables()
-        {
-            return variables;
-        }
     }
 }

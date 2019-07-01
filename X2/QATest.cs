@@ -15,18 +15,19 @@ namespace X2
 {
     interface IQATest
     {
-        Structs.TestResult Run(Structs.TestPlan testPlan, QATestSetup testSetup);
+        void Run();
     }
 
     class QATest : IQATest
     {
         Structs.TestPlan testPlan;
-        //public List<string> results = new List<string>();
+        QATestSetup testSetup;
         Operations operations;
 
-        public QATest(Structs.TestPlan testPlan1)
+        public QATest(Structs.TestPlan testPlan1, QATestSetup testSetup1)
         {
-            testPlan = new Structs.TestPlan(testPlan1.testSteps);
+            testPlan = testPlan1;//new Structs.TestPlan(testPlan1.testSteps);
+            testSetup = testSetup1;
         }
 
         public event EventHandler RunFinishedEvent;
@@ -52,7 +53,7 @@ namespace X2
             }
         }
 
-        public Structs.TestResult Run(Structs.TestPlan testPlan, QATestSetup testSetup)
+        public void Run()
         {
             List<Structs.TestStepResult> testResult = new List<Structs.TestStepResult>();
             
@@ -65,21 +66,21 @@ namespace X2
                 currentResult = new Structs.TestStepResult(testStep.stepDescription, DateTime.Now, operations.Operation(testStep));
                 testResult.Add(currentResult);
 
-                //do refaktoryzacji
-                testSetup.testResult = new Structs.TestResult(testResult).DeepClone(); //konieczne przed wywałaniem eventu //tymczasowe brzydactwo
+                testSetup.testResult = new Structs.TestResult(testResult).DeepClone(); 
                 OnStepFinished();
 
                 if(currentResult.result != "ok")
                 {
-                    testSetup.testResult = new Structs.TestResult(testResult).DeepClone(); //konieczne przed wywałaniem eventu //tymczasowe brzydactwo
+                    testSetup.testResult = new Structs.TestResult(testResult).DeepClone();
                     OnRunFinished();
-                    return new Structs.TestResult(testResult);
+                    return;
                 }
             }
 
-            testSetup.testResult = new Structs.TestResult(testResult).DeepClone(); //konieczne przed wywałaniem eventu //tymczasowe brzydactwo
+            testSetup.testResult = new Structs.TestResult(testResult).DeepClone();
+
             OnRunFinished();
-            return new Structs.TestResult(testResult);
+            return;
         }
     }
 }

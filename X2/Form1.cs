@@ -24,7 +24,12 @@ namespace X2
             numericUpDown2.Value = testSetup.maxRow;
             checkBox1.Checked = testSetup.killDriver;            
         }
-        
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            new QATestLauncher(this).Run();
+        }
+
         private void button1_Click(object sender, EventArgs e)
         {
             openFileDialog1.ShowDialog();            
@@ -37,20 +42,26 @@ namespace X2
             textBox1.Text = openFileDialog1.FileName;            
         }
 
-        private void button4_Click(object sender, EventArgs e)
-        {
-            new QATestLauncher(this).Run(this);
-        }
-
         //wystawione dla QATestLauncher, który odpala to przez delegata
         public void UpdateResult()
         {
             textBox2.Text = testSetup.testResult.ToCsvString();
-            textBox2.Text += "\r\nLog:\r\n" + testSetup.standardOutput;
+
+            string s = "";
+            foreach (Structs.Variable v in testSetup.variables)
+            {
+                s += v.name + " = " + v.value + "\r\n";
+            }
+            if (s.Length > 0)
+            {
+                textBox2.Text += "\r\nVariables:\r\n" + s;
+            }
+
+            textBox2.Text += "\r\nLog:\r\n" + testSetup.log;
         }
         
         //wystawione dla QATestLauncher, który odpala to przez delegata
-        public void UpdateProgress(object sender, EventArgs e)
+        public void UpdateProgress()
         {
             textBox2.Text = testSetup.testResult.ToCsvString();            
         }        
