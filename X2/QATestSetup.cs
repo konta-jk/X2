@@ -27,6 +27,8 @@ namespace X2
         public int maxRow = 5000;
         public bool killDriver = true;
 
+        public System.Drawing.Size initialWindowSize;        
+
         //dostępne dla interfejsu graficznego
         public Structs.TestResult testResult;       
 
@@ -39,17 +41,30 @@ namespace X2
 
         public void Init()
         {
+            //MessageBox.Show("New Chrome window will show up. Please don't touch it. You can interact with other applications, including other Chrome windows.", "Hello!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+            MessageBox.Show("Kiedy rozpocznie się test, Selenium otworzy nowe okno przeglądarki Chrome. Nie należy dotykać tego okna. "
+                + "\r\nMożna przełączyć się na inne okienko. Logowanie do Windows równiez zaburza przebieg testu.", 
+                "Cześć!", MessageBoxButtons.OK, MessageBoxIcon.Information);
+
+            log = "";
+            Log("Start: " + DateTime.Now.ToString());
+
+            //opcje które coś dały
+            //...
+
+            //opcje których efektu nie widać xd
+            ChromeOptions chromeOptions = new ChromeOptions();
+            chromeOptions.AddArgument("--ignore-certificate-errors"); //współpraca z google
+            chromeOptions.AddArgument("--ignore-ssl-errors"); //współpraca z google
+            chromeOptions.AddArgument("--proxy-server='direct://'"); //szybkość działania dla zminimalizowanego chrome
+            chromeOptions.AddArgument("--proxy-bypass-list=*"); //szybkość działania dla zminimalizowanego chrome
+            chromeOptions.AddAdditionalCapability(CapabilityType.AcceptSslCertificates, true, true); //współpraca z google
+            chromeOptions.AddArgument("--start-maximized"); //błąd po dodaniu maximize przy każdej akcji i interwencji uzytkownika
+
             try
             {
-                Log("Start: " + DateTime.Now.ToString());                
-
-                ChromeOptions chromeOptions = new ChromeOptions();
-                chromeOptions.AddArgument("--ignore-certificate-errors");
-                chromeOptions.AddArgument("--ignore-ssl-errors");
-                chromeOptions.AddAdditionalCapability(CapabilityType.AcceptSslCertificates, true, true);
-
                 driver = new ChromeDriver(chromeOptions);
-                driver.Manage().Window.Maximize();
+                driver.Manage().Window.Maximize();                
                 driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(Settings.implicitWait);
             }
             catch (Exception e)
@@ -59,6 +74,10 @@ namespace X2
                 Log(s);                
                 MessageBox.Show(s);
             }
+
+            initialWindowSize = driver.Manage().Window.Size;          
+            
+            
         }
 
         public void TearDownTest()

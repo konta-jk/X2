@@ -64,7 +64,8 @@ namespace X2
         public void UpdateProgress()
         {
             textBox2.Text = testSetup.testResult.ToCsvString();            
-        }        
+        }
+        
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {

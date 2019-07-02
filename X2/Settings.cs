@@ -25,6 +25,8 @@ namespace X2
             { "CP7 błędy walidacji MV", "<div _ngcontent-c8=\"\" class=\"row alert alert-danger ng-tns-c8-3 ng-star-inserted\"><b _ngcontent-c8=\"\" class=\"ng-tns-c8-3\">Błędy walidacji:</b>"},
             { "CP7 czerwony toster", "<div class=\"simple-notification error has-icon ng-trigger ng-trigger-enterLeave\"" }
         };
+
+        
         
     }
 }

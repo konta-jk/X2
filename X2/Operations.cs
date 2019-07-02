@@ -34,12 +34,27 @@ namespace X2
         {
             testSetup = testSetup1; //wskaźnik, bez kopiowania blurp hrpfr
         }
-            
+
+        int catchCount = 0;
+        int catchLimit = 10; //do settingsów
+
         public string Operation(Structs.TestStep testStep1)
         {
-            string result = "init";
-            int catchLimit = 20;
-            int catchCount = 0;
+            string result = "init";                        
+
+            if ((testSetup.driver.Manage().Window.Size.Width != testSetup.initialWindowSize.Width)
+                || (testSetup.driver.Manage().Window.Size.Height != testSetup.initialWindowSize.Height))
+            {
+                testSetup.Log("Operation: window size has changed during test step " + testStep1.stepDescription + ". Next action: try to maximize.");
+                try
+                {
+                    testSetup.driver.Manage().Window.Maximize();
+                }
+                catch (Exception)
+                {
+                    testSetup.Log("Failed to maximize window.");
+                }
+            }
 
             try
             {
@@ -56,7 +71,7 @@ namespace X2
             {
                 catchCount++;
                 testSetup.Log("Exception caught \"UnhandledAlertException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: close alert, retry.");                
-                CloseAlert();
+                CloseAlert("Accept");
                 if(catchCount < catchLimit)
                 {
                     result = Operation(testStep1);
@@ -93,6 +108,28 @@ namespace X2
                     result = "Catch limit exceeded. \"ElementNotInteractableException\" in test step " + testStep1.stepDescription + ".";
                 }
             }
+            catch (NoSuchElementException e)
+            {
+                if (testStep1.operationName == "RefreshUntil") //tylko dla tej operacji reagować odświeżeniem strony na NoSuchElementException
+                {
+                    catchCount++;
+                    testSetup.Log("Exception caught \"NoSuchElementException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: sleep, refresh, retry.");
+                    Sleep(2000);
+                    Refresh();
+                    if (catchCount < catchLimit)
+                    {
+                        result = Operation(testStep1);
+                    }
+                    else
+                    {
+                        result = "Catch limit exceeded. \"NoSuchElementException\" in test step " + testStep1.stepDescription + ".";
+                    }
+                }
+                else
+                {
+                    result = "Error in step named: \"" + testStep1.stepDescription + "\". Operation: \"" + testStep1.operationName + "\". Exception: \r\n" + e;
+                }                
+            }
             catch (Exception e)
             {
                 result = "Error in step named: \"" + testStep1.stepDescription + "\". Operation: \"" + testStep1.operationName + "\". Exception: \r\n"  + e;
@@ -111,6 +148,10 @@ namespace X2
                 case "SendKeys":
                     SendKeys(testStep1);
                     result = "ok";
+                    break;
+
+                case "SendEnumKey":                    
+                    result = SendEnumKey(testStep1); ;
                     break;
 
                 case "GoToUrl":
@@ -143,8 +184,12 @@ namespace X2
                     break;
 
                 case "CloseAlert":
-                    CloseAlert();
+                    CloseAlert(testStep1.operationText);
                     result = "ok";
+                    break;
+
+                case "SendEnumKeyToAlert":
+                    result = SendEnumKeyToAlert(testStep1.operationText);
                     break;
 
                 case "SelectOption":
@@ -202,7 +247,7 @@ namespace X2
                 string customError = CustomErrorDetected();
                 if (customError != "no")
                 {
-                    return "Custom error detected: " + customError; 
+                    return "Custom error detected: " + customError;
                 }
                 else
                 {
@@ -257,15 +302,49 @@ namespace X2
             element.SendKeys(value + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą
         }
 
-        private void CloseAlert()
+        private void CloseAlert(string operationText)
         {
             try
-            {
-                testSetup.driver.SwitchTo().Alert().Accept();                
+            {   
+                switch (operationText)
+                {
+                    case "Accept":
+                        testSetup.driver.SwitchTo().Alert().Accept();
+                        break;
+                    case "Dismiss":
+                        testSetup.driver.SwitchTo().Alert().Dismiss();                        
+                        break;
+                }
             }
             catch (NoAlertPresentException)
             {
                 testSetup.Log("CloseAlert(): exception caught \"NoAlertPresentException\".");                
+            }            
+        }
+
+        private string SendEnumKeyToAlert(string operationText)
+        {
+            try
+            {
+                switch (operationText)
+                {
+                    case "Escape":
+                        testSetup.driver.SwitchTo().Alert().SendKeys(OpenQA.Selenium.Keys.Escape);
+                        return "ok";
+                    case "Enter":
+                        testSetup.driver.SwitchTo().Alert().SendKeys(OpenQA.Selenium.Keys.Enter);
+                        return "ok";
+                    case "Tab":
+                        testSetup.driver.SwitchTo().Alert().SendKeys(OpenQA.Selenium.Keys.Tab);
+                        return "ok";
+                    default:
+                        return "SendKey(): Can't recognize key code " + operationText;
+                }
+            }
+            catch (NoAlertPresentException e)
+            {                
+                testSetup.Log("SendEnumKeyToAlert(): exception caught \"NoAlertPresentException\".");
+                return "SendEnumKeyToAlert(): NoAlertPresentException";
             }            
         }
 
@@ -338,6 +417,13 @@ namespace X2
             List<string> texts = new List<string>();
             
             texts0 = Regex.Split(testStep1.operationText, @";").ToList();
+            //debug
+            /*
+            foreach (string str in Regex.Split(testStep1.operationText, @";").ToList())
+            {
+                Console.WriteLine(">>>>>>>>>>" + str);
+            }
+            */
             
             foreach(string s in texts0)
             {                
@@ -349,8 +435,8 @@ namespace X2
                 {
                     s1 = Regex.Replace(s1, @"^\s+", "");
                     s1 = Regex.Replace(s1, @"\s+$", "");
-                    s1 = s1.Substring(2);
-                    s1 = s1.Substring(0, s1.Length - 2);
+                    s1 = s1.Substring(1);
+                    s1 = s1.Substring(0, s1.Length - 1);
                     texts.Add(testSetup.variables.Where(t => t.name == s1).First().value); //opatrzyć wyjątkiem w razie braku setvariable przed uzyciem variable albo rozbudować walidację data table
                 }
                 else
@@ -358,11 +444,19 @@ namespace X2
                     texts.Add(s1);
                 }                
             }
+
+            //debug
+            /*
+            foreach (string str in texts)
+            {
+                Console.WriteLine("#####" + str);
+            }
+            int i = 1;
+            */
+
             return texts;            
         }
-
-
-
+        
         private bool GetIsMatchForRefreshUntil(string xpath, List<string> texts)
         {
             IWebElement parent;
@@ -373,12 +467,18 @@ namespace X2
             }
             catch(NoSuchElementException)
             {
-                testSetup.Log("GetIsMatchForRefreshUntil(): exception caught \"NoSuchElementException\".");                
-                return false;
+                testSetup.Log("GetIsMatchForRefreshUntil(): exception caught \"NoSuchElementException\". Next actions: throw.");
+                throw;
             }
 
             //bezpośrednie dzieci
             List<IWebElement> children = parent.FindElements(By.XPath("./*")).ToList();
+
+            
+
+           
+
+
 
             bool existsFit = false;
             foreach(IWebElement elem in children)
@@ -388,6 +488,9 @@ namespace X2
 
                 foreach (string text in texts)
                 {
+                    //debug
+                    Console.WriteLine(">> Sprawdzam, czy \"" + s + "\" zawiera " + text);
+
                     if(!s.Contains(text))
                     {
                         thisFits = false;
@@ -424,5 +527,26 @@ namespace X2
             return "no";
         }
 
+        private string SendEnumKey(Structs.TestStep testStep1)
+        {
+            IWebElement element = testSetup.driver.FindElement(By.XPath(testStep1.operationText));
+            Actions action = new Actions(testSetup.driver); 
+            action.MoveToElement(element).Perform();            
+
+            switch (testStep1.operationText)
+            {
+                case "Escape":
+                    element.SendKeys(OpenQA.Selenium.Keys.Escape);
+                    return "ok";
+                case "Enter":
+                    element.SendKeys(OpenQA.Selenium.Keys.Enter);
+                    return "ok";
+                case "Tab":
+                    element.SendKeys(OpenQA.Selenium.Keys.Tab);
+                    return "ok";
+                default:
+                    return "SendEnumKey(): Can't recognize key code " + testStep1.operationText;
+            }
+        }
     }
 }

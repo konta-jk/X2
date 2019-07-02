@@ -68,6 +68,7 @@ namespace X2
         
         private delegate void UpdateResultDelegate();
         private delegate void UpdateProgressDelegate();
+        private delegate void BringToFrontDelegate();
 
         void OnRunFinished(object sender, EventArgs e)
         {
