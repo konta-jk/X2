@@ -167,6 +167,10 @@ namespace X2
                     result = ClickJS(testStep1);
                     break;
 
+                case "WaitFor":
+                    result = WaitFor(testStep1);
+                    break;
+
                 case "Refresh":
                     Refresh();
                     result = "ok";
@@ -489,7 +493,7 @@ namespace X2
                 foreach (string text in texts)
                 {
                     //debug
-                    Console.WriteLine(">> Sprawdzam, czy \"" + s + "\" zawiera " + text);
+                    //Console.WriteLine(">> Sprawdzam, czy \"" + s + "\" zawiera " + text);
 
                     if(!s.Contains(text))
                     {
@@ -552,7 +556,7 @@ namespace X2
         //desperacka próba obsłużenia zapisz i zatwierdź, używać w ostateczności, nie obsługuje err
         private string ClickJS(Structs.TestStep testStep1)
         {
-            Sleep(2000);
+            Sleep(1000);
 
             IJavaScriptExecutor js = (IJavaScriptExecutor)testSetup.driver;
 
@@ -562,9 +566,60 @@ namespace X2
             //element.Click();
             js.ExecuteScript("arguments[0].click();", element);
 
-            Sleep(10000);
+            Sleep(20000);
 
             return "ok";
+        }
+
+        //służy do
+        //1. weryfikacji, że test dotarł do oczekiwanego elementu (ewentualnie z tekstem)
+        //2. oczekiwania sztywno przez x s - np. po zapisz i zatwierdź
+        //3. oczekiwania aż pojawi się element (ew. tekst)
+        private string WaitFor(Structs.TestStep testStep1)
+        {
+            int timeOut = 40; //do settingsów
+            TimeSpan whileDuration = new TimeSpan(0, 0, 0);
+            DateTime startTime = DateTime.Now;
+            string expectedText = "";
+
+            if ((testStep1.operationText != null) && (testStep1.operationText != ""))
+            {
+                expectedText = testStep1.operationText;
+                expectedText = Regex.Replace(expectedText, @"^\s+", "");
+                expectedText = Regex.Replace(expectedText, @"\s+$", "");
+            }            
+            
+            List<IWebElement> elements = new List<IWebElement>();
+
+            while (whileDuration.TotalSeconds < timeOut)
+            {
+                elements = testSetup.driver.FindElements(By.XPath(testStep1.xpath)).ToList();
+
+                if (elements.Count > 0)
+                {
+                    if (expectedText != "")
+                    {
+                        if (elements[0].Text.Contains(expectedText))
+                        {
+                            return "ok";
+                        }
+                        else
+                        {
+                            elements.Clear();
+                        }
+                    }
+                    else
+                    {
+                        return "ok";
+                    }
+                }
+
+                Sleep(500);
+
+                whileDuration = DateTime.Now - startTime;
+            }
+
+            return "Wait for (expected text: \"" + expectedText + "\") timed out";
         }
     }
 }
