@@ -163,6 +163,10 @@ namespace X2
                     result = Click(testStep1);
                     break;
 
+                case "ClickJS":
+                    result = ClickJS(testStep1);
+                    break;
+
                 case "Refresh":
                     Refresh();
                     result = "ok";
@@ -468,16 +472,12 @@ namespace X2
             catch(NoSuchElementException)
             {
                 testSetup.Log("GetIsMatchForRefreshUntil(): exception caught \"NoSuchElementException\". Next actions: throw.");
-                throw;
+                //throw;
+                return false;
             }
 
             //bezpośrednie dzieci
             List<IWebElement> children = parent.FindElements(By.XPath("./*")).ToList();
-
-            
-
-           
-
 
 
             bool existsFit = false;
@@ -546,6 +546,36 @@ namespace X2
                     return "ok";
                 default:
                     return "SendEnumKey(): Can't recognize key code " + testStep1.operationText;
+            }
+        }
+
+        private string ClickJS(Structs.TestStep testStep1)
+        {
+            IJavaScriptExecutor js = (IJavaScriptExecutor)testSetup.driver;
+
+            IWebElement element = testSetup.driver.FindElement(By.XPath(testStep1.xpath));
+            Actions action = new Actions(testSetup.driver); //bo inaczej zdarzają się problemy z click
+            action.MoveToElement(element).Perform();
+            //element.Click();
+            js.ExecuteScript("arguments[0].click();", element);
+
+            //sprawdzenie wystąpienia błędu zdefiniowanego przez uzytkownika (jako fragment html)            
+            if ((Settings.customErrors.Count > 0) && (testStep1.operationText == "Err"))
+            {
+                Sleep(Settings.sleepAfterOperation);
+                string customError = CustomErrorDetected();
+                if (customError != "no")
+                {
+                    return "Custom error detected: " + customError;
+                }
+                else
+                {
+                    return "ok";
+                }
+            }
+            else
+            {
+                return "ok";
             }
         }
     }
