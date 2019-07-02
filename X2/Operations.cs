@@ -391,7 +391,7 @@ namespace X2
         private string RefreshUntil(Structs.TestStep testStep1)
         {
             int duration = 4000;
-            int timeOut = 180; //s, default 300
+            int timeOut = 60; //s, default 300
             DateTime start = DateTime.Now;
             TimeSpan whileDuration = new TimeSpan(0, 0, 0);
 
@@ -549,8 +549,11 @@ namespace X2
             }
         }
 
+        //desperacka próba obsłużenia zapisz i zatwierdź, używać w ostateczności, nie obsługuje err
         private string ClickJS(Structs.TestStep testStep1)
         {
+            Sleep(2000);
+
             IJavaScriptExecutor js = (IJavaScriptExecutor)testSetup.driver;
 
             IWebElement element = testSetup.driver.FindElement(By.XPath(testStep1.xpath));
@@ -559,24 +562,9 @@ namespace X2
             //element.Click();
             js.ExecuteScript("arguments[0].click();", element);
 
-            //sprawdzenie wystąpienia błędu zdefiniowanego przez uzytkownika (jako fragment html)            
-            if ((Settings.customErrors.Count > 0) && (testStep1.operationText == "Err"))
-            {
-                Sleep(Settings.sleepAfterOperation);
-                string customError = CustomErrorDetected();
-                if (customError != "no")
-                {
-                    return "Custom error detected: " + customError;
-                }
-                else
-                {
-                    return "ok";
-                }
-            }
-            else
-            {
-                return "ok";
-            }
+            Sleep(10000);
+
+            return "ok";
         }
     }
 }
