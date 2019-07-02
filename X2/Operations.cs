@@ -593,33 +593,44 @@ namespace X2
 
             while (whileDuration.TotalSeconds < timeOut)
             {
-                elements = testSetup.driver.FindElements(By.XPath(testStep1.xpath)).ToList();
-
-                if (elements.Count > 0)
+                if ((testStep1.xpath != null) && (testStep1.xpath != ""))
                 {
-                    if (expectedText != "")
+                    elements = testSetup.driver.FindElements(By.XPath(testStep1.xpath)).ToList();
+                    if (elements.Count > 0)
                     {
-                        if (elements[0].Text.Contains(expectedText))
+                        //dodac warunek, ze visible, interactible itp
+                        //uładzic te funkcje
+
+                        if (expectedText != "")
                         {
-                            return "ok";
+                            if (elements[0].Text.Contains(expectedText))
+                            {
+                                return "ok";
+                            }
+                            else
+                            {
+                                elements.Clear();
+                            }
                         }
                         else
                         {
-                            elements.Clear();
+                            return "ok";
                         }
                     }
-                    else
-                    {
-                        return "ok";
-                    }
                 }
-
                 Sleep(500);
-
                 whileDuration = DateTime.Now - startTime;
             }
 
-            return "Wait for (expected text: \"" + expectedText + "\") timed out";
+            if ((testStep1.xpath != null) && (testStep1.xpath != ""))
+            {
+                return "Wait for (expected text: \"" + expectedText + "\") timed out";
+            }
+            else
+            {
+                return "ok";
+            }
+                
         }
     }
 }
