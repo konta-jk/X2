@@ -63,7 +63,7 @@ namespace X2
         //wystawione dla QATestLauncher, który odpala to przez delegata
         public void UpdateProgress()
         {
-            textBox2.Text = testSetup.testResult.ToCsvString();            
+            textBox2.Text = testSetup.testResult.ToCsvString();
         }
         
 

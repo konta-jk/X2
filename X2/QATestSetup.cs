@@ -65,7 +65,7 @@ namespace X2
             {
                 driver = new ChromeDriver(chromeOptions);
                 driver.Manage().Window.Maximize();                
-                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromSeconds(Settings.implicitWait);
+                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromMilliseconds(Settings.implicitWait);
             }
             catch (Exception e)
             {                
