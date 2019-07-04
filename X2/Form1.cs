@@ -45,7 +45,7 @@ namespace X2
         //wystawione dla QATestLauncher, który odpala to przez delegata
         public void UpdateResult()
         {
-            textBox2.Text = testSetup.testResult.ToCsvString();
+            string output = testSetup.testResult.ToCsvString();
 
             string s = "";
             foreach (Structs.Variable v in testSetup.variables)
@@ -54,18 +54,28 @@ namespace X2
             }
             if (s.Length > 0)
             {
-                textBox2.Text += "\r\nVariables:\r\n" + s;
+                output += "\r\nVariables:\r\n" + s;
             }
 
-            textBox2.Text += "\r\nLog:\r\n" + testSetup.log;
+            output += "\r\nLog:\r\n" + testSetup.log;
+
+            textBox2.Text = output;
+
+            string path = testSetup.GetPathMakeFolder(@"\Logs\");
+            path = path + @"\" + testSetup.testRunId + ".txt";
+            System.IO.File.WriteAllText(path, output);
         }
-        
+
         //wystawione dla QATestLauncher, który odpala to przez delegata
         public void UpdateProgress()
         {
             textBox2.Text = testSetup.testResult.ToCsvString();
         }
-        
+
+        private void SaveToFile(string fileName)
+        {
+
+        }
 
         private void textBox1_TextChanged(object sender, EventArgs e)
         {
@@ -115,6 +125,10 @@ namespace X2
             openFileDialog1.ShowDialog();
         }
 
+        private void debugButton_Click(object sender, EventArgs e)
+        {
+            
+        }
     }
 }
 

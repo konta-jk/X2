@@ -51,7 +51,10 @@ namespace X2
 
         public string OpActionClick(Structs.TestStep testStep1)
         {
-            IWebElement element = testSetup.driver.FindElement(By.XPath(testStep1.xpath));
+            //IWebElement element = testSetup.driver.FindElement(By.XPath(testStep1.xpath));
+
+            IWebElement element = ElementFinder(testStep1);
+
             ScrollAndMoveTo(element, testSetup.driver);
             element.Click();
 
@@ -243,12 +246,21 @@ namespace X2
                     {
                         //dodac warunek, ze visible, interactible itp
                         //uładzic te funkcje
+                        
 
                         if (expectedText != "")
                         {
                             if (elements[0].Text.Contains(expectedText))
                             {
-                                return "ok";
+                                if(DisplayedAndEnabled(elements[0]))
+                                {
+                                    return "ok";
+                                }
+                                else
+                                {
+                                    return "OpActionWaitFor(): element found is disabled or not displayed.";
+                                }
+                                
                             }
                             else
                             {
@@ -257,7 +269,14 @@ namespace X2
                         }
                         else
                         {
-                            return "ok";
+                            if (DisplayedAndEnabled(elements[0]))
+                            {
+                                return "ok";
+                            }
+                            else
+                            {
+                                return "OpActionWaitFor(): element found is disabled or not displayed.";
+                            }
                         }
                     }
                 }
@@ -374,7 +393,7 @@ namespace X2
             }
             catch (NoSuchElementException)
             {
-                testSetup.Log("GetIsMatchForRefreshUntil(): exception caught \"NoSuchElementException\". Next actions: throw.");
+                testSetup.Log("GetIsMatchForRefreshUntil(): exception caught \"NoSuchElementException\". Next actions: none.");
                 //throw;
                 return false;
             }
@@ -485,5 +504,54 @@ namespace X2
             js.ExecuteScript("arguments[0].scrollIntoView({behavior: \"smooth\", block: \"center\"})", element);
             action.MoveToElement(element).Perform();
         }
+
+        private bool DisplayedAndEnabled(IWebElement element)
+        {
+            if (element.Displayed && element.Enabled)
+            {
+                return true;
+            }
+            else
+            {
+                return false;
+            }
+        }
+
+        //tym zastapic szukanie elementow w kazdej op action
+        private IWebElement ElementFinder(Structs.TestStep testStep1)
+        {
+            DateTime start = DateTime.Now;
+            int timeout = 60000; //ms, do settings
+            TimeSpan whileDuration = TimeSpan.FromMilliseconds(0);
+
+            List<IWebElement> elements = new List<IWebElement>();
+            
+            while (whileDuration.TotalMilliseconds < timeout)
+            {
+                elements = testSetup.driver.FindElements(By.XPath(testStep1.xpath)).ToList();
+                if (elements.Count > 0)
+                {
+                    if (DisplayedAndEnabled(elements[0]))
+                    {
+                        //Console.WriteLine("ElementFinder(): proper element found in step" + testStep1.stepDescription);
+
+                        return elements[0];
+                        
+                    }
+                    else
+                    {
+                        testSetup.Log("ElementFinder(): element found is disabled or not displayed in step " 
+                            + testStep1.stepDescription + ". Next action: sleep, retry.");
+                    }
+                }
+                Sleep(100); //do settings
+                whileDuration = DateTime.Now - start;
+            }
+
+            //po staremu, na chama, rzeby rzuciło wyjątkami
+            return testSetup.driver.FindElement(By.XPath(testStep1.xpath));            
+        }
+
+
     }
 }

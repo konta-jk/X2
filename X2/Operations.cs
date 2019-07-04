@@ -101,7 +101,7 @@ namespace X2
             //niby redundantne z implicit wait, ale w praktyce pomaga
             catch (NoSuchElementException e) 
             {                
-                catchCount++;
+                catchCount += 9; //ze względu na implicit wait (jakoś to ogarnąć potem)
                 testSetup.Log("Exception caught \"NoSuchElementException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: sleep, retry.");
                 //bez refresh!
                 opActions.Sleep(Settings.sleepAfterNoSuchElement); //do tego dochodzi implicit wait, więc łącznie 40,3 s x 10... wtf

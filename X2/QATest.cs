@@ -71,6 +71,7 @@ namespace X2
 
                 if(currentResult.result != "ok")
                 {
+                    testSetup.Log("QATest.Run(): stopping the test. Wrong result: " + currentResult.result + " in test step " + testStep.stepDescription + ".");
                     testSetup.testResult = new Structs.TestResult(testResult).DeepClone();
                     OnRunFinished();
                     return;

@@ -26,7 +26,7 @@ namespace X2
 
         public QATestLauncher(Form1 form1)
         {
-            form = form1;
+            var form = form1;
 
             string extension = Regex.Match(form.testSetup.fileName, "\\.[0-9a-z]+$").Value;
             //Structs.TestPlan testPlan;
@@ -89,7 +89,7 @@ namespace X2
 
             if (form.testSetup.killDriver)
             {
-                System.Threading.Thread.Sleep(TimeSpan.FromSeconds(2)); //aby uzytkownik mógł sie przyjrzeć zakończeniu przed zamknięciem przeglądarki; do settingsów
+                Thread.Sleep(TimeSpan.FromMilliseconds(Settings.killDriverDelay)); //aby uzytkownik mógł sie przyjrzeć zakończeniu przed zamknięciem przeglądarki; do settingsów
                 form.testSetup.TearDownTest();
             }
         }       

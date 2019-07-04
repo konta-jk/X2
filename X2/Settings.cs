@@ -19,6 +19,9 @@ namespace X2
         public static readonly int catchLimit = 10;
         public static readonly int sleepAfterNoSuchElement = 300;
         public static readonly int sleepAfterElementNotInteractible = 1000;
+        public static readonly bool logWithScreenshots = true;
+        public static readonly float maximumDriveRatioToLogWithSs = 0.8f;
+        public static readonly int killDriverDelay = 2000;
 
         public struct ActionsSettings
         {
