@@ -12,7 +12,7 @@ namespace X2
 {
     class CsvReader
     {
-        public static DataTable ReadCsv(QATestSetup testSetup, string fileName)
+        public static DataTable ReadCsv(QATestStuff testStuff, string fileName)
         {
             DataTable dataTable = new DataTable();
             StreamReader streamReader = new StreamReader(fileName);
@@ -41,7 +41,7 @@ namespace X2
                 {
                     row[i] = cells[i];
                 }
-                if((lineReads >= testSetup.minRow) && (lineReads <= testSetup.maxRow))
+                if((lineReads >= testStuff.minRow) && (lineReads <= testStuff.maxRow))
                 {
                     dataTable.Rows.Add(row);
                 }

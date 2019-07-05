@@ -25,9 +25,9 @@ namespace X2
 {
     public interface IQATestLaunchPoint
     {
-        DataTable GetTestPlanAsDataTable();
+        DataTable GetTestPlanAsDataTable(); //test plan przeniesiony do test stuff
         IQATestLaunchPoint GetLaunchPoint();
-        QATestSetup GetTestSetup();
+        QATestStuff GetTestStuff();
         void OnTestProgress();
         void OnTestFinish();
     }

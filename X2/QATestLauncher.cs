@@ -1,9 +1,9 @@
 ﻿/*
- * uniwersalna klasa do odpalania testu
- * trzyma śmieci, których nie chcę w QATest; wątek itp
- * bierze form, a w nim setupa, a w nim filename
- * ładuje wyniki do setupa
- * 
+ * QATestLauncher to uniwersalna klasa do przeprowadzania testu. Postanowiłem, że nie będzie w niej zmian związanych z pracą nad wyższymi warstwami.
+ * Specyfikację jej wymagań zawiera interfejs IQATestLaunchPoint.
+ * Trzyma śmieci nie związane bezpośrednio z testem, których nie chcę w QATest (wątek, nasłuch na eventy, reakcje na eventy, utworzenie TestPlan, walidacja planu testów).
+ * Nadrzędna względem QATest: przekazuje jej TestPlan (do refaktoryzacji) i QATestStuff, otrzymuje zwrotnie eventy (rezultat QATest ładuje do QATestStuff)
+ *   
  */
 
 using System;
@@ -23,42 +23,21 @@ namespace X2
     {
         private IQATestLaunchPoint launchPoint;
         private readonly DataTable testPlanAsDataTable;
-        private QATestSetup testSetup;
+        private QATestStuff testStuff;
         public QATest qATest;
-        private Structs.TestPlan testPlan;
+        //private Structs.TestPlan testPlan;
 
 
         public QATestLauncher(IQATestLaunchPoint launchPoint1)
         {
             launchPoint = launchPoint1; //np. Form1
-            testSetup = launchPoint1.GetTestSetup();
+            testStuff = launchPoint1.GetTestStuff();
             testPlanAsDataTable = launchPoint1.GetTestPlanAsDataTable();
-
-            /*
-            string extension = Regex.Match(testSetup.fileName, "\\.[0-9a-z]+$").Value;
-            //Structs.TestPlan testPlan;
-            DataTable dataTable;
-
-            switch (extension)
-            {
-                case ".xlsx":
-                    dataTable = XlsxReader.ReadExcellSheet(testSetup);                    
-                    break;
-
-                case ".csv":
-                    dataTable = CsvReader.ReadCsv(testSetup);
-                    break;
-
-                default:
-                    dataTable = CsvReader.ReadCsv(testSetup);
-                    break;
-            }
-            */
-
+            
             if (TestPlanFromDataTable.IsValid(testPlanAsDataTable))
             {
-                testPlan = TestPlanFromDataTable.GetTestPlan(testPlanAsDataTable);
-                qATest = new QATest(testPlan, testSetup);
+                testStuff.testPlan = TestPlanFromDataTable.GetTestPlan(testPlanAsDataTable);
+                qATest = new QATest(testStuff);
                 qATest.RunFinishedEvent += OnRunFinished;
                 qATest.StepFinishedEvent += OnStepFinished;
             }            
@@ -66,30 +45,21 @@ namespace X2
 
         public void Run() 
         {
-            if (testPlan.testSteps != null)
+            if (testStuff.testPlan.testSteps != null)
             {
-                //testSetup.seleniumThread = new Thread(ActualRun);
-                testSetup.seleniumThread = new Thread(qATest.Run);
-                testSetup.seleniumThread.IsBackground = true;
-                testSetup.seleniumThread.Start();
+                testStuff.seleniumThread = new Thread(qATest.Run);
+                testStuff.seleniumThread.IsBackground = true;
+                testStuff.seleniumThread.Start();
             }            
         }
-        
-        //private delegate void UpdateResultDelegate();
-        //private delegate void UpdateProgressDelegate();
-        private delegate void BringToFrontDelegate();
 
         void OnRunFinished(object sender, EventArgs e)
         {
-            //Console.WriteLine("QATestLauncher: RunFinishedEvent caught");                        
-            //launchPoint.DoInvoke(new UpdateResultDelegate(launchPoint.UpdateResult)); //działające
             launchPoint.OnTestFinish();
         }
 
         void OnStepFinished(object sender, EventArgs e)
         {
-            //Console.WriteLine("QATestLauncher: StepFinishedEvent caught");
-            //launchPoint.DoInvoke(new UpdateProgressDelegate(launchPoint.UpdateProgress));
             launchPoint.OnTestProgress();
         }           
     }

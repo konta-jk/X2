@@ -20,20 +20,18 @@ namespace X2
 {
     class OpActions
     {
-        QATestSetup testSetup;
+        QATestStuff testStuff;
 
-        public OpActions(QATestSetup testSetup1)
+        public OpActions(QATestStuff testStuff1)
         {
-            testSetup = testSetup1;
+            testStuff = testStuff1;
         }
 
         public void OpActionSendKeys(Structs.TestStep testStep1)
         {
-            IWebElement element = testSetup.driver.FindElement(By.XPath(testStep1.xpath));
-            //Actions action = new Actions(testSetup.driver); //dla estetyki tylko
-            //action.MoveToElement(element).Perform();
+            IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
 
-            ScrollAndMoveTo(element, testSetup.driver);
+            ScrollAndMoveTo(element, testStuff.driver);
 
             string text = testStep1.operationText;
             element.SendKeys(testStep1.operationText + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą            
@@ -41,21 +39,21 @@ namespace X2
 
         public void OpActionGoToUrl(Structs.TestStep testStep1)
         {
-            testSetup.driver.Navigate().GoToUrl(testStep1.operationText);
+            testStuff.driver.Navigate().GoToUrl(testStep1.operationText);
         }
 
         public void OpActionRefresh()
         {
-            testSetup.driver.Navigate().Refresh();
+            testStuff.driver.Navigate().Refresh();
         }
 
         public string OpActionClick(Structs.TestStep testStep1)
         {
-            //IWebElement element = testSetup.driver.FindElement(By.XPath(testStep1.xpath));
+            //IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
 
             IWebElement element = ElementFinder(testStep1);
 
-            ScrollAndMoveTo(element, testSetup.driver);
+            ScrollAndMoveTo(element, testStuff.driver);
             element.Click();
 
             //sprawdzenie wystąpienia błędu zdefiniowanego przez uzytkownika (jako fragment html)            
@@ -80,13 +78,13 @@ namespace X2
 
         public void OpActionMoveToElement(Structs.TestStep testStep1)
         {
-            IWebElement element = testSetup.driver.FindElement(By.XPath(testStep1.xpath));
-            ScrollAndMoveTo(element, testSetup.driver);
+            IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
+            ScrollAndMoveTo(element, testStuff.driver);
         }
 
         public void OpActionSetVariable(Structs.TestStep testStep1)
         {
-            IWebElement element = testSetup.driver.FindElement(By.XPath(testStep1.xpath));
+            IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
 
             Structs.Variable v;
 
@@ -99,22 +97,22 @@ namespace X2
                 v = new Structs.Variable(testStep1.operationText, element.GetAttribute("value"));
             }
 
-            if (testSetup.variables.Where(t => t.name == v.name).Count() == 0)
+            if (testStuff.variables.Where(t => t.name == v.name).Count() == 0)
             {
-                testSetup.variables.Add(v);
+                testStuff.variables.Add(v);
             }
             else
             {
-                testSetup.variables.Remove(testSetup.variables.Where(t => t.name == v.name).First());
-                testSetup.variables.Add(v);
+                testStuff.variables.Remove(testStuff.variables.Where(t => t.name == v.name).First());
+                testStuff.variables.Add(v);
             }
         }
 
         public void OpActionSendVariable(Structs.TestStep testStep1)
         {
-            IWebElement element = testSetup.driver.FindElement(By.XPath(testStep1.xpath));
-            ScrollAndMoveTo(element, testSetup.driver);
-            string value = testSetup.variables.Where(t => t.name == testStep1.operationText).SingleOrDefault().value;
+            IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
+            ScrollAndMoveTo(element, testStuff.driver);
+            string value = testStuff.variables.Where(t => t.name == testStep1.operationText).SingleOrDefault().value;
             element.SendKeys(value + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą
         }
 
@@ -125,16 +123,16 @@ namespace X2
                 switch (operationText)
                 {
                     case "Accept":
-                        testSetup.driver.SwitchTo().Alert().Accept();
+                        testStuff.driver.SwitchTo().Alert().Accept();
                         break;
                     case "Dismiss":
-                        testSetup.driver.SwitchTo().Alert().Dismiss();
+                        testStuff.driver.SwitchTo().Alert().Dismiss();
                         break;
                 }
             }
             catch (NoAlertPresentException)
             {
-                testSetup.Log("CloseAlert(): exception caught \"NoAlertPresentException\".");
+                testStuff.Log("CloseAlert(): exception caught \"NoAlertPresentException\".");
             }
         }
 
@@ -145,13 +143,13 @@ namespace X2
                 switch (operationText)
                 {
                     case "Escape":
-                        testSetup.driver.SwitchTo().Alert().SendKeys(OpenQA.Selenium.Keys.Escape);
+                        testStuff.driver.SwitchTo().Alert().SendKeys(OpenQA.Selenium.Keys.Escape);
                         return "ok";
                     case "Enter":
-                        testSetup.driver.SwitchTo().Alert().SendKeys(OpenQA.Selenium.Keys.Enter);
+                        testStuff.driver.SwitchTo().Alert().SendKeys(OpenQA.Selenium.Keys.Enter);
                         return "ok";
                     case "Tab":
-                        testSetup.driver.SwitchTo().Alert().SendKeys(OpenQA.Selenium.Keys.Tab);
+                        testStuff.driver.SwitchTo().Alert().SendKeys(OpenQA.Selenium.Keys.Tab);
                         return "ok";
                     default:
                         return "SendKey(): Can't recognize key code " + operationText;
@@ -159,16 +157,16 @@ namespace X2
             }
             catch (NoAlertPresentException)
             {
-                testSetup.Log("SendEnumKeyToAlert(): exception caught \"NoAlertPresentException\".");
+                testStuff.Log("SendEnumKeyToAlert(): exception caught \"NoAlertPresentException\".");
                 return "SendEnumKeyToAlert(): NoAlertPresentException";
             }
         }
 
         public void OpActionSelectOption(Structs.TestStep testStep1)
         {
-            IWebElement element = testSetup.driver.FindElement(By.XPath(testStep1.xpath));
+            IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
 
-            ScrollAndMoveTo(element, testSetup.driver);
+            ScrollAndMoveTo(element, testStuff.driver);
 
             SelectElement option = new SelectElement(element);
             int i;
@@ -179,8 +177,8 @@ namespace X2
 
         public string OpActionSendEnumKey(Structs.TestStep testStep1)
         {
-            IWebElement element = testSetup.driver.FindElement(By.XPath(testStep1.operationText));
-            ScrollAndMoveTo(element, testSetup.driver);
+            IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.operationText));
+            ScrollAndMoveTo(element, testStuff.driver);
 
             switch (testStep1.operationText)
             {
@@ -204,11 +202,11 @@ namespace X2
         {
             Sleep(Settings.ActionsSettings.opActionClickJSInitialSleep);
 
-            IJavaScriptExecutor js = (IJavaScriptExecutor)testSetup.driver;
+            IJavaScriptExecutor js = (IJavaScriptExecutor)testStuff.driver;
 
-            IWebElement element = testSetup.driver.FindElement(By.XPath(testStep1.xpath));
+            IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
 
-            ScrollAndMoveTo(element, testSetup.driver);
+            ScrollAndMoveTo(element, testStuff.driver);
 
             //element.Click();
             js.ExecuteScript("arguments[0].click();", element);
@@ -241,7 +239,7 @@ namespace X2
             {
                 if ((testStep1.xpath != null) && (testStep1.xpath != ""))
                 {
-                    elements = testSetup.driver.FindElements(By.XPath(testStep1.xpath)).ToList();
+                    elements = testStuff.driver.FindElements(By.XPath(testStep1.xpath)).ToList();
                     if (elements.Count > 0)
                     {
                         //dodac warunek, ze visible, interactible itp
@@ -297,7 +295,7 @@ namespace X2
         public string OpActionScroll(Structs.TestStep testStep1)
         {
             Sleep(Settings.ActionsSettings.opActionScrollSleep);
-            IJavaScriptExecutor js = (IJavaScriptExecutor)testSetup.driver;
+            IJavaScriptExecutor js = (IJavaScriptExecutor)testStuff.driver;
             string destination = testStep1.operationText;
 
             Tuple<int, int> vector = new Tuple<int, int>(0, 0);
@@ -367,7 +365,7 @@ namespace X2
                 && (whileDuration.TotalSeconds < timeout))
             {
                 Sleep(duration);
-                testSetup.driver.Navigate().Refresh();
+                testStuff.driver.Navigate().Refresh();
                 whileDuration = DateTime.Now - start;
             }
 
@@ -389,11 +387,11 @@ namespace X2
 
             try
             {
-                parent = testSetup.driver.FindElement(By.XPath(xpath)); //nie zakładać, że istnieje
+                parent = testStuff.driver.FindElement(By.XPath(xpath)); //nie zakładać, że istnieje
             }
             catch (NoSuchElementException)
             {
-                testSetup.Log("GetIsMatchForRefreshUntil(): exception caught \"NoSuchElementException\". Next actions: none.");
+                testStuff.Log("GetIsMatchForRefreshUntil(): exception caught \"NoSuchElementException\". Next actions: none.");
                 //throw;
                 return false;
             }
@@ -439,7 +437,7 @@ namespace X2
                     s1 = ClearString(s1);
                     s1 = s1.Substring(1);
                     s1 = s1.Substring(0, s1.Length - 1);
-                    texts.Add(testSetup.variables.Where(t => t.name == s1).First().value); //opatrzyć wyjątkiem w razie braku setvariable przed uzyciem variable albo rozbudować walidację data table
+                    texts.Add(testStuff.variables.Where(t => t.name == s1).First().value); //opatrzyć wyjątkiem w razie braku setvariable przed uzyciem variable albo rozbudować walidację data table
                 }
                 else
                 {
@@ -456,7 +454,7 @@ namespace X2
 
         private string CustomErrorDetected()
         {
-            string pageSource = testSetup.driver.PageSource;
+            string pageSource = testStuff.driver.PageSource;
 
             foreach (KeyValuePair<string, string> s in Settings.customErrors)
             {
@@ -475,17 +473,17 @@ namespace X2
 
         public void KeepMaximized(Structs.TestStep testStep1)
         {
-            if ((testSetup.driver.Manage().Window.Size.Width != testSetup.initialWindowSize.Width)
-                || (testSetup.driver.Manage().Window.Size.Height != testSetup.initialWindowSize.Height))
+            if ((testStuff.driver.Manage().Window.Size.Width != testStuff.initialWindowSize.Width)
+                || (testStuff.driver.Manage().Window.Size.Height != testStuff.initialWindowSize.Height))
             {
-                testSetup.Log("Operation: window size has changed during test step " + testStep1.stepDescription + ". Next action: try to maximize.");
+                testStuff.Log("Operation: window size has changed during test step " + testStep1.stepDescription + ". Next action: try to maximize.");
                 try
                 {
-                    testSetup.driver.Manage().Window.Maximize();
+                    testStuff.driver.Manage().Window.Maximize();
                 }
                 catch (Exception)
                 {
-                    testSetup.Log("Failed to maximize window.");
+                    testStuff.Log("Failed to maximize window.");
                 }
             }
         }
@@ -528,7 +526,7 @@ namespace X2
             
             while (whileDuration.TotalMilliseconds < timeout)
             {
-                elements = testSetup.driver.FindElements(By.XPath(testStep1.xpath)).ToList();
+                elements = testStuff.driver.FindElements(By.XPath(testStep1.xpath)).ToList();
                 if (elements.Count > 0)
                 {
                     if (DisplayedAndEnabled(elements[0]))
@@ -540,7 +538,7 @@ namespace X2
                     }
                     else
                     {
-                        testSetup.Log("ElementFinder(): element found is disabled or not displayed in step " 
+                        testStuff.Log("ElementFinder(): element found is disabled or not displayed in step " 
                             + testStep1.stepDescription + ". Next action: sleep, retry.");
                     }
                 }
@@ -549,7 +547,7 @@ namespace X2
             }
 
             //po staremu, na chama, rzeby rzuciło wyjątkami
-            return testSetup.driver.FindElement(By.XPath(testStep1.xpath));            
+            return testStuff.driver.FindElement(By.XPath(testStep1.xpath));            
         }
 
 

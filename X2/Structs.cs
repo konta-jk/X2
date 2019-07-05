@@ -78,7 +78,7 @@ namespace X2
                 string s = "[timeStamp], [stepDescription], [result]\r\n";
                 foreach (Structs.TestStepResult stepResult in testStepResults)
                 {
-                    s += stepResult.timeStamp.ToString("HH:mm:ss") + ", (" + stepResult.stepDescription + ", " + stepResult.result + "\r\n";
+                    s += stepResult.timeStamp.ToString("HH:mm:ss") + ", " + stepResult.stepDescription + ", " + stepResult.result + "\r\n";
                 }
                 return s;
             }

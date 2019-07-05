@@ -21,13 +21,13 @@ namespace X2
     class QATest : IQATest
     {
         Structs.TestPlan testPlan;
-        QATestSetup testSetup;
+        QATestStuff testStuff;
         Operations operations;
 
-        public QATest(Structs.TestPlan testPlan1, QATestSetup testSetup1)
+        public QATest(QATestStuff testStuff1)
         {
-            testPlan = testPlan1;//new Structs.TestPlan(testPlan1.testSteps);
-            testSetup = testSetup1;
+            testPlan = testStuff1.testPlan; 
+            testStuff = testStuff1;
         }
 
         public event EventHandler RunFinishedEvent;
@@ -59,26 +59,26 @@ namespace X2
             
             Structs.TestStepResult currentResult;
 
-            operations = new Operations(testSetup);
+            operations = new Operations(testStuff);
 
             foreach (Structs.TestStep testStep in testPlan.testSteps)
             {
                 currentResult = new Structs.TestStepResult(testStep.stepDescription, DateTime.Now, operations.Operation(testStep));
                 testResult.Add(currentResult);
 
-                testSetup.testResult = new Structs.TestResult(testResult).DeepClone(); 
+                testStuff.testResult = new Structs.TestResult(testResult).DeepClone(); 
                 OnStepFinished();
 
                 if(currentResult.result != "ok")
                 {
-                    testSetup.Log("QATest.Run(): stopping the test. Wrong result: " + currentResult.result + " in test step " + testStep.stepDescription + ".");
-                    testSetup.testResult = new Structs.TestResult(testResult).DeepClone();
+                    testStuff.Log("QATest.Run(): stopping the test. Wrong result: " + currentResult.result + " in test step " + testStep.stepDescription + ".");
+                    testStuff.testResult = new Structs.TestResult(testResult).DeepClone();
                     OnRunFinished();
                     return;
                 }
             }
 
-            testSetup.testResult = new Structs.TestResult(testResult).DeepClone();
+            testStuff.testResult = new Structs.TestResult(testResult).DeepClone();
 
             OnRunFinished();
             return;

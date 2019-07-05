@@ -34,6 +34,15 @@ namespace X2
             public static readonly int opActionRefreshUntilTimeout = 180000; //ms
         }
 
+        public static readonly string message1 = "Kiedy rozpocznie się test, Selenium otworzy nowe okno przeglądarki Chrome. Podnieś wtedy ręce do góry."
+                + "\r\nPraca na komputerze, na którym Selenium przeprowadza test, nie jest zalecana. Nie należy dotykać automatycznie sterowanego okna przeglądarki."
+                + "\r\nMożliwe przyczyny błędów w przebiegu testu:"
+                + "\r\n1. Zaburzenia wprowadzone przez użytkownika komputera"
+                + "\r\n2. Błędy w scenariuszu"
+                + "\r\n3. Zmiany w testowanym procesie, np. xpath"
+                + "\r\n4. Błędy w procesie";
+
+
         //wystapienie tych fragmentów html-a ma przerwać test i wyrzucić komunikat "custom error"; przerwanie w operacji Click z tekstem Err
         public static readonly Dictionary<string, string> customErrors = new Dictionary<string, string>()
         {

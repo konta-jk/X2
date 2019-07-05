@@ -1,6 +1,6 @@
 ﻿/*
  * wykonuje operacje na elemencie, instancja dedykowana dla danego testu
- * można by tez utworzyć bardziej złozone operacje, np. wybierz opcję z dropdowna albo kliknij akcję na liście
+ * 
  */
 
 using System;
@@ -28,13 +28,13 @@ namespace X2
     class Operations : IOperations
     {
         
-        QATestSetup testSetup;
+        QATestStuff testStuff;
         OpActions opActions;
 
-        public Operations(QATestSetup testSetup1)
+        public Operations(QATestStuff testStuff1)
         {
-            testSetup = testSetup1; //wskaźnik, bez kopiowania blurp hrpfr
-            opActions = new OpActions(testSetup1);
+            testStuff = testStuff1; //wskaźnik, bez kopiowania blurp hrpfr
+            opActions = new OpActions(testStuff1);
         }
 
         int catchCount = 0;
@@ -55,12 +55,12 @@ namespace X2
             catch (NoAlertPresentException)
             {
                 catchCount++;
-                testSetup.Log("Exception caught \"NoAlertPresentException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: none.");                
+                testStuff.Log("Exception caught \"NoAlertPresentException\" in step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next: none.");                
             }
             catch (UnhandledAlertException)
             {
                 catchCount++;
-                testSetup.Log("Exception caught \"UnhandledAlertException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: close alert, retry.");
+                testStuff.Log("Exception caught \"UnhandledAlertException\" in step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next: close alert, retry.");
                 opActions.OpActionCloseAlert("Accept");
                 if(catchCount < catchLimit)
                 {
@@ -68,26 +68,26 @@ namespace X2
                 }
                 else
                 {
-                    result = "Catch limit exceeded: \"UnhandledAlertException\" in test step " + testStep1.stepDescription + ".";
+                    result = "Catch limit exceeded: \"UnhandledAlertException\" in step " + testStep1.stepDescription + ".";
                 }
             }
             catch (StaleElementReferenceException)
             {
                 catchCount++;
-                testSetup.Log("Exception caught \"StaleElementReferenceException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next action: retry.");
+                testStuff.Log("Exception caught \"StaleElementReferenceException\" in step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next: retry.");
                 if (catchCount < catchLimit)
                 {
                     result = Operation(testStep1);
                 }
                 else
                 {
-                    result = "Catch limit exceeded: \"StaleElementReferenceException\" in test step " + testStep1.stepDescription + ".";
+                    result = "Catch limit exceeded: \"StaleElementReferenceException\" in step " + testStep1.stepDescription + ".";
                 }
             }
             catch (ElementNotInteractableException)
             {
                 catchCount++;
-                testSetup.Log("Exception caught \"ElementNotInteractableException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: sleep, retry.");
+                testStuff.Log("Exception caught \"ElementNotInteractableException\" in step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next: sleep, retry.");
                 opActions.Sleep(Settings.sleepAfterElementNotInteractible);
                 if (catchCount < catchLimit)
                 {
@@ -95,14 +95,14 @@ namespace X2
                 }
                 else
                 {
-                    result = "Catch limit exceeded. \"ElementNotInteractableException\" in test step " + testStep1.stepDescription + ".";
+                    result = "Catch limit exceeded. \"ElementNotInteractableException\" in step " + testStep1.stepDescription + ".";
                 }
             }
             //niby redundantne z implicit wait, ale w praktyce pomaga
             catch (NoSuchElementException e) 
             {                
                 catchCount += 9; //ze względu na implicit wait (jakoś to ogarnąć potem)
-                testSetup.Log("Exception caught \"NoSuchElementException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: sleep, retry.");
+                testStuff.Log("Exception caught \"NoSuchElementException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: sleep, retry.");
                 //bez refresh!
                 opActions.Sleep(Settings.sleepAfterNoSuchElement); //do tego dochodzi implicit wait, więc łącznie 40,3 s x 10... wtf
                     

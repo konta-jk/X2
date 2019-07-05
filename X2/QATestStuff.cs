@@ -19,42 +19,48 @@ using System.Text.RegularExpressions;
 
 namespace X2
 {
-    public class QATestSetup
+    public class QATestStuff
     {
         //globalsy
         public IWebDriver driver;
         public Thread seleniumThread;
         public string log;
         public List<Structs.Variable> variables;
+        public int minRow;
+        public int maxRow;
+        public bool killDriver;
+
 
         //brane z interfejsu + wartości domyslne ładowane do interfejsu
         //public string fileName; //specyficzne dla launch pointa typu form, a tu powinny być ogólne rzeczy
-        public int minRow = 2;
-        public int maxRow = 5000;
-        public bool killDriver = true;
+        public class QATestStuffOptions
+        {
+            public int minRow;
+            public int maxRow;
+            public bool killDriver;
+        }
 
         public System.Drawing.Size initialWindowSize;
         public string testRunId;
-        
 
+
+        public Structs.TestPlan testPlan;
         //dostępne dla interfejsu graficznego
-        public Structs.TestResult testResult;
+        public Structs.TestResult testResult; 
 
         public bool canSaveScreenshots = true;
 
-        public QATestSetup()
+        public QATestStuff(QATestStuffOptions stuffOptions)
         {
             testResult = new Structs.TestResult();
             variables = new List<Structs.Variable>();
+            minRow = stuffOptions.minRow;
+            maxRow = stuffOptions.maxRow;
+            killDriver = stuffOptions.killDriver;
         }
 
-        public void Init()
+        public void CreateDriver() //w przyszłości do argumentów dodać typ przeglądarki
         {
-            //MessageBox.Show("New Chrome window will show up. Please don't touch it. You can interact with other applications, including other Chrome windows.", "Hello!", MessageBoxButtons.OK, MessageBoxIcon.Information);
-            MessageBox.Show("Kiedy rozpocznie się test, Selenium otworzy nowe okno przeglądarki Chrome. Nie należy dotykać tego okna. "
-                + "\r\nMożna przełączyć się na inne okienko. Logowanie do Windows równiez zaburza przebieg testu.", 
-                "Cześć!", MessageBoxButtons.OK, MessageBoxIcon.Information);
-
             ChromeOptions chromeOptions = new ChromeOptions();
             //chromeOptions.AddArgument("no-sandbox"); //http timeout; to podobno śmierdzi
             chromeOptions.AddArgument("ignore-certificate-errors"); //współpraca z google
@@ -76,6 +82,11 @@ namespace X2
                 Log(s);
                 MessageBox.Show(s);
             }
+        }
+
+        public void Init()
+        {
+          
 
             log = "";           
             Guid guid = Guid.NewGuid();
@@ -160,13 +171,13 @@ namespace X2
                 }
                 catch
                 {
-                    Console.WriteLine("QATestSetup.Screenshot(): can't take screenshot.");
+                    Console.WriteLine("QATestStuff.Screenshot(): can't take screenshot.");
                 }
                 
             }
             else
             {
-                MessageBox.Show("QATestSetup.Screenshot(): Can't take screenshot, driver is null.");
+                MessageBox.Show("QATestStuff.Screenshot(): Can't take screenshot, driver is null.");
                 return;
             }
 

@@ -18,7 +18,7 @@ namespace X2
             for (int i = 0; i < testPlanTable.Rows.Count; i++)
             {
                 DataRow row = testPlanTable.Rows[i];
-                step = new Structs.TestStep((i + 1).ToString() + ") " + row.ItemArray[0].ToString(), row.ItemArray[1].ToString(), row.ItemArray[2].ToString(), row.ItemArray[3].ToString());                
+                step = new Structs.TestStep("(" + (i + 1).ToString() + ") " + row.ItemArray[0].ToString(), row.ItemArray[1].ToString(), row.ItemArray[2].ToString(), row.ItemArray[3].ToString());                
                 testSteps.Add(step);                
             }
 

@@ -101,7 +101,7 @@
     <Compile Include="QATestLauncher.cs" />
     <Compile Include="DeepClone.cs" />
     <Compile Include="Operations.cs" />
-    <Compile Include="QATestSetup.cs" />
+    <Compile Include="QATestStuff.cs" />
     <Compile Include="XlsxReader.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

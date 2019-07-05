@@ -15,7 +15,7 @@ namespace X2
 {
     static class XlsxReader
     {
-        public static DataTable ReadExcellSheet(QATestSetup testSetup, string fileName)
+        public static DataTable ReadExcellSheet(QATestStuff testStuff, string fileName)
         {
             try
             {
@@ -28,7 +28,7 @@ namespace X2
                 DataTable schema = connection.GetOleDbSchemaTable(OleDbSchemaGuid.Tables, new object[] { null, null, null, "TABLE" });
                 string sheetName = schema.Rows[0].Field<string>("TABLE_NAME");
 
-                string select = "select * from [" + sheetName + "A" + testSetup.minRow.ToString() + ":D" + testSetup.maxRow.ToString() + "]";
+                string select = "select * from [" + sheetName + "A" + testStuff.minRow.ToString() + ":D" + testStuff.maxRow.ToString() + "]";
 
                 OleDbDataAdapter sheetAdapter = new OleDbDataAdapter(select, connection);
                 sheetAdapter.Fill(dataSheet);

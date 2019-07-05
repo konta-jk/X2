@@ -17,14 +17,13 @@ namespace X2
 {
     public partial class Form1 : Form, IQATestLaunchPoint
     {
-        public QATestSetup testSetup = new QATestSetup();
+        public QATestStuff testStuff;
+
+        private float testProgress = 0.0f;
 
         public Form1()
         {
-            InitializeComponent();
-            numericUpDown1.Value = testSetup.minRow;
-            numericUpDown2.Value = testSetup.maxRow;
-            checkBox1.Checked = testSetup.killDriver;
+            InitializeComponent();            
         }
 
         private delegate void UpdateResultDelegate();
@@ -35,11 +34,13 @@ namespace X2
             //UpdateResult musi być wywołane za pomocą delegata, inaczej form drze mordę, że inny wątek się dobiera do jego kontrolki
             this.Invoke(new UpdateResultDelegate(UpdateResult));
 
-            if (testSetup.killDriver)
+            if (testStuff.killDriver)
             {
                 Thread.Sleep(TimeSpan.FromMilliseconds(Settings.killDriverDelay)); //aby uzytkownik mógł sie przyjrzeć zakończeniu przed zamknięciem przeglądarki; do settingsów
-                testSetup.TearDownTest();
+                testStuff.TearDownTest();
             }
+
+            testStuff = null;
         }
 
         public void OnTestProgress()
@@ -58,15 +59,15 @@ namespace X2
             switch (extension)
             {
                 case ".xlsx":
-                    dataTable = XlsxReader.ReadExcellSheet(testSetup, fileName);
+                    dataTable = XlsxReader.ReadExcellSheet(testStuff, fileName);
                     break;
 
                 case ".csv":
-                    dataTable = CsvReader.ReadCsv(testSetup, fileName);
+                    dataTable = CsvReader.ReadCsv(testStuff, fileName);
                     break;
 
                 default:
-                    dataTable = CsvReader.ReadCsv(testSetup, fileName);
+                    dataTable = CsvReader.ReadCsv(testStuff, fileName);
                     break;
             }
 
@@ -78,19 +79,17 @@ namespace X2
             return this;
         }
 
-        public QATestSetup GetTestSetup()
+        public QATestStuff GetTestStuff()
         {
-            return testSetup;
+            return testStuff;
         }
 
-        //wystawione dla QATestLauncher, żeby mógł zrobić z tego delegata
-        //---może tutaj da się przenieść delegata
         private void UpdateResult()
         {
-            string output = testSetup.testResult.ToCsvString();
+            string output = testStuff.testResult.ToCsvString();
 
             string s = "";
-            foreach (Structs.Variable v in testSetup.variables)
+            foreach (Structs.Variable v in testStuff.variables)
             {
                 s += v.name + " = " + v.value + "\r\n";
             }
@@ -99,27 +98,44 @@ namespace X2
                 output += "\r\nVariables:\r\n" + s;
             }
 
-            output += "\r\nLog:\r\n" + testSetup.log;
+            output += "\r\nLog:\r\n" + testStuff.log;
 
             textBox2.Text = output;
 
-            string path = testSetup.GetPathMakeFolder(@"\Logs\");
-            path = path + @"\" + testSetup.testRunId + ".txt";
+            string path = testStuff.GetPathMakeFolder(@"\Logs\");
+            path = path + @"\" + testStuff.testRunId + ".txt";
             System.IO.File.WriteAllText(path, output);
         }
 
-        //wystawione dla QATestLauncher, który odpala to przez delegata
         private void UpdateProgress()
         {
-            textBox2.Text = testSetup.testResult.ToCsvString();
+            textBox2.Text = testStuff.testResult.ToCsvString();
+            int currentStep = Math.Min(testStuff.testResult.testStepResults.Count, testStuff.testPlan.testSteps.Count - 1);
+            textBox2.Text += "\r\nIn progress: " + testStuff.testPlan.testSteps[currentStep].stepDescription;
+
+            testProgress = ((float)testStuff.testResult.testStepResults.Count / (float)testStuff.testPlan.testSteps.Count);
+            progressBar1.Value = (int)Math.Round(100 * testProgress, 0);
         }
 
         private void StartTest()
         {
-            testSetup.Init();
+            DialogResult dialogResult = 
+                MessageBox.Show(Settings.message1,
+                "Cześć!", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
+            if (dialogResult != DialogResult.OK)
+            {
+                return;
+            }
+
+            QATestStuff.QATestStuffOptions stuffOptions = new QATestStuff.QATestStuffOptions();
+            stuffOptions.killDriver = checkBox1.Checked;
+            stuffOptions.minRow = (int)numericUpDown1.Value;
+            stuffOptions.maxRow = (int)numericUpDown2.Value;
+            testStuff = new QATestStuff(stuffOptions);
+            testStuff.CreateDriver(); //inna klasa można chcieć zrobić testStuff.driver = ...
+            testStuff.Init();
             new QATestLauncher(this).Run();
         }
-
 
         //przycisk "Testuj"
         private void button4_Click(object sender, EventArgs e)
@@ -134,8 +150,6 @@ namespace X2
 
         private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
-            //Globals.fileName = openFileDialog1.FileName; //
-            //testSetup.fileName = openFileDialog1.FileName; //nowe
             textBox1.Text = openFileDialog1.FileName;            
         }
 
@@ -151,28 +165,29 @@ namespace X2
 
         private void numericUpDown1_ValueChanged(object sender, EventArgs e)
         {
-            testSetup.minRow = Decimal.ToInt32(numericUpDown1.Value);
-            //Console.WriteLine("min: " + testSetup.minRow.ToString() + "max: " + testSetup.maxRow.ToString());
-
+            numericUpDown2.Minimum = Decimal.ToInt32(numericUpDown1.Value);
+            /*
             if (numericUpDown2.Value <= numericUpDown1.Value)
             {
                 numericUpDown2.Value = numericUpDown1.Value;
             }
+            */
         }
 
         private void numericUpDown2_ValueChanged(object sender, EventArgs e)
         {
-            testSetup.maxRow = Decimal.ToInt32(numericUpDown2.Value);
-            //Console.WriteLine("min: " + testSetup.minRow.ToString() + "max: " + testSetup.maxRow.ToString());
+            numericUpDown1.Maximum = Decimal.ToInt32(numericUpDown2.Value);
+            /*
             if(numericUpDown2.Value <= numericUpDown1.Value)
             {
                 numericUpDown1.Value = numericUpDown2.Value;
             }
+            */
         }
 
         private void checkBox1_CheckedChanged(object sender, EventArgs e)
         {
-            testSetup.killDriver = checkBox1.Checked;
+            testStuff.killDriver = checkBox1.Checked;
         }
 
         private void textBox2_TextChanged(object sender, EventArgs e)
@@ -189,7 +204,7 @@ namespace X2
 
         private void debugButton_Click(object sender, EventArgs e)
         {
-            
+            //...
         }
     }
 }
