@@ -16,7 +16,11 @@ namespace X2
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
+
+
             Application.Run(new Form1());
+
+            //zrobić alternatywę dla Form1, klasę nadrzędną dla launchera i z niej spróbować działać
         }
     }
 }

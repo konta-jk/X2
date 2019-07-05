@@ -102,6 +102,7 @@
     <Compile Include="DeepClone.cs" />
     <Compile Include="Operations.cs" />
     <Compile Include="QATestStuff.cs" />
+    <Compile Include="Validator.cs" />
     <Compile Include="XlsxReader.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>

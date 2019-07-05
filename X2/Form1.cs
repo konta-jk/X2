@@ -218,6 +218,26 @@ namespace X2
         {
             //
         }
+
+        private void button3_Click_1(object sender, EventArgs e)
+        {
+            Validator V = new Validator();
+            DataTable t = new DataTable();
+            t.Columns.Add("d");
+            t.Columns.Add("a");
+            t.Columns.Add("t");
+            t.Columns.Add("x");
+            DataRow r = t.NewRow();            
+            r[0] = "klik";
+            r[1] = "Click";
+            r[2] = "";
+            r[3] = "xs";
+            t.Rows.Add(t);
+
+            Console.WriteLine("..." + t.Rows.Count + ", " + r[0].ToString() + r[1].ToString() + r[2].ToString() + r[3].ToString());
+
+            Console.WriteLine(V.ValidateRow(r));
+        }
     }
 }
 
