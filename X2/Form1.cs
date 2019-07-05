@@ -13,7 +13,7 @@ using OpenQA.Selenium.Interactions;
 
 namespace X2
 {
-    public partial class Form1 : Form
+    public partial class Form1 : Form, IQATestLaunchPoint
     {
         public QATestSetup testSetup = new QATestSetup();
 
@@ -22,27 +22,32 @@ namespace X2
             InitializeComponent();
             numericUpDown1.Value = testSetup.minRow;
             numericUpDown2.Value = testSetup.maxRow;
-            checkBox1.Checked = testSetup.killDriver;            
+            checkBox1.Checked = testSetup.killDriver;
         }
 
-        private void button4_Click(object sender, EventArgs e)
+        public void DoInvoke(Delegate method)
         {
-            new QATestLauncher(this).Run();
+            this.Invoke(method);
         }
 
-        private void button1_Click(object sender, EventArgs e)
+        public DataTable GetTestPlanAsDataTable()
         {
-            openFileDialog1.ShowDialog();            
+            //todo
+            return new DataTable();
         }
 
-        private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        public IQATestLaunchPoint GetLaunchPoint()
         {
-            //Globals.fileName = openFileDialog1.FileName; //
-            testSetup.fileName = openFileDialog1.FileName; //nowe
-            textBox1.Text = openFileDialog1.FileName;            
+            return this;
         }
 
-        //wystawione dla QATestLauncher, który odpala to przez delegata
+        public QATestSetup GetTestSetup()
+        {
+            return testSetup;
+        }
+
+        //wystawione dla QATestLauncher, żeby mógł zrobić z tego delegata
+        //---może tutaj da się przenieść delegata
         public void UpdateResult()
         {
             string output = testSetup.testResult.ToCsvString();
@@ -72,9 +77,25 @@ namespace X2
             textBox2.Text = testSetup.testResult.ToCsvString();
         }
 
-        private void SaveToFile(string fileName)
-        {
 
+
+
+
+        private void button4_Click(object sender, EventArgs e)
+        {
+            new QATestLauncher(this).Run();
+        }
+
+        private void button1_Click(object sender, EventArgs e)
+        {
+            openFileDialog1.ShowDialog();            
+        }
+
+        private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
+        {
+            //Globals.fileName = openFileDialog1.FileName; //
+            testSetup.fileName = openFileDialog1.FileName; //nowe
+            textBox1.Text = openFileDialog1.FileName;            
         }
 
         private void textBox1_TextChanged(object sender, EventArgs e)

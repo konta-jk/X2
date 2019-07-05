@@ -95,6 +95,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IQATestLaunchPoint.cs" />
     <Compile Include="OpActions.cs" />
     <Compile Include="CsvReader.cs" />
     <Compile Include="QATestLauncher.cs" />

@@ -15,42 +15,45 @@ using System.Threading;
 using System.ComponentModel;
 using System.Text.RegularExpressions;
 using System.Data;
+using System.Reflection;
 
 namespace X2
 {
     class QATestLauncher
     {
-        Form1 form;
+        IQATestLaunchPoint launchPoint;
+        QATestSetup testSetup;
         public QATest qATest;
         Structs.TestPlan testPlan;
 
-        public QATestLauncher(Form1 form1)
+        public QATestLauncher(IQATestLaunchPoint launchPoint1)
         {
-            var form = form1;
+            launchPoint = launchPoint1;
+            testSetup = launchPoint.GetTestSetup();
 
-            string extension = Regex.Match(form.testSetup.fileName, "\\.[0-9a-z]+$").Value;
+            string extension = Regex.Match(testSetup.fileName, "\\.[0-9a-z]+$").Value;
             //Structs.TestPlan testPlan;
             DataTable dataTable;
 
             switch (extension)
             {
                 case ".xlsx":
-                    dataTable = XlsxReader.ReadExcellSheet(form.testSetup);                    
+                    dataTable = XlsxReader.ReadExcellSheet(testSetup);                    
                     break;
 
                 case ".csv":
-                    dataTable = CsvReader.ReadCsv(form.testSetup);
+                    dataTable = CsvReader.ReadCsv(testSetup);
                     break;
 
                 default:
-                    dataTable = CsvReader.ReadCsv(form.testSetup);
+                    dataTable = CsvReader.ReadCsv(testSetup);
                     break;
             }
 
             if (TestPlanFromDataTable.IsValid(dataTable))
             {
                 testPlan = TestPlanFromDataTable.GetTestPlan(dataTable);
-                qATest = new QATest(testPlan, form1.testSetup);
+                qATest = new QATest(testPlan, testSetup);
                 qATest.RunFinishedEvent += OnRunFinished;
                 qATest.StepFinishedEvent += OnStepFinished;
             }            
@@ -60,9 +63,9 @@ namespace X2
         {
             if (testPlan.testSteps != null)
             {
-                form.testSetup.seleniumThread = new Thread(ActualRun);
-                form.testSetup.seleniumThread.IsBackground = true;
-                form.testSetup.seleniumThread.Start();
+                testSetup.seleniumThread = new Thread(ActualRun);
+                testSetup.seleniumThread.IsBackground = true;
+                testSetup.seleniumThread.Start();
             }            
         }
         
@@ -73,24 +76,25 @@ namespace X2
         void OnRunFinished(object sender, EventArgs e)
         {
             //Console.WriteLine("QATestLauncher: RunFinishedEvent caught");                        
-            form.Invoke(new UpdateResultDelegate(form.UpdateResult));
+            launchPoint.DoInvoke(new UpdateResultDelegate(launchPoint.UpdateResult)); //działające
+            
         }
 
         void OnStepFinished(object sender, EventArgs e)
         {
             //Console.WriteLine("QATestLauncher: StepFinishedEvent caught");
-            form.Invoke(new UpdateProgressDelegate(form.UpdateProgress));
+            launchPoint.DoInvoke(new UpdateProgressDelegate(launchPoint.UpdateProgress));
         }
 
         void ActualRun()
         {
-            form.testSetup.Init();            
+            testSetup.Init();            
             qATest.Run(); 
 
-            if (form.testSetup.killDriver)
+            if (testSetup.killDriver)
             {
                 Thread.Sleep(TimeSpan.FromMilliseconds(Settings.killDriverDelay)); //aby uzytkownik mógł sie przyjrzeć zakończeniu przed zamknięciem przeglądarki; do settingsów
-                form.testSetup.TearDownTest();
+                testSetup.TearDownTest();
             }
         }       
     }
