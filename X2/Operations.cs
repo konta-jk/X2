@@ -52,6 +52,7 @@ namespace X2
                 opActions.Sleep(Settings.sleepAfterOperation);
                 catchCount = 0;
             }
+            //operacje potrzebne dla wszystkich
             catch (NoAlertPresentException)
             {
                 catchCount++;
@@ -91,12 +92,16 @@ namespace X2
                 opActions.Sleep(Settings.sleepAfterElementNotInteractible);
                 if (catchCount < catchLimit)
                 {
+                    opActions.TryHelpNonInteractible(testStep1, catchCount); //to jest fajne
+
                     result = Operation(testStep1);
                 }
                 else
                 {
                     result = "Catch limit exceeded. \"ElementNotInteractableException\" in step " + testStep1.stepDescription + ".";
                 }
+
+                
             }
             //niby redundantne z implicit wait, ale w praktyce pomaga
             catch (NoSuchElementException e) 
@@ -112,7 +117,7 @@ namespace X2
                 }
                 else
                 {
-                    result = "Catch limit exceeded. \"NoSuchElementException\" in test step " + testStep1.stepDescription + ". Exception: \r\n" + e;
+                    result = "Catch limit exceeded. \"NoSuchElementException\" in test step " + testStep1.stepDescription + ". Is test scenario up-to-date? Exception: \r\n" + e;
                 }                               
             }            
             catch (Exception e)

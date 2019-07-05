@@ -32,7 +32,7 @@ namespace X2
         public void OnTestFinish()
         {
             //UpdateResult musi być wywołane za pomocą delegata, inaczej form drze mordę, że inny wątek się dobiera do jego kontrolki
-            this.Invoke(new UpdateResultDelegate(UpdateResult));
+            this.BeginInvoke(new UpdateResultDelegate(UpdateResult));
 
             if (testStuff.killDriver)
             {
@@ -46,7 +46,8 @@ namespace X2
         public void OnTestProgress()
         {
             //UpdateProgress musi być wywołane za pomocą delegata, inaczej form drze mordę, że inny wątek się dobiera do jego kontrolki
-            this.Invoke(new UpdateProgressDelegate(UpdateProgress));
+            this.BeginInvoke(new UpdateProgressDelegate(UpdateProgress));
+            
         }
 
         public DataTable GetTestPlanAsDataTable()
@@ -105,6 +106,8 @@ namespace X2
             string path = testStuff.GetPathMakeFolder(@"\Logs\");
             path = path + @"\" + testStuff.testRunId + ".txt";
             System.IO.File.WriteAllText(path, output);
+
+            button2.Enabled = false;
         }
 
         private void UpdateProgress()
@@ -135,6 +138,8 @@ namespace X2
             testStuff.CreateDriver(); //inna klasa można chcieć zrobić testStuff.driver = ...
             testStuff.Init();
             new QATestLauncher(this).Run();
+
+            button2.Enabled = true;
         }
 
         //przycisk "Testuj"
@@ -185,11 +190,6 @@ namespace X2
             */
         }
 
-        private void checkBox1_CheckedChanged(object sender, EventArgs e)
-        {
-            testStuff.killDriver = checkBox1.Checked;
-        }
-
         private void textBox2_TextChanged(object sender, EventArgs e)
         {
             BringToFront();
@@ -205,6 +205,18 @@ namespace X2
         private void debugButton_Click(object sender, EventArgs e)
         {
             //...
+        }
+
+        private void button2_Click(object sender, EventArgs e)
+        {
+            //..
+            UpdateResult();
+            testStuff.TearDownTest();
+        }
+
+        private void button3_Click(object sender, EventArgs e)
+        {
+            //
         }
     }
 }

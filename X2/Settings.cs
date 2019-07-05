@@ -32,6 +32,8 @@ namespace X2
             public static readonly int opActionScrollSleep = 1000;
             public static readonly int opActionRefreshUntilSleep = 4000;
             public static readonly int opActionRefreshUntilTimeout = 180000; //ms
+            public static readonly int elementFinderTimeout = 12000; //ms
+
         }
 
         public static readonly string message1 = "Kiedy rozpocznie się test, Selenium otworzy nowe okno przeglądarki Chrome. Podnieś wtedy ręce do góry."

@@ -29,7 +29,8 @@ namespace X2
 
         public void OpActionSendKeys(Structs.TestStep testStep1)
         {
-            IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
+            //IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
+            IWebElement element = ElementFinder(testStep1);
 
             ScrollAndMoveTo(element, testStuff.driver);
 
@@ -50,7 +51,6 @@ namespace X2
         public string OpActionClick(Structs.TestStep testStep1)
         {
             //IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
-
             IWebElement element = ElementFinder(testStep1);
 
             ScrollAndMoveTo(element, testStuff.driver);
@@ -78,13 +78,15 @@ namespace X2
 
         public void OpActionMoveToElement(Structs.TestStep testStep1)
         {
-            IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
+            //IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
+            IWebElement element = ElementFinder(testStep1);
             ScrollAndMoveTo(element, testStuff.driver);
         }
 
         public void OpActionSetVariable(Structs.TestStep testStep1)
         {
-            IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
+            //IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
+            IWebElement element = ElementFinder(testStep1);
 
             Structs.Variable v;
 
@@ -110,7 +112,8 @@ namespace X2
 
         public void OpActionSendVariable(Structs.TestStep testStep1)
         {
-            IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
+            //IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
+            IWebElement element = ElementFinder(testStep1);
             ScrollAndMoveTo(element, testStuff.driver);
             string value = testStuff.variables.Where(t => t.name == testStep1.operationText).SingleOrDefault().value;
             element.SendKeys(value + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą
@@ -164,7 +167,8 @@ namespace X2
 
         public void OpActionSelectOption(Structs.TestStep testStep1)
         {
-            IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
+            //IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
+            IWebElement element = ElementFinder(testStep1);
 
             ScrollAndMoveTo(element, testStuff.driver);
 
@@ -177,7 +181,8 @@ namespace X2
 
         public string OpActionSendEnumKey(Structs.TestStep testStep1)
         {
-            IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.operationText));
+            //IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.operationText));
+            IWebElement element = ElementFinder(testStep1);
             ScrollAndMoveTo(element, testStuff.driver);
 
             switch (testStep1.operationText)
@@ -387,7 +392,7 @@ namespace X2
 
             try
             {
-                parent = testStuff.driver.FindElement(By.XPath(xpath)); //nie zakładać, że istnieje
+                parent = testStuff.driver.FindElement(By.XPath(xpath)); //nie zakładać, że istnieje                
             }
             catch (NoSuchElementException)
             {
@@ -519,7 +524,7 @@ namespace X2
         private IWebElement ElementFinder(Structs.TestStep testStep1)
         {
             DateTime start = DateTime.Now;
-            int timeout = 60000; //ms, do settings
+            int timeout = Settings.ActionsSettings.elementFinderTimeout; //ms, do settings
             TimeSpan whileDuration = TimeSpan.FromMilliseconds(0);
 
             List<IWebElement> elements = new List<IWebElement>();
@@ -550,6 +555,71 @@ namespace X2
             return testStuff.driver.FindElement(By.XPath(testStep1.xpath));            
         }
 
+        //działania ostatniej szansy, kiedy test się zatnie na NonInteractibleException
+        public void TryHelpNonInteractible(Structs.TestStep testStep, int catchCount)
+        {
+            if(catchCount > 3) //default 3
+            {
+                //rekurencyjnie szuka interaktywnego (visible, enabled) rodzica i kiedy znajdzie, jedzie do niego
+                MoveToParent();
+            }
+
+            void MoveToParent()
+            {
+                string log = "TryHelpNonInteractible().MoveToParent(): I will try to find an interactible parent.";
+
+                string initialXPath = testStep.xpath;
+
+                string goodXPath = MoveUpAndTry(initialXPath);
+
+                string MoveUpAndTry(string xpath)
+                {
+                    log += "\r\nMoveUpAndTry() called for xpath " + xpath;
+
+                    string parentXPath = xpath.Substring(0, xpath.LastIndexOf('/'));
+
+                    List<IWebElement> parents;
+
+                    if (parentXPath.Count(t => t == '/') > 1)
+                    {
+                        parents = testStuff.driver.FindElements(By.XPath(parentXPath)).ToList();
+                    }
+                    else
+                    {                        
+                        return "not xpath";
+                    }
+
+                    if (parents.Count > 0)
+                    {
+                        if (parents[0].Displayed && parents[0].Enabled)
+                        {
+                            return parentXPath;
+                        }
+                        else
+                        {
+                            return MoveUpAndTry(parentXPath);
+                        }
+                    }
+                    else
+                    {
+                        return "parents count 0";
+                    }
+                }
+
+                if (goodXPath.Count(t => t == '/') > 1)
+                {
+                    log += "\r\nInteractible parent found, calling ScrollAndMoveTo, xpath found: " + goodXPath;
+                    IWebElement parent = testStuff.driver.FindElement(By.XPath(goodXPath));
+                    ScrollAndMoveTo(parent, testStuff.driver);
+                }
+                else
+                {
+                    log += "\r\nSearch for interactible parent failed.";
+                }
+
+                testStuff.Log(log);
+            }
+        }
 
     }
 }

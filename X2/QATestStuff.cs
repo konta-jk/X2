@@ -103,11 +103,6 @@ namespace X2
 
         public void TearDownTest()
         {
-            if (seleniumThread != null)
-            {
-                seleniumThread.Interrupt();
-            }
-
             if (driver != null)
             {
                 try
@@ -117,8 +112,15 @@ namespace X2
                 }
                 catch (Exception e)
                 {
-                    MessageBox.Show("Failed to kill Selenium driver. Please close it manually. Exception:\r\n" + e.ToString());
-                }                
+                    //MessageBox.Show("Failed to kill Selenium driver. Please close it manually. Exception:\r\n" + e.ToString());
+                    //tylko console, bo who cares, skoro driver i tak ginie (to chyba normalne, że czymś rzuca ginac i nie należy tego łapać)
+                    Console.WriteLine("TearDownTest(): possible fail closing Selenium driver. Exception:\r\n" + e.ToString());
+                }
+            }
+
+            if (seleniumThread != null)
+            {
+                seleniumThread.Interrupt();
             }
         }
 
@@ -185,11 +187,15 @@ namespace X2
 
             fileName = DateTime.Now.Hour.ToString() + "_" + DateTime.Now.Minute.ToString() + "_" + DateTime.Now.Second.ToString() + "_" + DateTime.Now.Millisecond.ToString("000") + "_" + fileName;
             fileName = Regex.Replace(fileName, "[^a-zA-Z0-9_.]+", "_", RegexOptions.Compiled);
-            fileName = fileName.Substring(0, Math.Min(260, fileName.Length));
+            fileName = fileName.Substring(0, Math.Min(160, fileName.Length));
 
             string ssFullPath = ssFullFolderPath + @"\" + fileName + ".png";
 
-            screenshot.SaveAsFile(ssFullPath, ScreenshotImageFormat.Png);
+            if(screenshot != null) //może być podczas przerywania testu
+            {
+                screenshot.SaveAsFile(ssFullPath, ScreenshotImageFormat.Png);
+            }
+            
         }
 
         public string GetPathMakeFolder(string relativePath)
