@@ -182,8 +182,7 @@ namespace X2
                     break;
 
                 case "CloseAlert":
-                    opActions.OpActionCloseAlert(testStep1.operationText);
-                    result = "ok";
+                    result = opActions.OpActionCloseAlert(testStep1.operationText);
                     break;
 
                 case "SendEnumKeyToAlert":

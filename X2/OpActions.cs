@@ -119,7 +119,7 @@ namespace X2
             element.SendKeys(value + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą
         }
 
-        public void OpActionCloseAlert(string operationText)
+        public string OpActionCloseAlert(string operationText)
         {
             try
             {
@@ -127,15 +127,18 @@ namespace X2
                 {
                     case "Accept":
                         testStuff.driver.SwitchTo().Alert().Accept();
-                        break;
+                        return "ok"; ;
                     case "Dismiss":
                         testStuff.driver.SwitchTo().Alert().Dismiss();
-                        break;
+                        return "ok";
+                    default:
+                        return "Incorrect text parameter in action CloseAlert";
                 }
             }
             catch (NoAlertPresentException)
             {
                 testStuff.Log("CloseAlert(): exception caught \"NoAlertPresentException\".");
+                return "ok"; //?
             }
         }
 
