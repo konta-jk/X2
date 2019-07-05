@@ -21,16 +21,20 @@ namespace X2
 {
     class QATestLauncher
     {
-        IQATestLaunchPoint launchPoint;
-        QATestSetup testSetup;
+        private IQATestLaunchPoint launchPoint;
+        private readonly DataTable testPlanAsDataTable;
+        private QATestSetup testSetup;
         public QATest qATest;
-        Structs.TestPlan testPlan;
+        private Structs.TestPlan testPlan;
+
 
         public QATestLauncher(IQATestLaunchPoint launchPoint1)
         {
             launchPoint = launchPoint1; //np. Form1
-            testSetup = launchPoint.GetTestSetup();
+            testSetup = launchPoint1.GetTestSetup();
+            testPlanAsDataTable = launchPoint1.GetTestPlanAsDataTable();
 
+            /*
             string extension = Regex.Match(testSetup.fileName, "\\.[0-9a-z]+$").Value;
             //Structs.TestPlan testPlan;
             DataTable dataTable;
@@ -49,10 +53,11 @@ namespace X2
                     dataTable = CsvReader.ReadCsv(testSetup);
                     break;
             }
+            */
 
-            if (TestPlanFromDataTable.IsValid(dataTable))
+            if (TestPlanFromDataTable.IsValid(testPlanAsDataTable))
             {
-                testPlan = TestPlanFromDataTable.GetTestPlan(dataTable);
+                testPlan = TestPlanFromDataTable.GetTestPlan(testPlanAsDataTable);
                 qATest = new QATest(testPlan, testSetup);
                 qATest.RunFinishedEvent += OnRunFinished;
                 qATest.StepFinishedEvent += OnStepFinished;
@@ -63,7 +68,8 @@ namespace X2
         {
             if (testPlan.testSteps != null)
             {
-                testSetup.seleniumThread = new Thread(ActualRun);
+                //testSetup.seleniumThread = new Thread(ActualRun);
+                testSetup.seleniumThread = new Thread(qATest.Run);
                 testSetup.seleniumThread.IsBackground = true;
                 testSetup.seleniumThread.Start();
             }            
@@ -85,19 +91,7 @@ namespace X2
             //Console.WriteLine("QATestLauncher: StepFinishedEvent caught");
             //launchPoint.DoInvoke(new UpdateProgressDelegate(launchPoint.UpdateProgress));
             launchPoint.OnTestProgress();
-        }
-
-        void ActualRun()
-        {
-            testSetup.Init();            
-            qATest.Run(); 
-
-            if (testSetup.killDriver)
-            {
-                Thread.Sleep(TimeSpan.FromMilliseconds(Settings.killDriverDelay)); //aby uzytkownik mógł sie przyjrzeć zakończeniu przed zamknięciem przeglądarki; do settingsów
-                testSetup.TearDownTest();
-            }
-        }       
+        }           
     }
 }
 

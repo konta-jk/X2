@@ -9,6 +9,8 @@ using System.Windows.Forms;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Interactions;
+using System.Text.RegularExpressions;
+using System.Threading;
 
 
 namespace X2
@@ -31,7 +33,13 @@ namespace X2
         public void OnTestFinish()
         {
             //UpdateResult musi być wywołane za pomocą delegata, inaczej form drze mordę, że inny wątek się dobiera do jego kontrolki
-            this.Invoke(new UpdateResultDelegate(UpdateResult)); 
+            this.Invoke(new UpdateResultDelegate(UpdateResult));
+
+            if (testSetup.killDriver)
+            {
+                Thread.Sleep(TimeSpan.FromMilliseconds(Settings.killDriverDelay)); //aby uzytkownik mógł sie przyjrzeć zakończeniu przed zamknięciem przeglądarki; do settingsów
+                testSetup.TearDownTest();
+            }
         }
 
         public void OnTestProgress()
@@ -40,11 +48,29 @@ namespace X2
             this.Invoke(new UpdateProgressDelegate(UpdateProgress));
         }
 
-
         public DataTable GetTestPlanAsDataTable()
         {
-            //todo
-            return new DataTable();
+            string fileName = textBox1.Text;
+
+            string extension = Regex.Match(fileName, "\\.[0-9a-z]+$").Value;
+            DataTable dataTable;
+
+            switch (extension)
+            {
+                case ".xlsx":
+                    dataTable = XlsxReader.ReadExcellSheet(testSetup, fileName);
+                    break;
+
+                case ".csv":
+                    dataTable = CsvReader.ReadCsv(testSetup, fileName);
+                    break;
+
+                default:
+                    dataTable = CsvReader.ReadCsv(testSetup, fileName);
+                    break;
+            }
+
+            return dataTable;
         }
 
         public IQATestLaunchPoint GetLaunchPoint()
@@ -59,7 +85,7 @@ namespace X2
 
         //wystawione dla QATestLauncher, żeby mógł zrobić z tego delegata
         //---może tutaj da się przenieść delegata
-        public void UpdateResult()
+        private void UpdateResult()
         {
             string output = testSetup.testResult.ToCsvString();
 
@@ -83,18 +109,22 @@ namespace X2
         }
 
         //wystawione dla QATestLauncher, który odpala to przez delegata
-        public void UpdateProgress()
+        private void UpdateProgress()
         {
             textBox2.Text = testSetup.testResult.ToCsvString();
         }
 
+        private void StartTest()
+        {
+            testSetup.Init();
+            new QATestLauncher(this).Run();
+        }
 
 
-
-
+        //przycisk "Testuj"
         private void button4_Click(object sender, EventArgs e)
         {
-            new QATestLauncher(this).Run();
+            StartTest();            
         }
 
         private void button1_Click(object sender, EventArgs e)
@@ -105,7 +135,7 @@ namespace X2
         private void openFileDialog1_FileOk(object sender, System.ComponentModel.CancelEventArgs e)
         {
             //Globals.fileName = openFileDialog1.FileName; //
-            testSetup.fileName = openFileDialog1.FileName; //nowe
+            //testSetup.fileName = openFileDialog1.FileName; //nowe
             textBox1.Text = openFileDialog1.FileName;            
         }
 

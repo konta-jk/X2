@@ -28,7 +28,7 @@ namespace X2
         public List<Structs.Variable> variables;
 
         //brane z interfejsu + wartości domyslne ładowane do interfejsu
-        public string fileName;
+        //public string fileName; //specyficzne dla launch pointa typu form, a tu powinny być ogólne rzeczy
         public int minRow = 2;
         public int maxRow = 5000;
         public bool killDriver = true;

@@ -12,10 +12,10 @@ namespace X2
 {
     class CsvReader
     {
-        public static DataTable ReadCsv(QATestSetup testSetup)
+        public static DataTable ReadCsv(QATestSetup testSetup, string fileName)
         {
             DataTable dataTable = new DataTable();
-            StreamReader streamReader = new StreamReader(testSetup.fileName);
+            StreamReader streamReader = new StreamReader(fileName);
             int lineReads = 0;
             string[] columns = streamReader.ReadLine().Split(',');
             lineReads++;
