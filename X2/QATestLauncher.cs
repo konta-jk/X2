@@ -28,7 +28,7 @@ namespace X2
 
         public QATestLauncher(IQATestLaunchPoint launchPoint1)
         {
-            launchPoint = launchPoint1;
+            launchPoint = launchPoint1; //np. Form1
             testSetup = launchPoint.GetTestSetup();
 
             string extension = Regex.Match(testSetup.fileName, "\\.[0-9a-z]+$").Value;
@@ -69,21 +69,22 @@ namespace X2
             }            
         }
         
-        private delegate void UpdateResultDelegate();
-        private delegate void UpdateProgressDelegate();
+        //private delegate void UpdateResultDelegate();
+        //private delegate void UpdateProgressDelegate();
         private delegate void BringToFrontDelegate();
 
         void OnRunFinished(object sender, EventArgs e)
         {
             //Console.WriteLine("QATestLauncher: RunFinishedEvent caught");                        
-            launchPoint.DoInvoke(new UpdateResultDelegate(launchPoint.UpdateResult)); //działające
-            
+            //launchPoint.DoInvoke(new UpdateResultDelegate(launchPoint.UpdateResult)); //działające
+            launchPoint.OnTestFinish();
         }
 
         void OnStepFinished(object sender, EventArgs e)
         {
             //Console.WriteLine("QATestLauncher: StepFinishedEvent caught");
-            launchPoint.DoInvoke(new UpdateProgressDelegate(launchPoint.UpdateProgress));
+            //launchPoint.DoInvoke(new UpdateProgressDelegate(launchPoint.UpdateProgress));
+            launchPoint.OnTestProgress();
         }
 
         void ActualRun()

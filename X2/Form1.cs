@@ -25,10 +25,21 @@ namespace X2
             checkBox1.Checked = testSetup.killDriver;
         }
 
-        public void DoInvoke(Delegate method)
+        private delegate void UpdateResultDelegate();
+        private delegate void UpdateProgressDelegate();
+        
+        public void OnTestFinish()
         {
-            this.Invoke(method);
+            //UpdateResult musi być wywołane za pomocą delegata, inaczej form drze mordę, że inny wątek się dobiera do jego kontrolki
+            this.Invoke(new UpdateResultDelegate(UpdateResult)); 
         }
+
+        public void OnTestProgress()
+        {
+            //UpdateProgress musi być wywołane za pomocą delegata, inaczej form drze mordę, że inny wątek się dobiera do jego kontrolki
+            this.Invoke(new UpdateProgressDelegate(UpdateProgress));
+        }
+
 
         public DataTable GetTestPlanAsDataTable()
         {
