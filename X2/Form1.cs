@@ -40,7 +40,7 @@ namespace X2
                 testStuff.TearDownTest();
             }
 
-            testStuff = null;
+            //testStuff = null; //źródło wielu błędów
         }
 
         public void OnTestProgress()

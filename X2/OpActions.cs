@@ -22,6 +22,8 @@ namespace X2
     {
         QATestStuff testStuff;
 
+        
+
         public OpActions(QATestStuff testStuff1)
         {
             testStuff = testStuff1;
@@ -53,7 +55,7 @@ namespace X2
             //IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
             IWebElement element = ElementFinder(testStep1);
 
-            ScrollAndMoveTo(element, testStuff.driver);
+            ScrollAndMoveTo(element, testStuff.driver); //zostanie pominięte gdy skipScrollAndMove = true
             element.Click();
 
             //sprawdzenie wystąpienia błędu zdefiniowanego przez uzytkownika (jako fragment html)            
@@ -175,9 +177,8 @@ namespace X2
 
             ScrollAndMoveTo(element, testStuff.driver);
 
-            SelectElement option = new SelectElement(element);
-            int i;
-            Int32.TryParse(testStep1.operationText, out i);
+            SelectElement option = new SelectElement(element);            
+            Int32.TryParse(testStep1.operationText, out int i);
             option.SelectByIndex(i);
             element.Click();
         }
@@ -330,7 +331,7 @@ namespace X2
                     }
                     else
                     {
-                        return "Error: can't recognize scroll destination \"" + destination + "\"; use \"Top\" or \"Bottom\"";
+                        return "Error: can't recognize scroll destination \"" + destination + "\"; use \"Top\" or \"Bottom\" or {dx;dy}";
                     }
             }            
 
@@ -503,11 +504,16 @@ namespace X2
             return text;
         }
 
+
+        
+
         private void ScrollAndMoveTo(IWebElement element, IWebDriver driver)
         {
             Actions action = new Actions(driver);
             IJavaScriptExecutor js = (IJavaScriptExecutor)driver;
-            js.ExecuteScript("arguments[0].scrollIntoView({behavior: \"smooth\", block: \"center\"})", element);
+            //js.ExecuteScript("arguments[0].scrollIntoView({behavior: \"smooth\", block: \"center\"})", element);
+            //smooth okazał się źródłem problemów, np. move to parent czasami znajdowało odkrywało ukryty element i natychmiast go gubiło
+            js.ExecuteScript("arguments[0].scrollIntoView({block: \"center\"})", element);
             action.MoveToElement(element).Perform();
         }
 
@@ -558,13 +564,49 @@ namespace X2
             return testStuff.driver.FindElement(By.XPath(testStep1.xpath));            
         }
 
+        private void HighlightElement(IWebElement element)
+        {
+            IJavaScriptExecutor js = (IJavaScriptExecutor)testStuff.driver;
+            js.ExecuteScript("arguments[0].style.border='6px solid orange'", element);
+            Sleep(1000);
+            IJavaScriptExecutor js1 = (IJavaScriptExecutor)testStuff.driver;
+            js1.ExecuteScript("arguments[0].style.border=''", element);
+        }
+
+        //działania ostatniej szansy
+        public void TryHelpNoSuchElement(int catchCount)
+        {
+            int deltaH = (int)(testStuff.initialWindowSize.Height * 0.8f);
+
+            switch (catchCount)
+            {
+                case 2:
+                    OpActionScroll(new Structs.TestStep("", "", "{0;" + deltaH.ToString() + "}", ""));
+                    Console.WriteLine("Scroll down " + deltaH.ToString() + " px");
+                    break;
+                case 3:
+                    OpActionScroll(new Structs.TestStep("", "", "{0;" + (-2 * deltaH).ToString() + "}", ""));
+                    Console.WriteLine("Scroll up " + (-2 * deltaH).ToString() + " px");
+                    break;
+                case 4:
+                    OpActionScroll(new Structs.TestStep("", "", "{0;" + deltaH.ToString() + "}", ""));
+                    Console.WriteLine("Scroll down " + deltaH.ToString() + " px");
+                    break;
+                case 5:
+                    //refresh??
+                    break;
+            }
+        }
+
         //działania ostatniej szansy, kiedy test się zatnie na NonInteractibleException
         public void TryHelpNonInteractible(Structs.TestStep testStep, int catchCount)
-        {
-            if(catchCount > 3) //default 3
+        {            
+            switch (catchCount) 
             {
-                //rekurencyjnie szuka interaktywnego (visible, enabled) rodzica i kiedy znajdzie, jedzie do niego
-                MoveToParent();
+                case 3:
+                    //rekurencyjnie szuka interaktywnego (visible, enabled) rodzica i kiedy znajdzie, jedzie do niego
+                    MoveToParent();
+                    break;
             }
 
             void MoveToParent()
@@ -614,6 +656,8 @@ namespace X2
                     log += "\r\nInteractible parent found, calling ScrollAndMoveTo, xpath found: " + goodXPath;
                     IWebElement parent = testStuff.driver.FindElement(By.XPath(goodXPath));
                     ScrollAndMoveTo(parent, testStuff.driver);
+
+                    //HighlightElement(parent);
                 }
                 else
                 {

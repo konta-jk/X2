@@ -52,7 +52,7 @@ namespace X2
                 opActions.Sleep(Settings.sleepAfterOperation);
                 catchCount = 0;
             }
-            //operacje potrzebne dla wszystkich
+            
             catch (NoAlertPresentException)
             {
                 catchCount++;
@@ -92,7 +92,10 @@ namespace X2
                 opActions.Sleep(Settings.sleepAfterElementNotInteractible);
                 if (catchCount < catchLimit)
                 {
-                    opActions.TryHelpNonInteractible(testStep1, catchCount); //to jest fajne
+                    if (Settings.allowTryHelps)
+                    {
+                        opActions.TryHelpNonInteractible(testStep1, catchCount); //znajduje interaktywnego rodzica i najeżdża na niego kursorem
+                    }
 
                     result = Operation(testStep1);
                 }
@@ -100,19 +103,21 @@ namespace X2
                 {
                     result = "Catch limit exceeded. \"ElementNotInteractableException\" in step " + testStep1.stepDescription + ".";
                 }
-
-                
             }
             //niby redundantne z implicit wait, ale w praktyce pomaga
             catch (NoSuchElementException e) 
             {                
-                catchCount += 9; //ze względu na implicit wait (jakoś to ogarnąć potem)
-                testStuff.Log("Exception caught \"NoSuchElementException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: sleep, retry.");
-                //bez refresh!
+                catchCount += 1; 
+                testStuff.Log("Exception caught \"NoSuchElementException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: sleep, retry.");                
                 opActions.Sleep(Settings.sleepAfterNoSuchElement); //do tego dochodzi implicit wait, więc łącznie 40,3 s x 10... wtf
                     
-                if (catchCount < catchLimit)
+                if (catchCount < Settings.noSuchElementCatchLimit)
                 {
+                    if(Settings.allowTryHelps)
+                    {
+                        opActions.TryHelpNoSuchElement(catchCount); //scrolluje
+                    }
+
                     result = Operation(testStep1);
                 }
                 else
@@ -122,6 +127,9 @@ namespace X2
             }            
             catch (Exception e)
             {
+                
+
+
                 result = "Error in step named: \"" + testStep1.stepDescription + "\". Operation: \"" + testStep1.operationName + "\". Exception: \r\n"  + e;
             }              
 
