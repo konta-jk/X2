@@ -221,6 +221,10 @@ namespace X2
 
         private void button3_Click_1(object sender, EventArgs e)
         {
+            new SideReader().TestThisShit();
+
+
+            /*
             Validator V = new Validator();
             DataTable t = new DataTable();
             t.Columns.Add("d");
@@ -237,6 +241,7 @@ namespace X2
             Console.WriteLine("..." + t.Rows.Count + ", " + r[0].ToString() + r[1].ToString() + r[2].ToString() + r[3].ToString());
 
             Console.WriteLine(V.ValidateRow(r));
+            */
         }
 
 
