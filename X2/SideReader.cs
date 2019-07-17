@@ -10,11 +10,12 @@ using System.Data;
 
 namespace X2
 {
-    //przenieść z X2/QA Cat do osobnego narzędzia QA Hog; nie ma szans żeby konwersja wystarczyła do stworzenia sensownego scenariusza (oczekiwanie, zapamiętywanie zmiennych)
+    //przenieść z X2/QA Cat do osobnego narzędzia QA Hog; nie ma szans żeby konwersja wystarczyła do stworzenia sensownego scenariusza (oczekiwanie, zapamiętywanie zmiennych itp)
     //dokończyć - ładne wybieranie xpatha, może da się coś pozyskać do kolumny text w test step....
     //może jeszcze dodać funkcję pośredniczącą między tworzeniem a zapisem data table, która przetłumaczy z seleniowego na moje
     //docelowo to osobne narzędzie/projekt/moduł będzie też musiał mieć kontrolki do wyboru pliku wejściowego i wyjściowego
 
+    //klasa odzwierciedlająca jsona
     class SideReader
     {
         [DataContract]
@@ -40,7 +41,7 @@ namespace X2
             }
         }
 
-        public SideContent GetSideFile(string json)
+        public SideContent GetSideContent(string json)
         {
             MemoryStream ms = new MemoryStream(Encoding.Unicode.GetBytes(json));
 
@@ -128,7 +129,7 @@ namespace X2
         public void TestThisShit()
         {
             //SideContent syf = GetSideFile(ReadSideFile(@"C:\Users\jaroslawk\Downloads\SideRipper1.side"));
-            SideContent syf = GetSideFile(ReadSideFile(@"C:\Users\jaroslawk\Downloads\BigBrute666.side"));
+            SideContent syf = GetSideContent(ReadSideFile(@"C:\Users\jaroslawk\Downloads\BigBrute666.side"));
 
 
 

@@ -86,7 +86,7 @@
           <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
         </dsig:Transforms>
         <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-        <dsig:DigestValue>nYgUC5QGEdq3tkUxMc+tfdrCRVWCSn03y5tpF0AeofY=</dsig:DigestValue>
+        <dsig:DigestValue>U+Dkkruk/C/BojBqLZzmI8V0WZWhKmrgr/8n4GN+Alo=</dsig:DigestValue>
       </hash>
     </dependentAssembly>
   </dependency>
@@ -97,15 +97,6 @@
       </dsig:Transforms>
       <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
       <dsig:DigestValue>a2ICi8XcydsCTaAE19nbnb5J0GATVfzcva8/ad8ZXVk=</dsig:DigestValue>
-    </hash>
-  </file>
-  <file name="chicken.ico" size="181546">
-    <hash>
-      <dsig:Transforms>
-        <dsig:Transform Algorithm="urn:schemas-microsoft-com:HashTransforms.Identity" />
-      </dsig:Transforms>
-      <dsig:DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha256" />
-      <dsig:DigestValue>IpQZw/dqilBjeXiWS2SiBh4iRP33TIl8c6fUrPVjKZs=</dsig:DigestValue>
     </hash>
   </file>
   <file name="X2.exe.config" size="189">
