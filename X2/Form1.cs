@@ -238,6 +238,46 @@ namespace X2
 
             Console.WriteLine(V.ValidateRow(r));
         }
+
+
+        //testy - tymczasowe --------------
+        
+        /*
+
+        IWebDriver driver1;
+
+
+        private void button5_Click(object sender, EventArgs e)
+        {
+            
+
+            InterceptMouse.StartHook(this); //na Form1 jako vertical slice; docelowo na innym Form odpalanym z Form1
+        }
+
+        public void OnMouseClickIntercept(int x, int y)
+        {
+            Console.WriteLine(x.ToString() + ", " + y.ToString());
+
+            IJavaScriptExecutor js = (IJavaScriptExecutor)driver1;            
+
+            object obj = js.ExecuteScript("return document.elementFromPoint(" + x.ToString() + ", " + y.ToString() + "); ");
+            IWebElement element = (IWebElement)obj;
+
+            if(element != null)
+            {
+                Console.WriteLine("element fount @ " + x.ToString() + ", " + y.ToString() + " tag: " + element.TagName);
+            }
+            
+            
+        }
+
+        private void button6_Click(object sender, EventArgs e)
+        {
+            driver1 = new ChromeDriver();
+        }
+
+        */
+        
     }
 }
 
