@@ -26,9 +26,9 @@ namespace X2
 
         List<OpActionValidationInfo> opAVals  = new List<OpActionValidationInfo>()
         {
-            { new OpActionValidationInfo("Click", "\b(Err)\b|^$", true) },
-            { new OpActionValidationInfo("ClickJS", "^$", true) },
-            { new OpActionValidationInfo("CloseAlert", "\b(Accept|Dismiss)\b", true) }/*,
+            { new OpActionValidationInfo("click", "\b(Err)\b|^$", true) },
+            { new OpActionValidationInfo("clickJS", "^$", true) },
+            { new OpActionValidationInfo("closeAlert", "\b(Accept|Dismiss)\b", true) }/*,
             { new AValInfo("", "", true) },
             { new AValInfo("", "", true) }
             */

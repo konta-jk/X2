@@ -141,73 +141,74 @@ namespace X2
         {
             string result = "init";
 
+            //klucz operationName wzorowany na słowniku komend Selenium (jak w plikach .side)
             switch (testStep1.operationName)
             {
-                case "SendKeys":
+                case "type": //dawne "SendKeys":
                     opActions.OpActionSendKeys(testStep1);
                     result = "ok";
                     break;
 
-                case "SendEnumKey":                    
+                case "sendKeys": //"SendEnumKey":                    
                     result = opActions.OpActionSendEnumKey(testStep1); ;
                     break;
 
-                case "GoToUrl":
+                case "goToUrl":
                     opActions.OpActionGoToUrl(testStep1);
                     result = "ok";
                     break;
 
-                case "Click":
+                case "click":
                     result = opActions.OpActionClick(testStep1);
                     break;
 
-                case "ClickJS":
+                case "clickJS":
                     result = opActions.OpActionClickJS(testStep1);
                     break;
 
-                case "WaitFor":
+                case "waitFor":
                     result = opActions.OpActionWaitFor(testStep1);
                     break;
 
-                case "Refresh":
+                case "refresh":
                     opActions.OpActionRefresh();
                     result = "ok";
                     break;
 
-                case "MoveToElement":
+                case "mouseOver": //"moveToElement":
                     opActions.OpActionMoveToElement(testStep1);
                     result = "ok";
                     break;
 
-                case "SetVariable":
+                case "setVariable":
                     opActions.OpActionSetVariable(testStep1);
                     result = "ok";
                     break;
 
-                case "SendVariable":
+                case "sendVariable":
                     opActions.OpActionSendVariable(testStep1);
                     result = "ok";
                     break;
 
-                case "CloseAlert":
+                case "closeAlert":
                     result = opActions.OpActionCloseAlert(testStep1.operationText);
                     break;
 
-                case "SendEnumKeyToAlert":
+                case "sendEnumKeyToAlert":
                     result = opActions.OpActionSendEnumKeyToAlert(testStep1.operationText);
                     break;
 
-                case "SelectOption":
+                case "select": //"SelectOption":
                     opActions.OpActionSelectOption(testStep1);
                     result = "ok";
                     break;
 
-                case "RefreshUntil":
+                case "refreshUntil":
                     result = opActions.OpActionRefreshUntil(testStep1);
                     break;
 
                     
-                case "Scroll":
+                case "scroll":
                     result = opActions.OpActionScroll(testStep1);
                     break;
 

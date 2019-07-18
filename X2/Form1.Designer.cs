@@ -58,7 +58,7 @@
             // 
             // openFileDialog1
             // 
-            this.openFileDialog1.Filter = "xlsx files|*.xlsx|csv files|*.csv";
+            this.openFileDialog1.Filter = "XLSX files|*.xlsx|CSV files|*.csv";
             this.openFileDialog1.ValidateNames = false;
             this.openFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.openFileDialog1_FileOk);
             // 
@@ -158,7 +158,7 @@
             this.numericUpDown2.Size = new System.Drawing.Size(50, 20);
             this.numericUpDown2.TabIndex = 11;
             this.numericUpDown2.Value = new decimal(new int[] {
-            1000,
+            5000,
             0,
             0,
             0});
@@ -171,9 +171,9 @@
             this.checkBox1.CheckState = System.Windows.Forms.CheckState.Checked;
             this.checkBox1.Location = new System.Drawing.Point(30, 88);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(203, 17);
+            this.checkBox1.Size = new System.Drawing.Size(140, 17);
             this.checkBox1.TabIndex = 12;
-            this.checkBox1.Text = "zamknij przeglądarkę po zakończeniu";
+            this.checkBox1.Text = "zamknij przeglądarkę po";
             this.checkBox1.UseVisualStyleBackColor = true;
             // 
             // progressBar1
@@ -202,7 +202,7 @@
             this.button3.Name = "button3";
             this.button3.Size = new System.Drawing.Size(63, 23);
             this.button3.TabIndex = 15;
-            this.button3.Text = "DEBUG";
+            this.button3.Text = "Konwerter";
             this.button3.UseVisualStyleBackColor = true;
             this.button3.Click += new System.EventHandler(this.button3_Click_1);
             // 
@@ -228,7 +228,7 @@
             this.MaximizeBox = false;
             this.Name = "Form1";
             this.SizeGripStyle = System.Windows.Forms.SizeGripStyle.Hide;
-            this.Text = "QACat";
+            this.Text = "QA Cat";
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown1)).EndInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDown2)).EndInit();
             this.ResumeLayout(false);

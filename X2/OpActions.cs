@@ -82,6 +82,9 @@ namespace X2
         {
             //IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
             IWebElement element = ElementFinder(testStep1);
+
+            HighlightElement(element); //debug
+
             ScrollAndMoveTo(element, testStuff.driver);
         }
 
@@ -177,9 +180,19 @@ namespace X2
 
             ScrollAndMoveTo(element, testStuff.driver);
 
-            SelectElement option = new SelectElement(element);            
-            Int32.TryParse(testStep1.operationText, out int i);
-            option.SelectByIndex(i);
+            SelectElement option = new SelectElement(element);
+            //int i = -1;
+            
+
+            if (Int32.TryParse(testStep1.operationText, out int i))
+            {
+                option.SelectByIndex(i);
+            }
+            else
+            {
+                option.SelectByText(testStep1.operationText);
+            }
+
             element.Click();
         }
 
@@ -601,7 +614,7 @@ namespace X2
         //działania ostatniej szansy, kiedy test się zatnie na NonInteractibleException
         public void TryHelpNonInteractible(Structs.TestStep testStep, int catchCount)
         {            
-            switch (catchCount) 
+            switch (catchCount) //do zmiany!!! w tym catch mógł się trafić inny błąd
             {
                 case 3:
                     //rekurencyjnie szuka interaktywnego (visible, enabled) rodzica i kiedy znajdzie, jedzie do niego

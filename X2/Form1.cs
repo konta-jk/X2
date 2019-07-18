@@ -11,7 +11,7 @@ using OpenQA.Selenium.Chrome;
 using OpenQA.Selenium.Interactions;
 using System.Text.RegularExpressions;
 using System.Threading;
-
+using System.Drawing;
 
 namespace X2
 {
@@ -130,6 +130,8 @@ namespace X2
                 return;
             }
 
+            
+
             QATestStuff.QATestStuffOptions stuffOptions = new QATestStuff.QATestStuffOptions();
             stuffOptions.killDriver = checkBox1.Checked;
             stuffOptions.minRow = (int)numericUpDown1.Value;
@@ -211,7 +213,12 @@ namespace X2
         {
             //..
             UpdateResult();
-            testStuff.TearDownTest();
+            if (testStuff.killDriver)
+            {
+                Thread.Sleep(TimeSpan.FromMilliseconds(Settings.killDriverDelay)); //aby uzytkownik mógł sie przyjrzeć zakończeniu przed zamknięciem przeglądarki; do settingsów
+                testStuff.TearDownTest();
+            }
+
         }
 
         private void button3_Click(object sender, EventArgs e)
@@ -220,10 +227,11 @@ namespace X2
         }
 
         private void button3_Click_1(object sender, EventArgs e)
-        {
-            new SideReader().TestThisShit();
+        {         
+            Form2SideConverter formSeleniumHog = new Form2SideConverter();
+            formSeleniumHog.ShowDialog(this);
 
-
+            //to był debug button, poniżej testy validatora
             /*
             Validator V = new Validator();
             DataTable t = new DataTable();
@@ -243,46 +251,7 @@ namespace X2
             Console.WriteLine(V.ValidateRow(r));
             */
         }
-
-
-        //testy - tymczasowe --------------
-        
-        /*
-
-        IWebDriver driver1;
-
-
-        private void button5_Click(object sender, EventArgs e)
-        {
-            
-
-            InterceptMouse.StartHook(this); //na Form1 jako vertical slice; docelowo na innym Form odpalanym z Form1
-        }
-
-        public void OnMouseClickIntercept(int x, int y)
-        {
-            Console.WriteLine(x.ToString() + ", " + y.ToString());
-
-            IJavaScriptExecutor js = (IJavaScriptExecutor)driver1;            
-
-            object obj = js.ExecuteScript("return document.elementFromPoint(" + x.ToString() + ", " + y.ToString() + "); ");
-            IWebElement element = (IWebElement)obj;
-
-            if(element != null)
-            {
-                Console.WriteLine("element fount @ " + x.ToString() + ", " + y.ToString() + " tag: " + element.TagName);
-            }
-            
-            
-        }
-
-        private void button6_Click(object sender, EventArgs e)
-        {
-            driver1 = new ChromeDriver();
-        }
-
-        */
-        
+                
     }
 }
 

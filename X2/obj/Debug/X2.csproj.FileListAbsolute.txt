@@ -62,3 +62,4 @@ C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.application
 C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.csproj.CopyComplete
 C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.exe
 C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.pdb
+C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.FormSeleniumHog.resources

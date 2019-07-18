@@ -8,13 +8,10 @@ using System.Runtime.Serialization.Json;
 using System.IO;
 using System.Data;
 
-namespace X2
+//inne namespace, bo X2 (właściwy QA Cat) nigdy nie będzie korzystał bezpośrednio z .side; side przyspiesza stworzenie scenariusza, ale jego nadal tworzy się ręcznie
+//nie ma szans, żeby konwersja wystarczyła do stworzenia sensownego scenariusza (oczekiwanie, zapamiętywanie zmiennych, ogólny śmietnik w side)            
+namespace SideConverter                       
 {
-    //przenieść z X2/QA Cat do osobnego narzędzia QA Hog; nie ma szans żeby konwersja wystarczyła do stworzenia sensownego scenariusza (oczekiwanie, zapamiętywanie zmiennych)
-    //dokończyć - ładne wybieranie xpatha, może da się coś pozyskać do kolumny text w test step....
-    //może jeszcze dodać funkcję pośredniczącą między tworzeniem a zapisem data table, która przetłumaczy z seleniowego na moje
-    //docelowo to osobne narzędzie/projekt/moduł będzie też musiał mieć kontrolki do wyboru pliku wejściowego i wyjściowego
-
     class SideReader
     {
         [DataContract]
@@ -40,7 +37,7 @@ namespace X2
             }
         }
 
-        public SideContent GetSideFile(string json)
+        public SideContent GetSideContent(string json)
         {
             MemoryStream ms = new MemoryStream(Encoding.Unicode.GetBytes(json));
 
@@ -60,7 +57,7 @@ namespace X2
             }
         }
 
-        void DataTableToCsvFile(string fileName, DataTable dataTable)
+        void SaveDataTableToCsvFile(string fileName, DataTable dataTable)
         {
             StringBuilder sb = new StringBuilder();
             List<string> columnNames = dataTable.Columns.Cast<DataColumn>().Select(column => column.ColumnName).ToList();
@@ -80,27 +77,26 @@ namespace X2
         public DataTable SideContentToDataTable(SideContent content)
         {
             DataTable dataTable = new DataTable();
-            for (int i = 0; i < 4; i++)
-            {
-                dataTable.Columns.Add("Column " + i.ToString());
-            }
+            dataTable.Columns.Add("Description");
+            dataTable.Columns.Add("Operation");
+            dataTable.Columns.Add("Text");
+            dataTable.Columns.Add("XPath");
+            
             DataRow row = dataTable.NewRow();
 
-            row[0] = "Load website";
-            row[1] = "GoToUrl";
+            
+            row[0] = "plugin init: load website";
+            row[1] = "goToUrl";
             row[2] = content.url;
             row[3] = "";
-
             dataTable.Rows.Add(row);
-
             row = dataTable.NewRow();
-
-            row[0] = "Reload website";
-            row[1] = "Refresh";
+            row[0] = "plugin init: reload website";
+            row[1] = "refresh";
             row[2] = "";
             row[3] = "";
-
             dataTable.Rows.Add(row);
+            
 
             foreach (SideContent.Test t in content.tests)
             {
@@ -108,34 +104,140 @@ namespace X2
                 {
                     row = dataTable.NewRow();
 
-                    row[0] = "..."; //todo
+                    row[0] = "plugin: " + c.command; //todo
                     row[1] = c.command;
-                    row[2] = ""; //todo
-                    row[3] = ""; //todo
+                    row[2] = c.value ?? "";
+
+                    if(c.targets.Count() > 0)
+                    {                        
+                        row[3] = (c.targets.Where(tr => tr[0].Contains("xpath") && tr[1].Contains("idRelative")).FirstOrDefault() 
+                            ?? c.targets.Where(tr => tr[0].Contains("xpath") && tr[1].Contains("attributes")).FirstOrDefault()
+                            ?? c.targets.Where(tr => tr[0].Contains("xpath") && tr[1].Contains("position")).FirstOrDefault()
+                            ?? c.targets.Where(tr => tr[0].Contains("xpath")).FirstOrDefault()
+                            ?? new string[] { "no xpath found (inner)" })[0] ?? "no xpath found (outer)"; 
+
+                        //dla google / aol chrzani się atributes
+                        //dla tarisa nie ma relative
+                        //1. relative
+                        //2. attributes
+                        //3. position
+                        //4. dowolne
+                    }                    
 
                     dataTable.Rows.Add(row);
                 }
             }
 
+            dataTable = TranslateSideContentDT(dataTable);
+
             return dataTable;
         }
 
-
-
-
-
-        //do wywalenia po testach ----------------------------------------
-        public void TestThisShit()
+        //do uporządkowania!!!
+        //takie operacjie na DataTable robi się beznadziejnie; na początku powinna być konwersja do string[][] i na koniec odwrotna
+        //to samo w validatorze
+        //i właściwie to wszystkie datatable można by wyrugować z projektu
+        private DataTable TranslateSideContentDT(DataTable contentTable)
         {
-            //SideContent syf = GetSideFile(ReadSideFile(@"C:\Users\jaroslawk\Downloads\SideRipper1.side"));
-            SideContent syf = GetSideFile(ReadSideFile(@"C:\Users\jaroslawk\Downloads\BigBrute666.side"));
+            DataTable outputTable = contentTable.Copy();
+
+            List<int> rowsForDeletion = new List<int>();
+
+            //update-y
+            foreach (DataRow row in outputTable.Rows)
+            {
+                if (row[3].ToString().Contains("xpath="))
+                {
+                    row[3] = row[3].ToString().Substring(6);                    
+                }
+
+                if (row[2].ToString().Contains("label="))
+                {
+                    row[2] = row[2].ToString().Substring(6);
+                }
+
+                if (row[1].ToString().Contains("sendKeys") && row[2].ToString().Contains("${KEY_ENTER}"))
+                {
+                    row[2] = "Enter";
+                }
+            }
+
+            //select - komenda zdefiniowana w dwóch wierszach
+            outputTable.AcceptChanges();
+            for (int i = 0; i < outputTable.Rows.Count; i++)
+            {
+                if (outputTable.Rows[i][1].ToString().Contains("select") && (i > 1))
+                {
+                    outputTable.Rows[i][3] = outputTable.Rows[i - 1][3].ToString();
+                    outputTable.Rows[i - 1].Delete();
+                }
+            }
+            outputTable.AcceptChanges();
+
+            //delete-y
+            List<string> unwantedComands = new List<string>() { "setWindowSize", "open", "mouseDown", "mouseUp", "mouseOut", "doubleClick" };
+            string[] lastRow = new string[4] { "", "", "", "" };
+            outputTable.AcceptChanges(); //mogę kasować w enumeracji, bo data table jest transakcyjne
+            foreach (DataRow row in outputTable.Rows)
+            {
+                //nieobsługiwane komendy
+                string command = row[1].ToString();
+                if (unwantedComands.Any(t => t.Contains(command)))
+                {
+                    row.Delete();
+                    continue;
+                }
+
+                {
+                    //kliknięcie nastepujące po, dodane przez plugin, zbędne
+                    if (row[1].ToString().Contains("click") && !lastRow[1].ToString().Contains("click") && row[3].ToString() == lastRow[3].ToString())
+                    {
+                        row.Delete();
+                        continue;
+                    }
+                }
+
+                //duplikaty
+                if ((lastRow[0] == row[0].ToString()) && (lastRow[1] == row[1].ToString()) && (lastRow[2] == row[2].ToString()) && (lastRow[3] == row[3].ToString()))
+                {
+                    row.Delete();
+                }
+                else
+                {
+                    //row.ItemArray.CopyTo(lastRow, 0); //ma być ostatnie w iteracji
+                    lastRow[0] = row[0].ToString();
+                    lastRow[1] = row[1].ToString();
+                    lastRow[2] = row[2].ToString();
+                    lastRow[3] = row[3].ToString();
+
+                }
 
 
+            }
+            outputTable.AcceptChanges();
 
-            Console.WriteLine(syf.name);
-            Console.WriteLine(syf.tests[0].commands[2].targets[0][0]);
+            
+            outputTable.AcceptChanges();
+            foreach (DataRow row in outputTable.Rows)
+            
+            outputTable.AcceptChanges();
 
-            DataTableToCsvFile(@"C:\Users\jaroslawk\Downloads\BigBrute667.csv", SideContentToDataTable(syf));
+            outputTable.AcceptChanges();
+            foreach (DataRow row in outputTable.Rows)
+            {
+
+            }
+            outputTable.AcceptChanges();
+
+
+            return outputTable;
+        }
+        
+        
+        public void ReadSideSaveCsv(string sideFileName, string csvFileName)
+        {
+            SideContent content = GetSideContent(ReadSideFile(sideFileName));
+            SaveDataTableToCsvFile(csvFileName, SideContentToDataTable(content));
         }
 
     }

@@ -31,9 +31,16 @@ namespace X2
             {
                 string[] cells 
                     = Regex.Split(streamReader.ReadLine(), ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
-                if (cells.Count() != 4)
+                if (cells.Count() > 4)
                 {
-                    return null;
+                    //return null; //źródło błędów, xpath z plugina może zawierać przecinki
+                                        
+                    for (int i = 4; i < cells.Count(); i++)
+                    {
+                        cells[3] += cells[i];
+                    }
+
+                    cells = cells.Where((value, index) => index < 4).ToArray();
                 }
                 lineReads++;
                 DataRow row = dataTable.NewRow();
