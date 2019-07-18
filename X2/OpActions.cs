@@ -79,11 +79,10 @@ namespace X2
         }
 
         public void OpActionMoveToElement(Structs.TestStep testStep1)
-        {
-            //IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
+        {            
             IWebElement element = ElementFinder(testStep1);
 
-            HighlightElement(element); //debug
+            HighlightElement(element); //debug, usunąć
 
             ScrollAndMoveTo(element, testStuff.driver);
         }
