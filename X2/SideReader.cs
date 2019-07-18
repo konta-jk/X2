@@ -12,6 +12,7 @@ using System.Data;
 //nie ma szans, żeby konwersja wystarczyła do stworzenia sensownego scenariusza (oczekiwanie, zapamiętywanie zmiennych, ogólny śmietnik w side)            
 namespace SideConverter                       
 {
+
     class SideReader
     {
         [DataContract]
@@ -162,6 +163,7 @@ namespace SideConverter
                 }
             }
 
+
             //select - komenda zdefiniowana w dwóch wierszach
             outputTable.AcceptChanges();
             for (int i = 0; i < outputTable.Rows.Count; i++)
@@ -188,14 +190,14 @@ namespace SideConverter
                     continue;
                 }
 
+                
+                //kliknięcie nastepujące po, dodane przez plugin, zbędne
+                if (row[1].ToString().Contains("click") && !lastRow[1].ToString().Contains("click") && row[3].ToString() == lastRow[3].ToString())
                 {
-                    //kliknięcie nastepujące po, dodane przez plugin, zbędne
-                    if (row[1].ToString().Contains("click") && !lastRow[1].ToString().Contains("click") && row[3].ToString() == lastRow[3].ToString())
-                    {
-                        row.Delete();
-                        continue;
-                    }
+                    row.Delete();
+                    continue;
                 }
+                
 
                 //duplikaty
                 if ((lastRow[0] == row[0].ToString()) && (lastRow[1] == row[1].ToString()) && (lastRow[2] == row[2].ToString()) && (lastRow[3] == row[3].ToString()))
@@ -211,6 +213,7 @@ namespace SideConverter
                     lastRow[3] = row[3].ToString();
 
                 }
+
 
 
             }
