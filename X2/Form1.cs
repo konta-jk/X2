@@ -23,7 +23,8 @@ namespace X2
 
         public Form1()
         {
-            InitializeComponent();            
+            InitializeComponent();
+            Thread.CurrentThread.CurrentUICulture = new System.Globalization.CultureInfo("en-us");
         }
 
         private delegate void UpdateResultDelegate();

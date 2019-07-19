@@ -590,7 +590,7 @@ namespace X2
         {
             int deltaH = (int)(testStuff.initialWindowSize.Height * 0.8f);
 
-            switch (catchCount)
+            switch (catchCount) //!!
             {
                 case 2:
                     OpActionScroll(new Structs.TestStep("", "", "{0;" + deltaH.ToString() + "}", ""));
@@ -613,7 +613,7 @@ namespace X2
         //działania ostatniej szansy, kiedy test się zatnie na NonInteractibleException
         public void TryHelpNonInteractible(Structs.TestStep testStep, int catchCount)
         {            
-            switch (catchCount) //do zmiany!!! w tym catch mógł się trafić inny błąd
+            switch (catchCount) //do zmiany!!! w tym catch mógł się trafić inny błąd //taki switch powinien być w operations?
             {
                 case 3:
                     //rekurencyjnie szuka interaktywnego (visible, enabled) rodzica i kiedy znajdzie, jedzie do niego

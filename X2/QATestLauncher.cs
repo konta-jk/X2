@@ -49,6 +49,7 @@ namespace X2
             {
                 testStuff.seleniumThread = new Thread(qATest.Run);
                 testStuff.seleniumThread.IsBackground = true;
+                testStuff.seleniumThread.CurrentUICulture = new System.Globalization.CultureInfo("en-us");
                 testStuff.seleniumThread.Start();
             }            
         }
