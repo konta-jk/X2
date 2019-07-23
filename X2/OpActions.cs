@@ -123,7 +123,7 @@ namespace X2
             element.SendKeys(value + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą
         }
 
-        public string OpActionCloseAlert(string operationText)
+        public string OpActionCloseAlert(string operationText) //tu chyba nie powinno być try catch i ogólnie w OpActions
         {
             try
             {
