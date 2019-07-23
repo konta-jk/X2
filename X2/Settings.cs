@@ -13,6 +13,10 @@ namespace X2
     //docelowo powinny być ładowane z pliku
     static class Settings
     {
+        public const string applicationMode = "batch"; //słownik wartości: { "batch", "single" }
+
+        public static readonly string connectionString = @"Data Source=taris\endorcopy;User id=sa;Password=sa;";
+
         public static readonly bool allowTryHelps = true;
         public static readonly int sleepAfterOperation = 400; //ms, default: 400
         public static readonly int implicitWait = 15000; //ms, default: 40000

@@ -18,7 +18,21 @@ namespace X2
             Application.SetCompatibleTextRenderingDefault(false);
 
 
-            Application.Run(new Form1());
+            switch (Settings.applicationMode)
+            {
+                case "single":
+                    Application.Run(new Form1());
+                    break;
+                case "batch":
+                    Application.Run(new Form3Tray());
+                    break;
+                default:
+                    Application.Run(new Form1());
+                    break;
+
+            }
+
+            
 
             //zrobić alternatywę dla Form1, klasę nadrzędną dla launchera i z niej spróbować działać
         }
