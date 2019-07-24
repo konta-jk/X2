@@ -13,11 +13,14 @@ namespace X2
 {
     public partial class Form3Tray : Form
     {
+        static TestManager testManager;
+
         public Form3Tray()
         {
             InitializeComponent();
             checkBox1.Checked = ApplicationIsInStartup();
             ToggleToTray(true);
+            testManager = new TestManager();
         }
 
         private void Form3Tray_FormClosing(object sender, FormClosingEventArgs e)
@@ -126,6 +129,9 @@ namespace X2
 
         private void OnTimerTick()
         {
+            testManager.RunFirst();
+
+            /*
             string s = "TODO: database (pooling!); is day and hour within brackets " +
                 DateTime.Now.DayOfWeek.ToString() +
                 " " + DateTime.Now.Hour.ToString() + ":" + DateTime.Now.Minute.ToString() +
@@ -133,28 +139,19 @@ namespace X2
                 "\r\nis test batch planned and not done yet" +
                 "\r\nthen batch.run";
             Console.WriteLine(s);
+            */
         }
         
         //drugi timer do wysłania notyfikacji o rezultatach do uzytkownika
-
-
-
+               
 
         // DEBUG -----------------------------
-
         private void DEBUG_BTN_Click(object sender, EventArgs e)
         {
-            
-
-
-
+            //....
 
 
         }
-
-
-
-
-
+       
     }
 }

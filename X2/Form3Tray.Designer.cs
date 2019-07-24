@@ -57,7 +57,7 @@
             // timer1
             // 
             this.timer1.Enabled = true;
-            this.timer1.Interval = 60000;
+            this.timer1.Interval = 10000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
             // DEBUG_BTN
@@ -79,6 +79,7 @@
             this.Controls.Add(this.checkBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form3Tray";
+            this.ShowInTaskbar = false;
             this.Text = "QA Cat [Test Manager]";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form3Tray_FormClosing);
             this.SizeChanged += new System.EventHandler(this.Form3Tray_SizeChanged);

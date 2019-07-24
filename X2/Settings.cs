@@ -13,7 +13,7 @@ namespace X2
     //docelowo powinny być ładowane z pliku
     static class Settings
     {
-        public const string applicationMode = "single"; //słownik wartości: { "batch", "single" }
+        public const string applicationMode = "batch"; //słownik wartości: { "batch", "single" }
 
         public static readonly string connectionString = @"Data Source=taris\endorcopy;User id=sa;Password=sa;";
 
