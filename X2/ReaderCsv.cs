@@ -10,7 +10,7 @@ using System.Text.RegularExpressions;
 
 namespace X2
 {
-    class CsvReader
+    class ReaderCsv
     {
         public static DataTable ReadCsv(QATestStuff testStuff, string fileName)
         {

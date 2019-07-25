@@ -9,7 +9,7 @@ using System.Windows.Forms;
 
 namespace X2
 {
-    class DataBaseReaderWriter
+    class ReaderWriterDataBase
     {
         SqlConnection connection;
 

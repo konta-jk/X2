@@ -13,7 +13,7 @@ using System.Windows.Forms;
 
 namespace X2
 {
-    static class XlsxReader
+    static class ReaderXlsx
     {
         public static DataTable ReadExcellSheet(QATestStuff testStuff, string fileName)
         {

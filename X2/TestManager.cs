@@ -59,7 +59,7 @@ namespace X2
             string query = @"INSERT INTO dps.dpsdynamic.QA_TEST_RESULT (IdTestPlan, TestResult, DurationSeconds, DateTime, LogPath, ScreenshotsPath) " +
                 @"VALUES (" + currentTestPlan + @", 'FAIL', " + ((int)((DateTime.Now - currentTestStart).TotalSeconds)).ToString() + @", '" + currentTestStart.ToString() + @"', '" + currentTestStuff.logger.GetFolderPath() + @"', '-1')";
 
-            new DataBaseReaderWriter().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable); //docelowo showExcMsg = false 
+            new ReaderWriterDataBase().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable); //docelowo showExcMsg = false 
 
             if (currentTestStuff.killDriver)
             {
@@ -103,7 +103,7 @@ namespace X2
             string query = @"INSERT INTO dps.dpsdynamic.QA_TEST_RESULT (IdTestPlan, TestResult, DurationSeconds, DateTime, LogPath, ScreenshotsPath) " +
                 @"VALUES (" + currentTestPlan + @", '" + successStr + @"', " + ((int)((DateTime.Now - currentTestStart).TotalSeconds)).ToString() + @", '" + currentTestStart.ToString() + @"', '" + currentTestStuff.logger.GetFolderPath() + @"', '-1')";
 
-            new DataBaseReaderWriter().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable); 
+            new ReaderWriterDataBase().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable); 
         }
 
         private void StartTest()
@@ -183,7 +183,7 @@ namespace X2
                 join q2 on q3.IdTestPlan = q2.IdTestPlan
                 order by idtestbatch, orderinbatch";
 
-            string result = new DataBaseReaderWriter().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable); //msg flase
+            string result = new ReaderWriterDataBase().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable); //msg flase
 
             if (result != "ok")
             {
@@ -217,7 +217,7 @@ namespace X2
         {
             batches.Clear();
             string query = "select IdTestBatch from dps.dpsdynamic.QA_TEST_BATCH where IsDaily = 'YES' and IsActive = 'YES'";
-            string result = new DataBaseReaderWriter().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable);
+            string result = new ReaderWriterDataBase().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable);
             if (result == "ok")
             {
                 foreach (DataRow row in dataTable.Rows)
@@ -232,7 +232,7 @@ namespace X2
         {
             testPlans.Clear();
             string query = "select IdTestPlan from dps.dpsdynamic.QA_TEST_PLAN where IdTestBatch = " + batch.ToString();
-            string result = new DataBaseReaderWriter().TryQueryToDataTable(Settings.connectionString, query, true, out DataTable dataTable); //msg false docelowo
+            string result = new ReaderWriterDataBase().TryQueryToDataTable(Settings.connectionString, query, true, out DataTable dataTable); //msg false docelowo
             if (result == "ok")
             {
                 foreach (DataRow row in dataTable.Rows)
@@ -246,7 +246,7 @@ namespace X2
         private DataTable GetTestSteps(int testPlan) 
         {
             string query = "select Description, Command, Text, XPath from dps.dpsdynamic.QA_TEST_STEP where IdTestPlan = '" + testPlan.ToString() + "'";
-            string result = new DataBaseReaderWriter().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable);
+            string result = new ReaderWriterDataBase().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable);
 
             return dataTable;
         }

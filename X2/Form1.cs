@@ -66,15 +66,15 @@ namespace X2
             switch (extension)
             {
                 case ".xlsx":
-                    dataTable = XlsxReader.ReadExcellSheet(testStuff, fileName);
+                    dataTable = ReaderXlsx.ReadExcellSheet(testStuff, fileName);
                     break;
 
                 case ".csv":
-                    dataTable = CsvReader.ReadCsv(testStuff, fileName);
+                    dataTable = ReaderCsv.ReadCsv(testStuff, fileName);
                     break;
 
                 default:
-                    dataTable = CsvReader.ReadCsv(testStuff, fileName);
+                    dataTable = ReaderCsv.ReadCsv(testStuff, fileName);
                     break;
             }
 
@@ -109,11 +109,11 @@ namespace X2
 
             textBox2.Text = output;
 
-            /*
-            string path = testStuff.GetPathMakeFolder(@"\Logs\");
-            path = path + @"\" + testStuff.testRunId + ".txt";
+
+            string path = testStuff.logger.GetFolderPath();
+            path = path + @"\Output.txt";
             System.IO.File.WriteAllText(path, output);
-            */
+            
 
             button2.Enabled = false;
         }

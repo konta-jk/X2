@@ -96,7 +96,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="DataBaseReaderWriter.cs" />
+    <Compile Include="ReaderWriterDataBase.cs" />
     <Compile Include="Form2SideConverter.cs">
       <SubType>Form</SubType>
     </Compile>
@@ -110,17 +110,17 @@
       <DependentUpon>Form3Tray.cs</DependentUpon>
     </Compile>
     <Compile Include="Logger.cs" />
-    <Compile Include="SideReader.cs" />
+    <Compile Include="ReaderSide.cs" />
     <Compile Include="IQATestLaunchPoint.cs" />
     <Compile Include="OpActions.cs" />
-    <Compile Include="CsvReader.cs" />
+    <Compile Include="ReaderCsv.cs" />
     <Compile Include="QATestLauncher.cs" />
     <Compile Include="DeepClone.cs" />
     <Compile Include="Operations.cs" />
     <Compile Include="QATestStuff.cs" />
     <Compile Include="TestManager.cs" />
     <Compile Include="Validator.cs" />
-    <Compile Include="XlsxReader.cs" />
+    <Compile Include="ReaderXlsx.cs" />
     <Compile Include="Form1.cs">
       <SubType>Form</SubType>
     </Compile>
