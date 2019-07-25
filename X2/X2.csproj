@@ -103,11 +103,11 @@
     <Compile Include="Form2SideConverter.Designer.cs">
       <DependentUpon>Form2SideConverter.cs</DependentUpon>
     </Compile>
-    <Compile Include="Form3Tray.cs">
+    <Compile Include="Form3Daemon.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Form3Tray.Designer.cs">
-      <DependentUpon>Form3Tray.cs</DependentUpon>
+    <Compile Include="Form3Daemon.Designer.cs">
+      <DependentUpon>Form3Daemon.cs</DependentUpon>
     </Compile>
     <Compile Include="Logger.cs" />
     <Compile Include="ReaderSide.cs" />
@@ -139,8 +139,8 @@
     <EmbeddedResource Include="Form2SideConverter.resx">
       <DependentUpon>Form2SideConverter.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Form3Tray.resx">
-      <DependentUpon>Form3Tray.cs</DependentUpon>
+    <EmbeddedResource Include="Form3Daemon.resx">
+      <DependentUpon>Form3Daemon.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

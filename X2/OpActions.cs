@@ -123,6 +123,22 @@ namespace X2
             element.SendKeys(value + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą
         }
 
+        //--------------------------------------------------------------------------------------------------------------
+        //todo:
+        //public void OpActionSetBatchVariable(Structs.TestStep testStep1)
+        //------------------------------------ jak zrobić przekazywanie danych od testu do testu w obrębie batcha, aby zrobić given when then???????
+        /*
+         * przez bazę źle - kilka demonów może współdzielić bazę
+         * 3 warstwy między OpActions a TestManagerem (launcher, test, operations)         
+         * 
+         * 
+         * 
+         */
+
+
+
+
+
         public string OpActionCloseAlert(string operationText) //tu chyba nie powinno być try catch i ogólnie w OpActions
         {
             try

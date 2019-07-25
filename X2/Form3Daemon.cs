@@ -11,11 +11,11 @@ using System.Windows.Forms;
 
 namespace X2
 {
-    public partial class Form3Tray : Form
+    public partial class Form3Daemon : Form
     {
         static TestManager testManager;
 
-        public Form3Tray()
+        public Form3Daemon()
         {
             InitializeComponent();
             checkBox1.Checked = ApplicationIsInStartup();

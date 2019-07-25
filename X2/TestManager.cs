@@ -18,7 +18,8 @@ namespace X2
     class TestManager : IQATestLaunchPoint
     {
         private List<int> batches = new List<int>();
-        //private int currentBatch;
+        private int currentBatch;
+        private int lastBatch = -1;
         private List<int> testPlans = new List<int>(); //dla bieżącego batcha
         private int currentTestPlan;
         private QATestStuff currentTestStuff;
@@ -26,6 +27,7 @@ namespace X2
         private string currentLogPath = "";
         private bool testRunning = false;
         private Logger techLogger;
+        private List<Structs.Variable> batchVariables = new List<Structs.Variable>();
 
         public TestManager()
         {
@@ -145,7 +147,7 @@ namespace X2
         }
         
 
-        private int FindFirstTest()
+        private int FindFirstTest(out int batch)
         {
             //znajdź pierwszy test plan z aktywnego batcha, dla którego nie wykonano dzisiaj testu
             //testować to jeszcze długo, pierwszy podejrzany w razie błędów
@@ -179,7 +181,7 @@ namespace X2
                 )
 
                 --select * from q3
-                select top 1 q3.IdTestPlan from q3
+                select top 1 q3.IdTestPlan, q2.IdTestBatch from q3
                 join q2 on q3.IdTestPlan = q2.IdTestPlan
                 order by idtestbatch, orderinbatch";
 
@@ -193,25 +195,32 @@ namespace X2
 
             if ((dataTable.Rows.Count > 0) && (dataTable.Rows[0][0].ToString() != "NO_RESULT_TABLE"))
             {
+                batch = (int)dataTable.Rows[0][1];
                 return (int)dataTable.Rows[0][0];
             }
             else
+            {
+                batch = -1;
                 return -1;
+            }
+                
         }
 
         public void RunFirst() //robi pierwszy z brzegu test jeszcze nie wykonany
         {   
-            if ((FindFirstTest() != -1) && !testRunning)
+            if ((FindFirstTest(out int temp) != -1) && !testRunning)
             {
-                currentTestPlan = FindFirstTest();
+                currentTestPlan = FindFirstTest(out currentBatch);
+
+                if (currentBatch != lastBatch)
+                {
+                    InitBatch();
+                }
+
+                techLogger.Log("TestManager.RunFirst() called, will start test for plan " + currentTestPlan.ToString() + ", batch " + currentBatch.ToString() + ".");
                 StartTest();
             }
         }
-
-
-
-
-
 
         private void GetBatches() 
         {
@@ -251,6 +260,10 @@ namespace X2
             return dataTable;
         }
 
+        private void InitBatch()
+        {
+            batchVariables.Clear();
+        }
 
 
     }

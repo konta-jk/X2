@@ -24,7 +24,7 @@ namespace X2
                     Application.Run(new Form1());
                     break;
                 case "batch":
-                    Application.Run(new Form3Tray());
+                    Application.Run(new Form3Daemon());
                     break;
                 default:
                     Application.Run(new Form1());
