@@ -1,6 +1,6 @@
 ﻿/*
  * Implementuje IQATestLaunchPoint, aby mógł przeprowadzać testy za pomocą QA Test Launchera
- * Ładuje dane testów do pamięci, bo i tak nie zdąży ich zapchać, bo testy robią się powoli i definicje testów na jedną noc powinny się zmieścić w 10 MB
+ * Wybiera pierwszy niezrealizowany test z zadanych do zrobienia i go przeprowadza, o ile nie jest zajęty; wywoływany przez timer
  * 
  */
 
@@ -18,13 +18,19 @@ namespace X2
     class TestManager : IQATestLaunchPoint
     {
         private List<int> batches = new List<int>();
-        private int currentBatch;
+        //private int currentBatch;
         private List<int> testPlans = new List<int>(); //dla bieżącego batcha
         private int currentTestPlan;
         private QATestStuff currentTestStuff;
         private DateTime currentTestStart;
         private string currentLogPath = "";
         private bool testRunning = false;
+        private Logger techLogger;
+
+        public TestManager()
+        {
+            techLogger = new Logger(@"\Daemon\", "Log.txt");
+        }
 
         public IQATestLaunchPoint GetLaunchPoint()
         {
@@ -46,9 +52,26 @@ namespace X2
             Console.WriteLine("TestManager.OnTestProgress()...");
         }
 
+        public void OnTestCancel(string reason)
+        {
+            Console.WriteLine("TestManager.OnTestCancel()... reason: " + reason);
+
+            string query = @"INSERT INTO dps.dpsdynamic.QA_TEST_RESULT (IdTestPlan, TestResult, DurationSeconds, DateTime, LogPath, ScreenshotsPath) " +
+                @"VALUES (" + currentTestPlan + @", 'FAIL', " + ((int)((DateTime.Now - currentTestStart).TotalSeconds)).ToString() + @", '" + currentTestStart.ToString() + @"', '" + currentTestStuff.logger.GetFolderPath() + @"', '-1')";
+
+            new DataBaseReaderWriter().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable); //docelowo showExcMsg = false 
+
+            if (currentTestStuff.killDriver)
+            {
+                currentTestStuff.TearDownTest();
+            }
+
+            testRunning = false;
+        }
+
         public void OnTestFinish()
         {
-            Console.WriteLine("# FINISH TestManager.OnTestFinish()...");
+            Console.WriteLine("TestManager.OnTestFinish()...");
 
             UpdateResult(); //na pałę wywołanie bez delegata //czyli nic nie rozumiem z delegatów, ale to działa; wcześniejsze uzycie delegatów było tylko objeściem ograniczeń control-ki
 
@@ -78,13 +101,9 @@ namespace X2
             SaveLog();
 
             string query = @"INSERT INTO dps.dpsdynamic.QA_TEST_RESULT (IdTestPlan, TestResult, DurationSeconds, DateTime, LogPath, ScreenshotsPath) " +
-                @"VALUES (" + currentTestPlan + @", '" + successStr + @"', " + ((int)((DateTime.Now - currentTestStart).TotalSeconds)).ToString() + @", '" + currentTestStart.ToString() + @"', '" + currentLogPath + @"', '-1')";
+                @"VALUES (" + currentTestPlan + @", '" + successStr + @"', " + ((int)((DateTime.Now - currentTestStart).TotalSeconds)).ToString() + @", '" + currentTestStart.ToString() + @"', '" + currentTestStuff.logger.GetFolderPath() + @"', '-1')";
 
-            new DataBaseReaderWriter().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable); //docelowo showExcMsg = false 
-
-
-            
-
+            new DataBaseReaderWriter().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable); 
         }
 
         private void StartTest()
@@ -104,8 +123,6 @@ namespace X2
         }
 
         
-
-
         private void SaveLog()
         {
             string output = currentTestStuff.testResult.ToCsvString();
@@ -120,25 +137,19 @@ namespace X2
                 output += "\r\nVariables:\r\n" + s;
             }
 
-            output += "\r\nLog:\r\n" + currentTestStuff.log;            
+            output += "\r\nLog:\r\n" + currentTestStuff.logger.GetLogString();
 
-            currentLogPath = currentTestStuff.GetPathMakeFolder(@"\Logs\");
-            currentLogPath = currentLogPath + @"\" + currentTestStuff.testRunId + ".txt";
+            currentLogPath = currentTestStuff.logger.GetFolderPath(); 
+            currentLogPath = currentLogPath + @"\Output.txt";
             System.IO.File.WriteAllText(currentLogPath, output);
         }
-
-
-        //lista id batch testów do zrobienia
-        //dla każdego
-        //zrobić listę id testów do zrobienia
-        //dla każdego
-        //normalnie test jak dotąd
+        
 
         private int FindFirstTest()
         {
-            //znajdź pierwszy test plan z aktywnego batcha, dla którego nie wykonano dzisiaj tylu testów ilu wymaga
-            //SIANO!!! Testować to zapytanie jeszcze długo! Pierwszy podejrzany w razie błędów
-            //do refaktoryzacji żeby używać prostszego sql-a
+            //znajdź pierwszy test plan z aktywnego batcha, dla którego nie wykonano dzisiaj testu
+            //testować to jeszcze długo, pierwszy podejrzany w razie błędów
+            //do refaktoryzacji żeby używać prostszego sql-a (kompatybilne z inną bazą)
             string query =
                 @"with q1 
                 as
@@ -172,7 +183,13 @@ namespace X2
                 join q2 on q3.IdTestPlan = q2.IdTestPlan
                 order by idtestbatch, orderinbatch";
 
-            new DataBaseReaderWriter().TryQueryToDataTable(Settings.connectionString, query, true, out DataTable dataTable); //msg flase
+            string result = new DataBaseReaderWriter().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable); //msg flase
+
+            if (result != "ok")
+            {
+                techLogger.Log("TestManager.FindFirstTest() DB connection error: " + result);
+            }
+
 
             if ((dataTable.Rows.Count > 0) && (dataTable.Rows[0][0].ToString() != "NO_RESULT_TABLE"))
             {

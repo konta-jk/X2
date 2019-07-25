@@ -109,6 +109,7 @@
     <Compile Include="Form3Tray.Designer.cs">
       <DependentUpon>Form3Tray.cs</DependentUpon>
     </Compile>
+    <Compile Include="Logger.cs" />
     <Compile Include="SideReader.cs" />
     <Compile Include="IQATestLaunchPoint.cs" />
     <Compile Include="OpActions.cs" />

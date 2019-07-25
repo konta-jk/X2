@@ -14,8 +14,7 @@ using System.Drawing;
 using System.Drawing.Imaging;
 using System.IO;
 using System.Text.RegularExpressions;
-
-
+using System.Globalization;
 
 namespace X2
 {
@@ -24,11 +23,14 @@ namespace X2
         //globalsy
         public IWebDriver driver;
         public Thread seleniumThread;
-        public string log;
+        //public string log;
+        public Logger logger;
         public List<Structs.Variable> variables;
         public int minRow;
         public int maxRow;
         public bool killDriver;
+
+        
 
 
         //brane z interfejsu + wartości domyslne ładowane do interfejsu
@@ -53,10 +55,11 @@ namespace X2
         public QATestStuff(QATestStuffOptions stuffOptions)
         {
             testResult = new Structs.TestResult();
-            variables = new List<Structs.Variable>();
+            variables = new List<Structs.Variable>();            
             minRow = stuffOptions.minRow;
             maxRow = stuffOptions.maxRow;
             killDriver = stuffOptions.killDriver;
+            
         }
 
         public void CreateDriver() //w przyszłości do argumentów dodać typ przeglądarki
@@ -86,12 +89,14 @@ namespace X2
 
         public void Init()
         {
-          
-
-            log = "";           
+            //log = "";           
             Guid guid = Guid.NewGuid();
-            testRunId = DateTime.Now.Hour.ToString() + "_" + DateTime.Now.Minute.ToString() + "_" + DateTime.Now.Second.ToString() + "_" + guid.ToString().Substring(0, 4).ToUpper();
-            Log("Start run " + testRunId);
+            testRunId = "Test_run_" + DateTime.Now.Hour.ToString() + "_" + DateTime.Now.Minute.ToString() + "_" + DateTime.Now.Second.ToString() + "_" + guid.ToString().Substring(0, 4).ToUpper();
+            logger = new Logger(@"\" + DateTime.Now.Date.ToShortDateString() + @"\" + testRunId, "Log.txt");
+
+            Log("Start " + testRunId);
+
+
             canSaveScreenshots = CanSaveScreenshots();
             if (!canSaveScreenshots)
             {
@@ -126,8 +131,7 @@ namespace X2
 
         public void Log(string text)
         {
-            Console.WriteLine(text);
-            log += text + "\r\n";
+            logger.Log(text);
             if(Settings.logWithScreenshots && canSaveScreenshots)
             {
                 Screenshot(text);
@@ -153,15 +157,6 @@ namespace X2
 
         private void Screenshot(string fileName) //nie działa bez drivera
         {
-            /*
-            int scale = 2; //powinna być potęga 2, inaczej brzydkie screeny
-            Rectangle bounds = Screen.GetBounds(Point.Empty);
-            Bitmap bitmap0 = new Bitmap(bounds.Width, bounds.Height);
-            Graphics graphics = Graphics.FromImage(bitmap0);
-            graphics.CopyFromScreen(Point.Empty, Point.Empty, bounds.Size);
-            Bitmap bitmap = new Bitmap(bitmap0, new Size((int)(bitmap0.Width / scale), (int)(bitmap0.Height / scale)));
-            */
-
             Screenshot screenshot = null;
 
             if (driver != null)
@@ -182,8 +177,10 @@ namespace X2
                 MessageBox.Show("QATestStuff.Screenshot(): Can't take screenshot, driver is null.");
                 return;
             }
+    
 
-            string ssFullFolderPath = GetPathMakeFolder(@"\Screenshots\");            
+            string ssFullFolderPath = logger.GetFolderPath() + @"\Screenshots\";
+            MakeFolder(ssFullFolderPath);
 
             fileName = DateTime.Now.Hour.ToString() + "_" + DateTime.Now.Minute.ToString() + "_" + DateTime.Now.Second.ToString() + "_" + DateTime.Now.Millisecond.ToString("000") + "_" + fileName;
             fileName = Regex.Replace(fileName, "[^a-zA-Z0-9_.]+", "_", RegexOptions.Compiled);
@@ -198,25 +195,17 @@ namespace X2
             
         }
 
-        public string GetPathMakeFolder(string relativePath)
+
+        private void MakeFolder(string absolutePath)
         {
-            string exeFolderPath = System.Reflection.Assembly.GetEntryAssembly().Location.ToString();
-            exeFolderPath = exeFolderPath.Substring(0, exeFolderPath.LastIndexOf('.'));
-            string relativeFolderPath = relativePath + DateTime.Now.Date.ToShortDateString();
-            string fullFolderPath;
-            if ((testRunId != null) && (testRunId != ""))
+            if (!System.IO.Directory.Exists(absolutePath))
             {
-                fullFolderPath = exeFolderPath + relativeFolderPath + @"\" + testRunId; //Path.Combine(exePath, ssRelativePath);
+                System.IO.Directory.CreateDirectory(absolutePath);
             }
-            else
-            {
-                fullFolderPath = exeFolderPath + relativeFolderPath + @"\no testRunId"; //Path.Combine(exePath, ssRelativePath);
-            }
-            if (!System.IO.Directory.Exists(fullFolderPath))
-            {
-                System.IO.Directory.CreateDirectory(fullFolderPath);
-            }
-            return fullFolderPath;
         }
+
+        
+
+
     }
 }

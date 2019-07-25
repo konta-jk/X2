@@ -41,17 +41,27 @@ namespace X2
                 qATest.RunFinishedEvent += OnRunFinished;
                 qATest.StepFinishedEvent += OnStepFinished;
             }            
+            else
+            {
+                testStuff.Log("This source doesn't contain a valid test plan or read failed. Test cancelled.");
+            }
         }
 
         public void Run() 
         {
-            if (testStuff.testPlan.testSteps != null)
+            if ((testStuff.testPlan.testSteps != null) && (testStuff.testPlan.testSteps.Count > 0))
             {
                 testStuff.seleniumThread = new Thread(qATest.Run);
                 testStuff.seleniumThread.IsBackground = true;
                 testStuff.seleniumThread.CurrentUICulture = new System.Globalization.CultureInfo("en-us");
                 testStuff.seleniumThread.Start();
-            }            
+            }
+            else
+            {
+                launchPoint.OnTestCancel("List of test steps is null or empty.");
+            }
+
+            
         }
 
         void OnRunFinished(object sender, EventArgs e)

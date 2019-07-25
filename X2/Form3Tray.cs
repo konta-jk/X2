@@ -129,17 +129,29 @@ namespace X2
 
         private void OnTimerTick()
         {
-            testManager.RunFirst();
+            if (IsTimeForTestsNow())
+            {
+                testManager.RunFirst();
+            }
+        }
 
-            /*
-            string s = "TODO: database (pooling!); is day and hour within brackets " +
-                DateTime.Now.DayOfWeek.ToString() +
-                " " + DateTime.Now.Hour.ToString() + ":" + DateTime.Now.Minute.ToString() +
-                "\r\nis test running" +
-                "\r\nis test batch planned and not done yet" +
-                "\r\nthen batch.run";
-            Console.WriteLine(s);
-            */
+        private bool IsTimeForTestsNow()
+        {
+            if ((DateTime.Now.DayOfWeek == DayOfWeek.Saturday) || (DateTime.Now.DayOfWeek == DayOfWeek.Sunday) || checkBox2.Checked)
+            {
+                return true;
+            }
+            else
+            {
+                if ((DateTime.Now.Hour > 18) && (DateTime.Now.Hour < 7))
+                {
+                    return true;
+                }
+                else
+                {
+                    return false;
+                }
+            }
         }
         
         //drugi timer do wysłania notyfikacji o rezultatach do uzytkownika
@@ -148,8 +160,6 @@ namespace X2
         // DEBUG -----------------------------
         private void DEBUG_BTN_Click(object sender, EventArgs e)
         {
-            //....
-
 
         }
        

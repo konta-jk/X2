@@ -40,7 +40,7 @@ namespace X2
             }
             else
             {
-                MessageBox.Show("This file doesn't contain a valid test plan or file read failed.");
+                //MessageBox.Show("This file doesn't contain a valid test plan or file read failed.");
                 return false;
             }
 

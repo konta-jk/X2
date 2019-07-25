@@ -51,6 +51,11 @@ namespace X2
             
         }
 
+        public void OnTestCancel(string reason)
+        {
+            MessageBox.Show("TestCanceled, reason: " + reason);
+        }
+
         public DataTable GetTestPlanAsDataTable()
         {
             string fileName = textBox1.Text;
@@ -100,13 +105,15 @@ namespace X2
                 output += "\r\nVariables:\r\n" + s;
             }
 
-            output += "\r\nLog:\r\n" + testStuff.log;
+            output += "\r\nLog:\r\n" + testStuff.logger.GetLogString(); //testStuff.log;
 
             textBox2.Text = output;
 
+            /*
             string path = testStuff.GetPathMakeFolder(@"\Logs\");
             path = path + @"\" + testStuff.testRunId + ".txt";
             System.IO.File.WriteAllText(path, output);
+            */
 
             button2.Enabled = false;
         }

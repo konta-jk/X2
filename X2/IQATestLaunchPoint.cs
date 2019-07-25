@@ -30,6 +30,7 @@ namespace X2
         QATestStuff GetTestStuff();
         void OnTestProgress();
         void OnTestFinish();
+        void OnTestCancel(string reason);
     }
 
 }

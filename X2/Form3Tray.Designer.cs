@@ -34,6 +34,7 @@
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
             this.DEBUG_BTN = new System.Windows.Forms.Button();
+            this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
             // checkBox1
@@ -70,17 +71,28 @@
             this.DEBUG_BTN.UseVisualStyleBackColor = true;
             this.DEBUG_BTN.Click += new System.EventHandler(this.DEBUG_BTN_Click);
             // 
+            // checkBox2
+            // 
+            this.checkBox2.AutoSize = true;
+            this.checkBox2.Location = new System.Drawing.Point(12, 35);
+            this.checkBox2.Name = "checkBox2";
+            this.checkBox2.Size = new System.Drawing.Size(163, 17);
+            this.checkBox2.TabIndex = 2;
+            this.checkBox2.Text = "testuj w dowolnym momencie";
+            this.checkBox2.UseVisualStyleBackColor = true;
+            // 
             // Form3Tray
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(623, 288);
+            this.Controls.Add(this.checkBox2);
             this.Controls.Add(this.DEBUG_BTN);
             this.Controls.Add(this.checkBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "Form3Tray";
             this.ShowInTaskbar = false;
-            this.Text = "QA Cat [Test Manager]";
+            this.Text = "QA Cat [Daemon]";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form3Tray_FormClosing);
             this.SizeChanged += new System.EventHandler(this.Form3Tray_SizeChanged);
             this.ResumeLayout(false);
@@ -94,5 +106,6 @@
         private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.Timer timer1;
         private System.Windows.Forms.Button DEBUG_BTN;
+        private System.Windows.Forms.CheckBox checkBox2;
     }
 }
