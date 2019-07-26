@@ -190,6 +190,14 @@ namespace X2
                     result = "ok";
                     break;
 
+                case "setBatchVariable":
+                    result = opActions.OpActionSetBatchVariable(testStep1);
+                    break;
+
+                case "sendBatchVariable":
+                    result = opActions.OpActionSendBatchVariable(testStep1);
+                    break;
+
                 case "closeAlert":
                     result = opActions.OpActionCloseAlert(testStep1.operationText);
                     break;
@@ -206,7 +214,6 @@ namespace X2
                 case "refreshUntil":
                     result = opActions.OpActionRefreshUntil(testStep1);
                     break;
-
                     
                 case "scroll":
                     result = opActions.OpActionScroll(testStep1);

@@ -55,7 +55,7 @@ namespace X2
             //IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
             IWebElement element = ElementFinder(testStep1);
 
-            ScrollAndMoveTo(element, testStuff.driver); //zostanie pominięte gdy skipScrollAndMove = true
+            ScrollAndMoveTo(element, testStuff.driver); 
             element.Click();
 
             //sprawdzenie wystąpienia błędu zdefiniowanego przez uzytkownika (jako fragment html)            
@@ -123,21 +123,60 @@ namespace X2
             element.SendKeys(value + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą
         }
 
-        //--------------------------------------------------------------------------------------------------------------
-        //todo:
-        //public void OpActionSetBatchVariable(Structs.TestStep testStep1)
-        //------------------------------------ jak zrobić przekazywanie danych od testu do testu w obrębie batcha, aby zrobić given when then???????
-        /*
-         * przez bazę źle - kilka demonów może współdzielić bazę
-         * 3 warstwy między OpActions a TestManagerem (launcher, test, operations)         
-         * 
-         * 
-         * 
-         */
+        //testować
+        public string OpActionSetBatchVariable(Structs.TestStep testStep1)
+        {
+            if (testStuff.testManager != null)
+            {
+                IWebElement element = ElementFinder(testStep1);
 
+                Structs.Variable v;
 
+                if ((element.Text != null) && (element.Text != ""))
+                {
+                    v = new Structs.Variable(testStep1.operationText, element.Text);
+                }
+                else
+                {
+                    v = new Structs.Variable(testStep1.operationText, element.GetAttribute("value"));
+                }
 
+                if (testStuff.testManager.batchVariables.Where(t => t.name == v.name).Count() == 0)
+                {
+                    testStuff.testManager.batchVariables.Add(v);
+                }
+                else
+                {
+                    testStuff.testManager.batchVariables.Remove(testStuff.variables.Where(t => t.name == v.name).First());
+                    testStuff.testManager.batchVariables.Add(v);
+                }
 
+                return "ok";
+            }        
+            else
+            {
+                return "OpActions.OpActionSetBatchVariable(): test manager is null, are you sure you're running a test batch, not a single test? Using batch variables is allowed only in batch tests.";
+            }
+        }
+
+        public string OpActionSendBatchVariable(Structs.TestStep testStep1)
+        {
+            //dodać sprawdzenia
+            if (testStuff.testManager != null)
+            {
+                IWebElement element = ElementFinder(testStep1);
+                ScrollAndMoveTo(element, testStuff.driver);
+                string value = testStuff.testManager.batchVariables.Where(t => t.name == testStep1.operationText).SingleOrDefault().value;
+                element.SendKeys(value + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą
+                return "ok";
+            }
+            else
+            {
+                return "OpActions.OpActionSendBatchVariable(): test manager is null, are you sure you're running a test batch, not a single test? Using batch variables is allowed only in batch tests.";
+            }
+
+                
+        }
 
         public string OpActionCloseAlert(string operationText) //tu chyba nie powinno być try catch i ogólnie w OpActions
         {

@@ -3,8 +3,7 @@
  * Wybiera pierwszy niezrealizowany test z zadanych do zrobienia i go przeprowadza, o ile nie jest zajęty; wywoływany przez timer
  * 
  */
-
-
+ 
 using System;
 using System.Collections.Generic;
 using System.Data;
@@ -15,7 +14,7 @@ using System.Threading.Tasks;
 
 namespace X2
 {
-    class TestManager : IQATestLaunchPoint
+    public class TestManager : IQATestLaunchPoint
     {
         private List<int> batches = new List<int>();
         private int currentBatch;
@@ -27,7 +26,7 @@ namespace X2
         private string currentLogPath = "";
         private bool testRunning = false;
         private Logger techLogger;
-        private List<Structs.Variable> batchVariables = new List<Structs.Variable>();
+        public List<Structs.Variable> batchVariables = new List<Structs.Variable>();
 
         public TestManager()
         {
@@ -119,6 +118,7 @@ namespace X2
             stuffOptions.minRow = 2;
             stuffOptions.maxRow = 1000000;
             currentTestStuff = new QATestStuff(stuffOptions);
+            currentTestStuff.testManager = this; //tylko klasa test manager to robi, form1 zostawia null
             currentTestStuff.CreateDriver(); //a może testStuff.driver = ..?
             currentTestStuff.Init();
             new QATestLauncher(this).Run();
@@ -254,7 +254,7 @@ namespace X2
 
         private DataTable GetTestSteps(int testPlan) 
         {
-            string query = "select Description, Command, Text, XPath from dps.dpsdynamic.QA_TEST_STEP where IdTestPlan = '" + testPlan.ToString() + "'";
+            string query = "select Description, Command, Text, XPath, OrderInTest from dps.dpsdynamic.QA_TEST_STEP where IdTestPlan = '" + testPlan.ToString() + "' order by OrderInTest"; //ORDER MORONIE!
             string result = new ReaderWriterDataBase().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable);
 
             return dataTable;

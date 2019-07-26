@@ -30,6 +30,7 @@ namespace X2
         public int maxRow;
         public bool killDriver;
 
+        public TestManager testManager; //null albo test manager wywołujący (potrzebne ze względu na zmienne przekazywane między testami)
         
 
 
