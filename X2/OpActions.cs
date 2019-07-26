@@ -178,7 +178,8 @@ namespace X2
                 
         }
 
-        public string OpActionCloseAlert(string operationText) //tu chyba nie powinno być try catch i ogólnie w OpActions
+        //26.07 błędy 
+        public string OpActionCloseAlert(string operationText) 
         {
             try
             {
@@ -194,10 +195,10 @@ namespace X2
                         return "Incorrect text parameter in action CloseAlert";
                 }
             }
-            catch (NoAlertPresentException)
+            catch (NoAlertPresentException e)
             {
-                testStuff.Log("CloseAlert(): exception caught \"NoAlertPresentException\".");
-                return "ok"; //?
+                testStuff.Log("OpActions.OpActionCloseAlert(): exception caught \"NoAlertPresentException\". Next: throw.");                                
+                throw e;
             }
         }
 

@@ -53,10 +53,21 @@ namespace X2
                 catchCount = 0;
             }
             
+            //26.07 błędy 
             catch (NoAlertPresentException)
             {
                 catchCount++;
-                testStuff.Log("Exception caught \"NoAlertPresentException\" in step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next: none.");                
+                testStuff.Log("Exception caught \"NoAlertPresentException\" in step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next: sleep, retry.");
+                opActions.Sleep(200);
+                if (catchCount < catchLimit)
+                {
+                    result = Operation(testStep1);
+                }
+                else
+                {
+                    //result = "Catch limit exceeded: \"UnhandledAlertException\" in step " + testStep1.stepDescription + ".";
+                    result = "ok"; 
+                }
             }
             catch (UnhandledAlertException)
             {

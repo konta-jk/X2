@@ -50,12 +50,12 @@ namespace X2
 
         public void OnTestProgress()
         {
-            Console.WriteLine("TestManager.OnTestProgress()...");
+            //Console.WriteLine("TestManager.OnTestProgress()...");
         }
 
         public void OnTestCancel(string reason)
         {
-            Console.WriteLine("TestManager.OnTestCancel()... reason: " + reason);
+            //Console.WriteLine("TestManager.OnTestCancel()... reason: " + reason);
 
             string query = @"INSERT INTO dps.dpsdynamic.QA_TEST_RESULT (IdTestPlan, TestResult, DurationSeconds, DateTime, LogPath, ScreenshotsPath) " +
                 @"VALUES (" + currentTestPlan + @", 'FAIL', " + ((int)((DateTime.Now - currentTestStart).TotalSeconds)).ToString() + @", '" + currentTestStart.ToString() + @"', '" + currentTestStuff.logger.GetFolderPath() + @"', '-1')";
@@ -72,7 +72,7 @@ namespace X2
 
         public void OnTestFinish()
         {
-            Console.WriteLine("TestManager.OnTestFinish()...");
+            //Console.WriteLine("TestManager.OnTestFinish()...");
 
             UpdateResult(); //na pałę wywołanie bez delegata //czyli nic nie rozumiem z delegatów, ale to działa; wcześniejsze uzycie delegatów było tylko objeściem ograniczeń control-ki
 
@@ -254,7 +254,7 @@ namespace X2
 
         private DataTable GetTestSteps(int testPlan) 
         {
-            string query = "select Description, Command, Text, XPath, OrderInTest from dps.dpsdynamic.QA_TEST_STEP where IdTestPlan = '" + testPlan.ToString() + "' order by OrderInTest"; //ORDER MORONIE!
+            string query = "select Description, Command, Text, XPath from dps.dpsdynamic.QA_TEST_STEP where IdTestPlan = '" + testPlan.ToString() + "' order by OrderInTest"; //ORDER MORONIE!
             string result = new ReaderWriterDataBase().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable);
 
             return dataTable;
