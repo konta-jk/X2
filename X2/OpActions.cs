@@ -181,29 +181,78 @@ namespace X2
         //26.07 błędy 
         public string OpActionCloseAlert(string operationText) 
         {
+            IAlert alert;// 
+            
+            alert = ExpectedConditions.AlertIsPresent().Invoke(testStuff.driver);
+
+            //ten fragemt robi to samo co powyższa linijka, ale nie używa depreciated ExpectedConditions, za to używa try catch, co jest jeszcze gorsze IMHO
+            /*
             try
             {
+                comeHereMotherfucker = testStuff.driver.SwitchTo().Alert();
+            }
+            catch (NoAlertPresentException)
+            {
+                comeHereMotherfucker = null;
+            }
+            */           
+
+
+            if (alert != null)
+            {
+                testStuff.Log("OpActions.OpActionCloseAlert(): alert found. Next: accept or dismiss.");
+
                 switch (operationText)
                 {
                     case "Accept":
-                        testStuff.driver.SwitchTo().Alert().Accept();
+                        alert.Accept();
                         return "ok"; ;
                     case "Dismiss":
-                        testStuff.driver.SwitchTo().Alert().Dismiss();
+                        alert.Dismiss();
                         return "ok";
-                    default:
+                    default:                        
                         return "Incorrect text parameter in action CloseAlert";
                 }
             }
-            catch (NoAlertPresentException e)
+            else
             {
-                testStuff.Log("OpActions.OpActionCloseAlert(): exception caught \"NoAlertPresentException\". Next: throw.");                                
-                throw e;
+                testStuff.Log("OpActions.OpActionCloseAlert(): alert not found. Next: return \"ok\".");
             }
+
+            return "ok"; //zakładając, że chodzi o pozbycie się alertu
+
         }
 
         public string OpActionSendEnumKeyToAlert(string operationText)
         {
+            IAlert alert;
+
+            alert = ExpectedConditions.AlertIsPresent().Invoke(testStuff.driver); //zamiast może być try catch z no alert present exception
+
+            if (alert != null)
+            {
+                switch (operationText)
+                {
+                    case "Escape":
+                        testStuff.driver.SwitchTo().Alert().SendKeys(OpenQA.Selenium.Keys.Escape);
+                        return "ok";
+                    case "Enter":
+                        testStuff.driver.SwitchTo().Alert().SendKeys(OpenQA.Selenium.Keys.Enter);
+                        return "ok";
+                    case "Tab":
+                        testStuff.driver.SwitchTo().Alert().SendKeys(OpenQA.Selenium.Keys.Tab);
+                        return "ok";
+                    default:
+                        return "SendKey(): Can't recognize key code " + operationText;
+                }
+            }
+            else
+            {
+                testStuff.Log("SendEnumKeyToAlert(): exception caught \"NoAlertPresentException\". Next: return \"ok\".");
+                return "ok"; //to jest dziwne, ale zakładam, że intencją jest najczęściej pozbycie się alertu
+            }
+
+            /*
             try
             {
                 switch (operationText)
@@ -226,6 +275,7 @@ namespace X2
                 testStuff.Log("SendEnumKeyToAlert(): exception caught \"NoAlertPresentException\".");
                 return "SendEnumKeyToAlert(): NoAlertPresentException";
             }
+            */
         }
 
         public void OpActionSelectOption(Structs.TestStep testStep1)
@@ -439,11 +489,13 @@ namespace X2
 
             while (
                 (!GetIsMatchForRefreshUntil(testStep1.xpath, GetTextsForRefreshUntil(testStep1)))
-                && (whileDuration.TotalSeconds < timeout))
+                && (whileDuration.TotalMilliseconds < timeout))
             {
                 Sleep(duration);
                 testStuff.driver.Navigate().Refresh();
                 whileDuration = DateTime.Now - start;
+
+                
             }
 
             if (whileDuration.TotalMilliseconds >= timeout)

@@ -185,7 +185,9 @@ namespace X2
 
             fileName = DateTime.Now.Hour.ToString() + "_" + DateTime.Now.Minute.ToString() + "_" + DateTime.Now.Second.ToString() + "_" + DateTime.Now.Millisecond.ToString("000") + "_" + fileName;
             fileName = Regex.Replace(fileName, "[^a-zA-Z0-9_.]+", "_", RegexOptions.Compiled);
-            fileName = fileName.Substring(0, Math.Min(160, fileName.Length));
+
+            int max = 240 - ssFullFolderPath.Length; //260 plus zapas na slasha, rozszerzenie i whatnot
+            fileName = fileName.Substring(0, Math.Min(max, fileName.Length));
 
             string ssFullPath = ssFullFolderPath + @"\" + fileName + ".png";
 

@@ -53,7 +53,6 @@ namespace X2
                 catchCount = 0;
             }
             
-            //26.07 błędy 
             catch (NoAlertPresentException)
             {
                 catchCount++;
@@ -66,7 +65,7 @@ namespace X2
                 else
                 {
                     //result = "Catch limit exceeded: \"UnhandledAlertException\" in step " + testStep1.stepDescription + ".";
-                    result = "ok"; 
+                    result = "ok"; //dziwne, ale chodzi o to, że kiedy leci taki wyjątek, to praktycznie zawsze przy próbie pozbycia się jebanego alertu; więc tu zakładany, że jebańca nie ma
                 }
             }
             catch (UnhandledAlertException)
@@ -210,7 +209,8 @@ namespace X2
                     break;
 
                 case "closeAlert":
-                    result = opActions.OpActionCloseAlert(testStep1.operationText);
+                    opActions.OpActionCloseAlert(testStep1.operationText);
+                    result = "ok";
                     break;
 
                 case "sendEnumKeyToAlert":

@@ -57,8 +57,8 @@ namespace X2
         {
             //Console.WriteLine("TestManager.OnTestCancel()... reason: " + reason);
 
-            string query = @"INSERT INTO dps.dpsdynamic.QA_TEST_RESULT (IdTestPlan, TestResult, DurationSeconds, DateTime, LogPath, ScreenshotsPath) " +
-                @"VALUES (" + currentTestPlan + @", 'FAIL', " + ((int)((DateTime.Now - currentTestStart).TotalSeconds)).ToString() + @", '" + currentTestStart.ToString() + @"', '" + currentTestStuff.logger.GetFolderPath() + @"', '-1')";
+            string query = @"INSERT INTO dps.dpsdynamic.QA_TEST_RESULT (IdPlan, IdBatch, TestResult, DurationSeconds, DateTime, LogPath, ScreenshotsPath) " +
+                @"VALUES (" + currentTestPlan + @", " + currentBatch +  @", 'FAIL', " + ((int)((DateTime.Now - currentTestStart).TotalSeconds)).ToString() + @", '" + currentTestStart.ToString() + @"', '" + currentTestStuff.logger.GetFolderPath() + @"', '-1')";
 
             new ReaderWriterDataBase().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable); //docelowo showExcMsg = false 
 
@@ -101,8 +101,10 @@ namespace X2
 
             SaveLog();
 
-            string query = @"INSERT INTO dps.dpsdynamic.QA_TEST_RESULT (IdTestPlan, TestResult, DurationSeconds, DateTime, LogPath, ScreenshotsPath) " +
-                @"VALUES (" + currentTestPlan + @", '" + successStr + @"', " + ((int)((DateTime.Now - currentTestStart).TotalSeconds)).ToString() + @", '" + currentTestStart.ToString() + @"', '" + currentTestStuff.logger.GetFolderPath() + @"', '-1')";
+
+            
+            string query = @"INSERT INTO dps.dpsdynamic.QA_TEST_RESULT (IdPlan, IdBatch, TestResult, DurationSeconds, DateTime, LogPath, ScreenshotsPath) " +
+                @"VALUES (" + currentTestPlan + @", " + currentBatch + @", '" + successStr + @"', " + ((int)((DateTime.Now - currentTestStart).TotalSeconds)).ToString() + @", '" + currentTestStart.ToString() + @"', '" + currentTestStuff.logger.GetFolderPath() + @"', '-1')";
 
             new ReaderWriterDataBase().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable); 
         }
@@ -150,40 +152,27 @@ namespace X2
         private int FindFirstTest(out int batch)
         {
             //znajdź pierwszy test plan z aktywnego batcha, dla którego nie wykonano dzisiaj testu
-            //testować to jeszcze długo, pierwszy podejrzany w razie błędów
-            //do refaktoryzacji żeby używać prostszego sql-a (kompatybilne z inną bazą)
+            //chyba wyjąć do settingsów całe query
             string query =
-                @"with q1 
-                as
-                (
-                select IdTestPlan, CAST(DateTime as Date) Date1, count(*) Count1 from dps.dpsdynamic.QA_TEST_RESULT
-                group by IdTestPlan, CAST(DateTime as Date)
-                ),
+                @"select A1.IdPlan, A2.IdBatch, A2.OrderInBatch from dps.dpsdynamic.qa_test_plan A1
+                join dps.dpsdynamic.qa_test_plan_in_batch A2
+                on A1.IdPlan = A2.IdPlan
+                join dps.dpsdynamic.QA_TEST_BATCH A3
+                on A3.IdBatch = A2.IdBatch
+                where (select count (*) from dps.dpsdynamic.qa_test_step_in_plan A5 where A5.idplan = A1.IdPlan) > 0
 
-                q2 
-                as
-                (
-                select P.IdTestPlan, P.IdTestBatch, P.Name, P.[Version], P.OrderInBatch, q1.Date1, q1.Count1, B.IsDaily, B.IsActive from dps.dpsdynamic.QA_TEST_PLAN P
-                join  dps.dpsdynamic.QA_TEST_BATCH B on P.IdTestBatch = B.IdTestBatch
-                left join q1 on P.IdTestPlan = q1.IdTestPlan
-                ),
+                except
 
-                q3
-                as
-                (
-                select IdTestPlan from q2
-                where IsActive = 'YES' and IsDaily = 'YES'
-
-                except 
-
-                select IdTestPlan from q2
-                where Date1 = cast(getdate() as date)
-                )
-
-                --select * from q3
-                select top 1 q3.IdTestPlan, q2.IdTestBatch from q3
-                join q2 on q3.IdTestPlan = q2.IdTestPlan
-                order by idtestbatch, orderinbatch";
+                select A1.IdPlan, A2.IdBatch, A2.OrderInBatch from dps.dpsdynamic.qa_test_plan A1
+                join dps.dpsdynamic.qa_test_plan_in_batch A2
+                on A1.IdPlan = A2.IdPlan
+                join dps.dpsdynamic.QA_TEST_BATCH A3
+                on A3.IdBatch = A2.IdBatch
+                right join dps.dpsdynamic.QA_TEST_RESULT A4
+                on A4.IdBatch = A2.IdBatch and A4.IdPlan = A2.IdPlan
+                where CAST(A4.DateTime as date) = CAST(GETDATE() AS date)
+                order by A2.IdBatch, A2.OrderInBatch";
+                
 
             string result = new ReaderWriterDataBase().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable); //msg flase
 
@@ -222,10 +211,11 @@ namespace X2
             }
         }
 
+        /*
         private void GetBatches() 
         {
             batches.Clear();
-            string query = "select IdTestBatch from dps.dpsdynamic.QA_TEST_BATCH where IsDaily = 'YES' and IsActive = 'YES'";
+            string query = "select IdTestBatch from dps.dpsdynamic.QA_TEST_BATCH where IsActive = 'YES'";
             string result = new ReaderWriterDataBase().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable);
             if (result == "ok")
             {
@@ -251,14 +241,19 @@ namespace X2
             }
             testPlans.Sort();
         }
+        */
+
+
 
         private DataTable GetTestSteps(int testPlan) 
         {
-            string query = "select Description, Command, Text, XPath from dps.dpsdynamic.QA_TEST_STEP where IdTestPlan = '" + testPlan.ToString() + "' order by OrderInTest"; //ORDER MORONIE!
+            string query = "select Description, Command, Text, XPath from dps.dpsdynamic.QA_TEST_STEP A1 " +
+                "join dps.dpsdynamic.QA_TEST_STEP_IN_PLAN A2 on A1.IdStep = A2.IdStep where A2.IdPlan = '" + testPlan.ToString() + "' order by A2.OrderInTest";
             string result = new ReaderWriterDataBase().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable);
 
             return dataTable;
         }
+        
 
         private void InitBatch()
         {
