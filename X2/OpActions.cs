@@ -343,6 +343,9 @@ namespace X2
                 case "Tab":
                     element.SendKeys(OpenQA.Selenium.Keys.Tab);
                     return "ok";
+                case "Backspace":
+                    element.SendKeys(OpenQA.Selenium.Keys.Backspace);
+                    return "ok";
                 default:
                     return "SendEnumKey(): Can't recognize key code " + testStep1.operationText;
             }
@@ -502,6 +505,42 @@ namespace X2
             }            
         }
 
+        public string OpActionPresetVariable(Structs.TestStep testStep1)
+        {
+            string text = testStep1.operationText;
+            string name = "";
+            string value = "";
+
+            try
+            {
+                
+                name = text.Substring(0, text.IndexOf('='));
+                value = text.Substring(text.IndexOf('=') + 1);
+                name = ClearString(name);
+                value = ClearString(value);
+
+            }
+            catch (Exception e)
+            {
+                return "OpActionPresetVariable(): can't parse \"" + text + "\". Exception:\r\n" + e;
+            }
+
+            Structs.Variable v = new Structs.Variable(name, value);
+
+            if (testStuff.variables.Where(t => t.name == v.name).Count() == 0)
+            {
+                testStuff.variables.Add(v);
+            }
+            else
+            {
+                testStuff.variables.Remove(testStuff.variables.Where(t => t.name == v.name).First());
+                testStuff.variables.Add(v);
+            }
+
+            return "ok";
+        }
+
+
         //odświeża stronę aż znajdzie wiersz, w którym są teksty określone w texts
         //w kroku jako xpath należy podać bezpośredniego rodzica wierszy <tr>, zazwyczaj body
         //w kroku jako text należy podać stałe teksty odzielone podwójnymi przecinkami albo zmienne obramowane podwójnymi nawiasami kwadratowymi
@@ -647,10 +686,7 @@ namespace X2
             text = Regex.Replace(text, @"^\s+", "");
             text = Regex.Replace(text, @"\s+$", "");
             return text;
-        }
-
-
-        
+        }        
 
         private void ScrollAndMoveTo(IWebElement element, IWebDriver driver)
         {

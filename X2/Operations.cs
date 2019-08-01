@@ -230,6 +230,10 @@ namespace X2
                     result = opActions.OpActionScroll(testStep1);
                     break;
 
+                case "presetVariable":
+                    result = opActions.OpActionPresetVariable(testStep1);
+                    break;
+
                 default:
                     result = "Error: can't recognize operation \"" + testStep1.operationName + "\".";
                     break;
