@@ -67,11 +67,26 @@ namespace SideConverter
             foreach (DataRow row in dataTable.Rows)
             {
                 IEnumerable<string> fields = row.ItemArray.Select(field =>
-                  string.Concat("", field.ToString().Replace("\"", "\"\""), ""));
+                  string.Concat("", field.ToString() /*.Replace("\"", "\"\"") */, ""));
                 sb.AppendLine(string.Join(",", fields));
             }
 
             File.WriteAllText(fileName, sb.ToString());
+        }
+
+        void SaveDataTableToSqlFile(string fileName, DataTable dataTable)
+        {
+            string s = "-- Generated from side file (Selenium plugin)\r\n";
+            foreach (DataRow row in dataTable.Rows)
+            {
+                s += "INSERT INTO dps.dpsdynamic.QA_TEST_STEP (Description, Command, Text, XPath) VALUES ('" +
+                    row[0].ToString() + "', '" +
+                    row[1].ToString() + "', '" +
+                    row[2].ToString() + "', '" +
+                    row[3].ToString().Replace("'", "''") + "')\r\n";
+            }
+
+            File.WriteAllText(fileName, s);
         }
 
         //work in progress, dokończyć
@@ -105,13 +120,17 @@ namespace SideConverter
                 {
                     row = dataTable.NewRow();
 
-                    row[0] = "plugin: " + c.command; //todo
+                    Guid guid = Guid.NewGuid();
+
+                    row[0] = "plugin: " + c.command + " " + guid.ToString().Substring(0, 2).ToUpper(); //todo
                     row[1] = c.command;
                     row[2] = c.value ?? "";
 
                     if(c.targets.Count() > 0)
                     {                        
-                        row[3] = (c.targets.Where(tr => tr[0].Contains("xpath") && tr[1].Contains("idRelative")).FirstOrDefault() 
+                        row[3] = (c.targets.Where(tr => tr[0].Contains("id=") && tr[1] == "id").FirstOrDefault() //później zostanie poprawione w translate
+                            //?? fajnie by było zacząć korzystać z id, bo bardziej czytelne w scenariuszu, ale to dłuższy temat
+                            ?? c.targets.Where(tr => tr[0].Contains("xpath") && tr[1].Contains("idRelative")).FirstOrDefault()
                             ?? c.targets.Where(tr => tr[0].Contains("xpath") && tr[1].Contains("attributes")).FirstOrDefault()
                             ?? c.targets.Where(tr => tr[0].Contains("xpath") && tr[1].Contains("position")).FirstOrDefault()
                             ?? c.targets.Where(tr => tr[0].Contains("xpath")).FirstOrDefault()
@@ -151,6 +170,15 @@ namespace SideConverter
                 {
                     row[3] = row[3].ToString().Substring(6);                    
                 }
+
+                
+                if ((row[3].ToString().Length >= 3) && (row[3].ToString().Substring(0, 3) == "id="))
+                {
+                    string s = @"//*[@" + row[3].ToString().Replace("id=", "id=\"") + @"""]";
+                    //Console.WriteLine("Translating: " + row[3].ToString() + " -> " + s); //debug
+                    row[3] = s;                    
+                }
+                
 
                 if (row[2].ToString().Contains("label="))
                 {
@@ -241,6 +269,12 @@ namespace SideConverter
         {
             SideContent content = GetSideContent(ReadSideFile(sideFileName));
             SaveDataTableToCsvFile(csvFileName, SideContentToDataTable(content));
+        }
+
+        public void ReadSideSaveSql(string sideFileName, string csvFileName)
+        {
+            SideContent content = GetSideContent(ReadSideFile(sideFileName));
+            SaveDataTableToSqlFile(csvFileName, SideContentToDataTable(content));
         }
 
     }

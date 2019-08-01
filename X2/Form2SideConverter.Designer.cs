@@ -68,13 +68,13 @@
             this.button2.Name = "button2";
             this.button2.Size = new System.Drawing.Size(75, 22);
             this.button2.TabIndex = 2;
-            this.button2.Text = "Zapisz CSV";
+            this.button2.Text = "Zapisz";
             this.button2.UseVisualStyleBackColor = true;
             this.button2.Click += new System.EventHandler(this.button2_Click);
             // 
             // saveFileDialog1
             // 
-            this.saveFileDialog1.Filter = "CSV files|*.csv";
+            this.saveFileDialog1.Filter = "CSV files|*.csv|SQL files|*.sql";
             this.saveFileDialog1.FileOk += new System.ComponentModel.CancelEventHandler(this.saveFileDialog1_FileOk);
             // 
             // Form2SideConverter

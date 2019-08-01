@@ -33,7 +33,7 @@
             this.checkBox1 = new System.Windows.Forms.CheckBox();
             this.notifyIcon1 = new System.Windows.Forms.NotifyIcon(this.components);
             this.timer1 = new System.Windows.Forms.Timer(this.components);
-            this.DEBUG_BTN = new System.Windows.Forms.Button();
+            this.ConverterBtn = new System.Windows.Forms.Button();
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.SuspendLayout();
             // 
@@ -61,15 +61,15 @@
             this.timer1.Interval = 10000;
             this.timer1.Tick += new System.EventHandler(this.timer1_Tick);
             // 
-            // DEBUG_BTN
+            // ConverterBtn
             // 
-            this.DEBUG_BTN.Location = new System.Drawing.Point(536, 253);
-            this.DEBUG_BTN.Name = "DEBUG_BTN";
-            this.DEBUG_BTN.Size = new System.Drawing.Size(75, 23);
-            this.DEBUG_BTN.TabIndex = 1;
-            this.DEBUG_BTN.Text = "DEBUG";
-            this.DEBUG_BTN.UseVisualStyleBackColor = true;
-            this.DEBUG_BTN.Click += new System.EventHandler(this.DEBUG_BTN_Click);
+            this.ConverterBtn.Location = new System.Drawing.Point(12, 253);
+            this.ConverterBtn.Name = "ConverterBtn";
+            this.ConverterBtn.Size = new System.Drawing.Size(75, 23);
+            this.ConverterBtn.TabIndex = 1;
+            this.ConverterBtn.Text = "Konwerter";
+            this.ConverterBtn.UseVisualStyleBackColor = true;
+            this.ConverterBtn.Click += new System.EventHandler(this.DEBUG_BTN_Click);
             // 
             // checkBox2
             // 
@@ -81,16 +81,16 @@
             this.checkBox2.Text = "testuj w dowolnym momencie";
             this.checkBox2.UseVisualStyleBackColor = true;
             // 
-            // Form3Tray
+            // Form3Daemon
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(623, 288);
             this.Controls.Add(this.checkBox2);
-            this.Controls.Add(this.DEBUG_BTN);
+            this.Controls.Add(this.ConverterBtn);
             this.Controls.Add(this.checkBox1);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
-            this.Name = "Form3Tray";
+            this.Name = "Form3Daemon";
             this.ShowInTaskbar = false;
             this.Text = "QA Cat [Daemon]";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.Form3Tray_FormClosing);
@@ -105,7 +105,7 @@
         private System.Windows.Forms.CheckBox checkBox1;
         private System.Windows.Forms.NotifyIcon notifyIcon1;
         private System.Windows.Forms.Timer timer1;
-        private System.Windows.Forms.Button DEBUG_BTN;
+        private System.Windows.Forms.Button ConverterBtn;
         private System.Windows.Forms.CheckBox checkBox2;
     }
 }

@@ -143,7 +143,7 @@ namespace X2
             }
             else
             {
-                if ((DateTime.Now.Hour > 18) && (DateTime.Now.Hour < 7))
+                if (Settings.appActiveHours.Contains(DateTime.Now.Hour))
                 {
                     return true;
                 }
@@ -160,7 +160,8 @@ namespace X2
         // DEBUG -----------------------------
         private void DEBUG_BTN_Click(object sender, EventArgs e)
         {
-
+            Form2SideConverter formSeleniumHog = new Form2SideConverter();
+            formSeleniumHog.ShowDialog(this);
         }
        
     }

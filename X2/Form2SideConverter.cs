@@ -35,7 +35,17 @@ namespace X2
 
         private void saveFileDialog1_FileOk(object sender, CancelEventArgs e)
         {
-            new SideConverter.SideReader().ReadSideSaveCsv(openFileDialog1.FileName, saveFileDialog1.FileName);
+            //dodać ifa filtr save dialoga; dorobić funkcję ReadSideSaveSql
+            switch (saveFileDialog1.FilterIndex)
+            {
+                case 1:
+                    new SideConverter.SideReader().ReadSideSaveCsv(openFileDialog1.FileName, saveFileDialog1.FileName);
+                    break;
+                case 2:
+                    new SideConverter.SideReader().ReadSideSaveSql(openFileDialog1.FileName, saveFileDialog1.FileName);
+                    break;
+            }
+            
         }
     }
 }

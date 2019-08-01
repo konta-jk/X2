@@ -28,6 +28,7 @@ namespace X2
         public static readonly bool logWithScreenshots = true; //SCREENSHOTY
         public static readonly float maximumDriveRatioToLogWithSs = 0.8f;
         public static readonly int killDriverDelay = 2000;
+        public static readonly int[] appActiveHours = new int[] { 1, 2, 3, 4, 5, 19, 20, 21, 22 }; //jeżeli godzina jest taka, jak w tej kolekcji, aplikacji wolno odpalać testy w dni robocze
 
         public struct ActionsSettings
         {
@@ -42,6 +43,7 @@ namespace X2
 
 
         }
+
 
         public static readonly string message1 = "Kiedy rozpocznie się test, Selenium otworzy nowe okno przeglądarki Chrome. Podnieś wtedy ręce do góry."
                 + "\r\nPraca na komputerze, na którym Selenium przeprowadza test, nie jest zalecana. Nie należy dotykać automatycznie sterowanego okna przeglądarki."

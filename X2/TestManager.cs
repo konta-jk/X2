@@ -50,13 +50,10 @@ namespace X2
 
         public void OnTestProgress()
         {
-            //Console.WriteLine("TestManager.OnTestProgress()...");
         }
 
         public void OnTestCancel(string reason)
         {
-            //Console.WriteLine("TestManager.OnTestCancel()... reason: " + reason);
-
             string query = @"INSERT INTO dps.dpsdynamic.QA_TEST_RESULT (IdPlan, IdBatch, TestResult, DurationSeconds, DateTime, LogPath, ScreenshotsPath) " +
                 @"VALUES (" + currentTestPlan + @", " + currentBatch +  @", 'FAIL', " + ((int)((DateTime.Now - currentTestStart).TotalSeconds)).ToString() + @", '" + currentTestStart.ToString() + @"', '" + currentTestStuff.logger.GetFolderPath() + @"', '-1')";
 
@@ -72,8 +69,6 @@ namespace X2
 
         public void OnTestFinish()
         {
-            //Console.WriteLine("TestManager.OnTestFinish()...");
-
             UpdateResult(); //na pałę wywołanie bez delegata //czyli nic nie rozumiem z delegatów, ale to działa; wcześniejsze uzycie delegatów było tylko objeściem ograniczeń control-ki
 
             if (currentTestStuff.killDriver)
@@ -116,7 +111,7 @@ namespace X2
             currentTestStart = DateTime.Now;
 
             QATestStuff.QATestStuffOptions stuffOptions = new QATestStuff.QATestStuffOptions();
-            stuffOptions.killDriver = true;
+            stuffOptions.killDriver = true; //default true!!
             stuffOptions.minRow = 2;
             stuffOptions.maxRow = 1000000;
             currentTestStuff = new QATestStuff(stuffOptions);
@@ -160,6 +155,7 @@ namespace X2
                 join dps.dpsdynamic.QA_TEST_BATCH A3
                 on A3.IdBatch = A2.IdBatch
                 where (select count (*) from dps.dpsdynamic.qa_test_step_in_plan A5 where A5.idplan = A1.IdPlan) > 0
+                and A3.IsActive = 'YES'
 
                 except
 
@@ -211,40 +207,6 @@ namespace X2
             }
         }
 
-        /*
-        private void GetBatches() 
-        {
-            batches.Clear();
-            string query = "select IdTestBatch from dps.dpsdynamic.QA_TEST_BATCH where IsActive = 'YES'";
-            string result = new ReaderWriterDataBase().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable);
-            if (result == "ok")
-            {
-                foreach (DataRow row in dataTable.Rows)
-                {
-                    batches.Add((int)row[0]);
-                }
-            }
-            batches.Sort();
-        }
-
-        private void GetTestPlans(int batch) 
-        {
-            testPlans.Clear();
-            string query = "select IdTestPlan from dps.dpsdynamic.QA_TEST_PLAN where IdTestBatch = " + batch.ToString();
-            string result = new ReaderWriterDataBase().TryQueryToDataTable(Settings.connectionString, query, true, out DataTable dataTable); //msg false docelowo
-            if (result == "ok")
-            {
-                foreach (DataRow row in dataTable.Rows)
-                {
-                    testPlans.Add((int)row[0]);
-                }
-            }
-            testPlans.Sort();
-        }
-        */
-
-
-
         private DataTable GetTestSteps(int testPlan) 
         {
             string query = "select Description, Command, Text, XPath from dps.dpsdynamic.QA_TEST_STEP A1 " +
@@ -252,14 +214,12 @@ namespace X2
             string result = new ReaderWriterDataBase().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable);
 
             return dataTable;
-        }
-        
+        }        
 
         private void InitBatch()
         {
+            lastBatch = currentBatch;
             batchVariables.Clear();
         }
-
-
     }
 }

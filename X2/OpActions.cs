@@ -37,7 +37,21 @@ namespace X2
             ScrollAndMoveTo(element, testStuff.driver);
 
             string text = testStep1.operationText;
-            element.SendKeys(testStep1.operationText + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą            
+
+            if ((text[0] == '{') && (text[text.Length - 1] == '}'))
+            {
+                switch (text)
+                {
+                    case "{DateTimeNow}":
+                        text = DateTime.Now.ToString("yyyy-MM-dd") + "T" + DateTime.Now.ToString("hh-mm-ss");
+                        break;
+                    case "{DateNow}":
+                        text = DateTime.Now.ToString("yyyy-MM-dd");
+                        break;
+                }
+            }
+
+            element.SendKeys(text + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą            
         }
 
         public void OpActionGoToUrl(Structs.TestStep testStep1)
@@ -166,9 +180,20 @@ namespace X2
             {
                 IWebElement element = ElementFinder(testStep1);
                 ScrollAndMoveTo(element, testStuff.driver);
-                string value = testStuff.testManager.batchVariables.Where(t => t.name == testStep1.operationText).SingleOrDefault().value;
-                element.SendKeys(value + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą
-                return "ok";
+
+                if (testStuff.testManager.batchVariables.Where(t => t.name == testStep1.operationText).Count() > 0)
+                {
+                    string value = testStuff.testManager.batchVariables.Where(t => t.name == testStep1.operationText).SingleOrDefault().value;
+                    element.SendKeys(value + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą
+                    return "ok";
+                }
+                else
+                {
+                    return "Can't find variable " + testStep1.operationText + ". Possible causes include: " +
+                        "\r\nprevious test in batch failed to set variable" +
+                        "\r\napplication was restarted mid-batch - as for 2019-08-01 batch variables are stored in RAM.";
+                }
+                
             }
             else
             {

@@ -29,8 +29,14 @@ namespace X2
             }
             while (!streamReader.EndOfStream)
             {
+                string line = streamReader.ReadLine();
+                if (line[0] == '[' && line[line.Length - 1] == ']') //komentatrz
+                {
+                    continue;
+                }
+
                 string[] cells 
-                    = Regex.Split(streamReader.ReadLine(), ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
+                    = Regex.Split(line, ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");
                 if (cells.Count() > 4)
                 {
                     //return null; //źródło błędów, xpath z plugina może zawierać przecinki

@@ -30,10 +30,26 @@ namespace X2
 
                 string select = "select * from [" + sheetName + "A" + testStuff.minRow.ToString() + ":D" + testStuff.maxRow.ToString() + "]";
 
+                
+
+
+
                 OleDbDataAdapter sheetAdapter = new OleDbDataAdapter(select, connection);
                 sheetAdapter.Fill(dataSheet);
 
                 connection.Close();
+
+                //usunięcie komentarzy
+                dataSheet.AcceptChanges();
+                foreach (DataRow row in dataSheet.Rows)
+                {
+                    string s = row[0].ToString();
+                    if (s[0] == '[' && s[s.Length - 1] == ']')
+                    {
+                        row.Delete();
+                    }
+                }
+                dataSheet.AcceptChanges();
 
                 return dataSheet;
             }
