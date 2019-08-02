@@ -22,7 +22,8 @@ namespace X2
     {
         QATestStuff testStuff;
 
-        
+        private IWebElement lastFoundByRefreshUntil;
+
 
         public OpActions(QATestStuff testStuff1)
         {
@@ -62,6 +63,21 @@ namespace X2
         public void OpActionRefresh()
         {
             testStuff.driver.Navigate().Refresh();
+        }
+
+        //dziadostwo na potrzeby klikania w zadanie na liście w CP5
+        //wolno tego używać wyłącznie po refresh until
+        public string OpActionClickLast()
+        {
+            if (lastFoundByRefreshUntil != null && lastFoundByRefreshUntil.Displayed && lastFoundByRefreshUntil.Enabled)
+            {
+                lastFoundByRefreshUntil.Click();
+                return "ok";
+            }
+            else
+            {
+                return "OpActionClickLast(): Can't find last element. Last element should be set by refreshUntil.";
+            }            
         }
 
         public string OpActionClick(Structs.TestStep testStep1)
@@ -123,7 +139,7 @@ namespace X2
             }
             else
             {
-                testStuff.variables.Remove(testStuff.variables.Where(t => t.name == v.name).First());
+                testStuff.variables.Remove(testStuff.variables.Where(t => t.name == v.name).FirstOrDefault());
                 testStuff.variables.Add(v);
             }
         }
@@ -161,7 +177,7 @@ namespace X2
                 }
                 else
                 {
-                    testStuff.testManager.batchVariables.Remove(testStuff.variables.Where(t => t.name == v.name).First());
+                    testStuff.testManager.batchVariables.Remove(testStuff.variables.Where(t => t.name == v.name).FirstOrDefault());
                     testStuff.testManager.batchVariables.Add(v);
                 }
 
@@ -533,7 +549,7 @@ namespace X2
             }
             else
             {
-                testStuff.variables.Remove(testStuff.variables.Where(t => t.name == v.name).First());
+                testStuff.variables.Remove(testStuff.variables.Where(t => t.name == v.name).FirstOrDefault());
                 testStuff.variables.Add(v);
             }
 
@@ -568,6 +584,7 @@ namespace X2
             }
             else
             {
+                
                 return "ok";
             }
         }
@@ -608,6 +625,16 @@ namespace X2
                 if (thisFits == true)
                 {
                     existsFit = true;
+
+                    //eksperyment
+                    //tutaj próbuję zdobyć namiar do dzieciaka z tekstem
+                    //zazwyczaj jest to zbędne, ale czasem trzeba to kliknąć
+                    List<IWebElement> subElements = elem.FindElements(By.XPath("./*")).ToList();
+                    //i wśród nich jest jeden z tekstem, przy czym uwzględniam tylko pierwszy tekst
+                    lastFoundByRefreshUntil = subElements.Where(t => t.Text.Contains(texts[0])).FirstOrDefault();
+
+                    
+                    
                 }
             }
             return existsFit;
@@ -740,6 +767,9 @@ namespace X2
                 Sleep(100); //do settings
                 whileDuration = DateTime.Now - start;
             }
+
+
+            
 
             //po staremu, na chama, rzeby rzuciło wyjątkami
             return testStuff.driver.FindElement(By.XPath(testStep1.xpath));            

@@ -31,7 +31,12 @@ namespace X2
         public bool killDriver;
 
         public TestManager testManager; //null albo test manager wywołujący (potrzebne ze względu na zmienne przekazywane między testami)
-        
+
+        public System.Drawing.Size initialWindowSize;
+        public string testRunId;
+        public Structs.TestPlan testPlan;        
+        public Structs.TestResult testResult;
+        public bool canSaveScreenshots = true;
 
 
         //brane z interfejsu + wartości domyslne ładowane do interfejsu
@@ -42,16 +47,6 @@ namespace X2
             public int maxRow;
             public bool killDriver;
         }
-
-        public System.Drawing.Size initialWindowSize;
-        public string testRunId;
-
-
-        public Structs.TestPlan testPlan;
-        //dostępne dla interfejsu graficznego
-        public Structs.TestResult testResult; 
-
-        public bool canSaveScreenshots = true;
 
         public QATestStuff(QATestStuffOptions stuffOptions)
         {

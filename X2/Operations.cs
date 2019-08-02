@@ -176,6 +176,10 @@ namespace X2
                     result = opActions.OpActionClickJS(testStep1);
                     break;
 
+                case "clickLast":
+                    result = opActions.OpActionClickLast();
+                    break;
+
                 case "waitFor":
                     result = opActions.OpActionWaitFor(testStep1);
                     break;
