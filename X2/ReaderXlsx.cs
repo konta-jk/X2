@@ -40,6 +40,8 @@ namespace X2
                 connection.Close();
 
                 //usunięcie komentarzy
+                //przeniesione do test plan from data table
+                /*
                 dataSheet.AcceptChanges();
                 foreach (DataRow row in dataSheet.Rows)
                 {
@@ -50,6 +52,7 @@ namespace X2
                     }
                 }
                 dataSheet.AcceptChanges();
+                */
 
                 return dataSheet;
             }

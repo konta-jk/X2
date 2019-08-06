@@ -60,6 +60,7 @@ namespace X2
 
         public void CreateDriver() //w przyszłości do argumentów dodać typ przeglądarki
         {
+            
             ChromeOptions chromeOptions = new ChromeOptions();
             //chromeOptions.AddArgument("no-sandbox"); //http timeout; to podobno śmierdzi
             chromeOptions.AddArgument("ignore-certificate-errors"); //współpraca z google
@@ -68,9 +69,17 @@ namespace X2
             chromeOptions.AddArgument("proxy-bypass-list=*"); //szybkość działania dla zminimalizowanego chrome
             chromeOptions.AddAdditionalCapability(CapabilityType.AcceptSslCertificates, true, true); //współpraca z google
             chromeOptions.AddArgument("start-maximized"); //błąd po dodaniu maximize przy każdej akcji i interwencji uzytkownika
+
+            
+
+
             try
             {
-                driver = new ChromeDriver(chromeOptions);
+
+                //próba rozwiązania problemu w win7
+                //driver = new ChromeDriver(@"C:\Testy automatyczne\QA Cat\bin\Release", chromeOptions); //tak ma być, zakomentowane do testów
+                driver = new ChromeDriver(chromeOptions); //tak ma być, zakomentowane do testów
+
                 driver.Manage().Window.Maximize();
                 driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromMilliseconds(Settings.implicitWait);
             }
@@ -78,7 +87,7 @@ namespace X2
             {
                 string s = "";
                 s = "Init failed\r\n" + e.ToString();
-                Log(s);
+                //Log(s); //powoduje błąd, bo logger null, bo test manager woła najpierw to, a potem init()
                 MessageBox.Show(s);
             }
         }

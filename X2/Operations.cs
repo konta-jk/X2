@@ -180,6 +180,15 @@ namespace X2
                     result = opActions.OpActionClickLast();
                     break;
 
+                case "doubleClick":
+                    opActions.OpActionDoubleClick(testStep1);
+                    result = "ok";
+                    break;
+
+                case "doubleClickLast":
+                    result = opActions.OpActionDoubleClickLast();
+                    break;
+
                 case "waitFor":
                     result = opActions.OpActionWaitFor(testStep1);
                     break;

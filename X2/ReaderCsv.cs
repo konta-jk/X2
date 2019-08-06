@@ -30,10 +30,13 @@ namespace X2
             while (!streamReader.EndOfStream)
             {
                 string line = streamReader.ReadLine();
-                if (line[0] == '[' && line[line.Length - 1] == ']') //komentatrz
+
+                
+                if (line[0] == '[' && line[line.Length - 1] == ']') //komentatrz //niby przeniesione do test plan from data table, ale konieczne tutaj, żeby sie nie wywaliło
                 {
                     continue;
                 }
+                
 
                 string[] cells 
                     = Regex.Split(line, ",(?=(?:[^\"]*\"[^\"]*\")*[^\"]*$)");

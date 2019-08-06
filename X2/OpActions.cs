@@ -69,6 +69,8 @@ namespace X2
         //wolno tego używać wyłącznie po refresh until
         public string OpActionClickLast()
         {
+            BrowserFocus();
+
             if (lastFoundByRefreshUntil != null && lastFoundByRefreshUntil.Displayed && lastFoundByRefreshUntil.Enabled)
             {
                 lastFoundByRefreshUntil.Click();
@@ -82,11 +84,16 @@ namespace X2
 
         public string OpActionClick(Structs.TestStep testStep1)
         {
+            BrowserFocus();
+
+            //dodane ze względu na problemy - czasem nie klika i nie zgłasza błędu
+            testStuff.Log("OpActions.OpActionClick() called in test step " + testStep1.stepDescription);
+
             //IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
             IWebElement element = ElementFinder(testStep1);
 
             ScrollAndMoveTo(element, testStuff.driver); 
-            element.Click();
+            element.Click();            
 
             //sprawdzenie wystąpienia błędu zdefiniowanego przez uzytkownika (jako fragment html)            
             if ((Settings.customErrors.Count > 0) && (testStep1.operationText == "Err"))
@@ -105,6 +112,33 @@ namespace X2
             else
             {
                 return "ok";
+            }
+        }
+
+        //do testów
+        public void OpActionDoubleClick(Structs.TestStep testStep1)
+        {
+            IWebElement element = ElementFinder(testStep1);
+            ScrollAndMoveTo(element, testStuff.driver);
+            new Actions(testStuff.driver).DoubleClick(element).Build().Perform();
+        }
+
+        //do testów
+        public string OpActionDoubleClickLast()
+        {
+            BrowserFocus();
+
+            if (lastFoundByRefreshUntil != null && lastFoundByRefreshUntil.Displayed && lastFoundByRefreshUntil.Enabled)
+            {
+                IWebElement element = lastFoundByRefreshUntil;
+                ScrollAndMoveTo(element, testStuff.driver);
+                new Actions(testStuff.driver).DoubleClick(element).Build().Perform();
+
+                return "ok";
+            }
+            else
+            {
+                return "OpActionClickLast(): Can't find last element. Last element should be set by refreshUntil.";
             }
         }
 
@@ -528,13 +562,21 @@ namespace X2
             string value = "";
 
             try
-            {
-                
+            {                
                 name = text.Substring(0, text.IndexOf('='));
                 value = text.Substring(text.IndexOf('=') + 1);
                 name = ClearString(name);
                 value = ClearString(value);
 
+                //jeżeli wartość ma być pobrana ze zmiennej batcha, np. text: x={y}
+                if (value[0] == '{' && value[value.Length - 1] == '}')
+                {
+                    value = testStuff.testManager.batchVariables.Where(t => t.name == value.Substring(1, value.Length - 2)).FirstOrDefault().value;                    
+                }
+
+
+
+                
             }
             catch (Exception e)
             {
@@ -879,5 +921,10 @@ namespace X2
             }
         }
 
+        private void BrowserFocus()
+        {
+            IJavaScriptExecutor js = (IJavaScriptExecutor)testStuff.driver;
+            js.ExecuteScript("window.focus();");
+        }
     }
 }

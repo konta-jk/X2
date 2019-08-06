@@ -106,6 +106,12 @@ namespace X2
 
         private void StartTest()
         {
+            //test czy występuje problem sesji 0
+            //System.Diagnostics.Process.Start(@"C:\Windows\System32\notepad.exe");
+            //return;
+            
+
+
             testRunning = true;
 
             currentTestStart = DateTime.Now;
