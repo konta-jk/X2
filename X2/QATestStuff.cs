@@ -62,7 +62,10 @@ namespace X2
         {
             
             ChromeOptions chromeOptions = new ChromeOptions();
-            //chromeOptions.AddArgument("no-sandbox"); //http timeout; to podobno śmierdzi
+
+            //chromeOptions.AddArgument("no-sandbox"); //testowo win7
+            //chromeOptions.BinaryLocation = @"C:\Program Files (x86)\Google\Chrome\Application\chrome.exe";
+
             chromeOptions.AddArgument("ignore-certificate-errors"); //współpraca z google
             chromeOptions.AddArgument("ignore-ssl-errors"); //współpraca z google
             chromeOptions.AddArgument("proxy-server='direct://'"); //szybkość działania dla zminimalizowanego chrome
@@ -71,15 +74,25 @@ namespace X2
             chromeOptions.AddArgument("start-maximized"); //błąd po dodaniu maximize przy każdej akcji i interwencji uzytkownika
             
             
+            
+
+            
+
 
 
             try
             {
+                //próby zmuszenia do współpracy z win7:
+                /*
+                ChromeDriverService service = ChromeDriverService.CreateDefaultService();
+                service.LogPath = "chromedriver.log";
+                service.EnableVerboseLogging = true;
+                //driver = new ChromeDriver(service, chromeOptions); 
+                */
                 
 
-                //próba rozwiązania problemu w win7
-                //driver = new ChromeDriver(@"C:\Testy automatyczne\QA Cat\bin\Release", chromeOptions); //tak ma być, zakomentowane do testów
-                driver = new ChromeDriver(chromeOptions); //tak ma być, zakomentowane do testów
+                driver = new ChromeDriver(chromeOptions); 
+
 
                 driver.Manage().Window.Maximize();
                 driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromMilliseconds(Settings.implicitWait);
