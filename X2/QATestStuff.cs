@@ -69,12 +69,13 @@ namespace X2
             chromeOptions.AddArgument("proxy-bypass-list=*"); //szybkość działania dla zminimalizowanego chrome
             chromeOptions.AddAdditionalCapability(CapabilityType.AcceptSslCertificates, true, true); //współpraca z google
             chromeOptions.AddArgument("start-maximized"); //błąd po dodaniu maximize przy każdej akcji i interwencji uzytkownika
-
+            
             
 
 
             try
             {
+                
 
                 //próba rozwiązania problemu w win7
                 //driver = new ChromeDriver(@"C:\Testy automatyczne\QA Cat\bin\Release", chromeOptions); //tak ma być, zakomentowane do testów

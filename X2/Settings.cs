@@ -32,6 +32,7 @@ namespace X2
 
         public struct ActionsSettings
         {
+            public static readonly int opActionClickRetarded = 10000;
             public static readonly int opActionClickJSInitialSleep = 1000;
             public static readonly int opActionClickJSFinalSleep = 20000;
             public static readonly int opActionWaitForTimeout = 40000;
@@ -40,8 +41,6 @@ namespace X2
             public static readonly int opActionRefreshUntilSleep = 4000;
             public static readonly int opActionRefreshUntilTimeout = 180000; //ms
             public static readonly int elementFinderTimeout = 3000; //ms default 12000
-
-
         }
 
 

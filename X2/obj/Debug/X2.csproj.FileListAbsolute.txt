@@ -40,28 +40,3 @@ D:\Git repositories\X2 R1 home\X2\obj\Debug\X2.exe
 D:\Git repositories\X2 R1 home\X2\obj\Debug\X2.pdb
 D:\Git repositories\X2 R1 home\X2\bin\Debug\WebDriver.Support.dll
 D:\Git repositories\X2 R1 home\X2\bin\Debug\WebDriver.Support.xml
-C:\Git repositories\X2 R1\X2\X2\bin\Debug\QA Cat.exe.config
-C:\Git repositories\X2 R1\X2\X2\bin\Debug\QA Cat.exe.manifest
-C:\Git repositories\X2 R1\X2\X2\bin\Debug\QA Cat.application
-C:\Git repositories\X2 R1\X2\X2\bin\Debug\QA Cat.exe
-C:\Git repositories\X2 R1\X2\X2\bin\Debug\QA Cat.pdb
-C:\Git repositories\X2 R1\X2\X2\bin\Debug\nunit.framework.dll
-C:\Git repositories\X2 R1\X2\X2\bin\Debug\SeleniumExtras.WaitHelpers.dll
-C:\Git repositories\X2 R1\X2\X2\bin\Debug\WebDriver.dll
-C:\Git repositories\X2 R1\X2\X2\bin\Debug\WebDriver.Support.dll
-C:\Git repositories\X2 R1\X2\X2\bin\Debug\nunit.framework.pdb
-C:\Git repositories\X2 R1\X2\X2\bin\Debug\nunit.framework.xml
-C:\Git repositories\X2 R1\X2\X2\bin\Debug\WebDriver.xml
-C:\Git repositories\X2 R1\X2\X2\bin\Debug\WebDriver.Support.xml
-C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.Form1.resources
-C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.Form2SideConverter.resources
-C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.Form3Daemon.resources
-C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.Properties.Resources.resources
-C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.csproj.GenerateResource.cache
-C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.csproj.CoreCompileInputs.cache
-C:\Git repositories\X2 R1\X2\X2\obj\Debug\QA Cat.exe.manifest
-C:\Git repositories\X2 R1\X2\X2\obj\Debug\QA Cat.application
-C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.csproj.CopyComplete
-C:\Git repositories\X2 R1\X2\X2\obj\Debug\QA Cat.exe
-C:\Git repositories\X2 R1\X2\X2\obj\Debug\QA Cat.pdb
-C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.csprojAssemblyReference.cache

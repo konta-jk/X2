@@ -84,6 +84,12 @@ namespace X2
 
         public string OpActionClick(Structs.TestStep testStep1)
         {
+            if(testStep1.operationText.Contains("Retarded"))
+            {
+                Sleep(Settings.ActionsSettings.opActionClickRetarded);
+            }
+
+
             BrowserFocus();
 
             //dodane ze względu na problemy - czasem nie klika i nie zgłasza błędu
@@ -96,7 +102,7 @@ namespace X2
             element.Click();            
 
             //sprawdzenie wystąpienia błędu zdefiniowanego przez uzytkownika (jako fragment html)            
-            if ((Settings.customErrors.Count > 0) && (testStep1.operationText == "Err"))
+            if ((Settings.customErrors.Count > 0) && (testStep1.operationText.Contains("Err")))
             {
                 Sleep(Settings.sleepAfterOperation);
                 string customError = CustomErrorDetected();
@@ -253,24 +259,24 @@ namespace X2
                 
         }
 
-        //26.07 błędy 
+        
         public string OpActionCloseAlert(string operationText) 
         {
             IAlert alert;// 
             
-            alert = ExpectedConditions.AlertIsPresent().Invoke(testStuff.driver);
+            
+            //alert = ExpectedConditions.AlertIsPresent().Invoke(testStuff.driver); //przestało działać po aktualizacji do 76
 
-            //ten fragemt robi to samo co powyższa linijka, ale nie używa depreciated ExpectedConditions, za to używa try catch, co jest jeszcze gorsze IMHO
-            /*
+            //ten fragemt robi to samo co powyższa linijka, ale nie używa depreciated ExpectedConditions, za to używa try catch, co jest jeszcze gorsze IMHO //odkomentowane po 76            
             try
             {
-                comeHereMotherfucker = testStuff.driver.SwitchTo().Alert();
+                alert = testStuff.driver.SwitchTo().Alert();
             }
             catch (NoAlertPresentException)
             {
-                comeHereMotherfucker = null;
+                alert = null;
             }
-            */           
+                       
 
 
             if (alert != null)
@@ -709,7 +715,7 @@ namespace X2
             return texts;
         }
 
-        public void Sleep(int duration)
+        public void Sleep(int duration) //ms
         {
             System.Threading.Thread.Sleep(duration);
         }
