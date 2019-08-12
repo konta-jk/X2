@@ -139,7 +139,7 @@ namespace X2
         {
             if ((DateTime.Now.DayOfWeek == DayOfWeek.Saturday) || (DateTime.Now.DayOfWeek == DayOfWeek.Sunday) || checkBox2.Checked)
             {
-                return true;
+                return new int[] { 0, 23 }.Contains(DateTime.Now.Hour) ? false : true; //to jest if; if godzina 0 albo 23, false
             }
             else
             {
@@ -153,7 +153,10 @@ namespace X2
                 }
             }
         }
+
+
         
+
         //drugi timer do wysłania notyfikacji o rezultatach do uzytkownika
                
 

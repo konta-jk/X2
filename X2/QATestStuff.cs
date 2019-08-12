@@ -72,13 +72,6 @@ namespace X2
             chromeOptions.AddArgument("proxy-bypass-list=*"); //szybkość działania dla zminimalizowanego chrome
             chromeOptions.AddAdditionalCapability(CapabilityType.AcceptSslCertificates, true, true); //współpraca z google
             chromeOptions.AddArgument("start-maximized"); //błąd po dodaniu maximize przy każdej akcji i interwencji uzytkownika
-            
-            
-            
-
-            
-
-
 
             try
             {
@@ -96,6 +89,9 @@ namespace X2
 
                 driver.Manage().Window.Maximize();
                 driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromMilliseconds(Settings.implicitWait);
+
+
+                
             }
             catch (Exception e)
             {
@@ -106,6 +102,7 @@ namespace X2
             }
         }
 
+
         public void Init()
         {
             //log = "";           
@@ -114,7 +111,6 @@ namespace X2
             logger = new Logger(@"\" + DateTime.Now.Date.ToShortDateString() + @"\" + testRunId, "Log.txt");
 
             Log("Start " + testRunId);
-
 
             canSaveScreenshots = CanSaveScreenshots();
             if (!canSaveScreenshots)
