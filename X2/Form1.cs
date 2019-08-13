@@ -131,7 +131,7 @@ namespace X2
         private void StartTest()
         {
             DialogResult dialogResult = 
-                MessageBox.Show(Settings.message1,
+                MessageBox.Show(Settings.singleModeInitMessage,
                 "Cześć!", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
             if (dialogResult != DialogResult.OK)
             {

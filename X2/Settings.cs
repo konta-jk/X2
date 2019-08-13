@@ -13,7 +13,7 @@ namespace X2
     //docelowo powinny być ładowane z pliku
     static class Settings
     {
-        public const string applicationMode = "batch"; //słownik wartości: { "batch", "single" }
+        public const string applicationMode = "single"; //słownik wartości: { "batch", "single" }
 
         public static readonly string connectionString = @"Data Source=taris\endorcopy;User id=sa;Password=sa;";
 
@@ -44,7 +44,7 @@ namespace X2
         }
 
 
-        public static readonly string message1 = "Kiedy rozpocznie się test, Selenium otworzy nowe okno przeglądarki Chrome. Podnieś wtedy ręce do góry."
+        public static readonly string singleModeInitMessage = "Kiedy rozpocznie się test, Selenium otworzy nowe okno przeglądarki Chrome. Podnieś wtedy ręce do góry."
                 + "\r\nPraca na komputerze, na którym Selenium przeprowadza test, nie jest zalecana. Nie należy dotykać automatycznie sterowanego okna przeglądarki."
                 + "\r\nMożliwe przyczyny błędów w przebiegu testu:"
                 + "\r\n1. Zaburzenia wprowadzone przez użytkownika komputera"

@@ -17,8 +17,13 @@ namespace X2
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
+            
 
-            switch (Settings.applicationMode)
+            Prefs.ReadFromFile("Preferences.json");
+            Prefs.Preferences DELETEME1 = Prefs.Settings; //debug
+            int DELETEME = 0; //debug
+
+            switch (Prefs.Settings.applicationMode)
             {
                 case "single":
                     Application.Run(new Form1());

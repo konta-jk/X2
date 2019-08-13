@@ -99,6 +99,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Prefs.cs" />
     <Compile Include="ReaderWriterDataBase.cs" />
     <Compile Include="Form2SideConverter.cs">
       <SubType>Form</SubType>

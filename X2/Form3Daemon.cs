@@ -15,12 +15,19 @@ namespace X2
     {
         static TestManager testManager;
 
+        
+
         public Form3Daemon()
         {
             InitializeComponent();
             checkBox1.Checked = ApplicationIsInStartup();
             ToggleToTray(true);
             testManager = new TestManager();
+
+
+
+           
+            
         }
 
         private void Form3Tray_FormClosing(object sender, FormClosingEventArgs e)
