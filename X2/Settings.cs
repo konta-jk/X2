@@ -13,7 +13,7 @@ namespace X2
     //docelowo powinny być ładowane z pliku
     static class Settings
     {
-        public const string applicationMode = "single"; //słownik wartości: { "batch", "single" }
+        public const string applicationMode = "batch"; //słownik wartości: { "batch", "single" }
 
         public static readonly string connectionString = @"Data Source=taris\endorcopy;User id=sa;Password=sa;";
 
@@ -28,7 +28,7 @@ namespace X2
         public static readonly bool logWithScreenshots = true; //SCREENSHOTY
         public static readonly float maximumDriveRatioToLogWithSs = 0.8f;
         public static readonly int killDriverDelay = 2000;
-        public static readonly int[] appActiveHours = new int[] { 1, 2, 3, 4, 5, 19, 20, 21, 22 }; //jeżeli godzina jest taka, jak w tej kolekcji, aplikacji wolno odpalać testy w dni robocze
+        public static readonly int[] appActiveHours = new int[] { 4, 5, 19, 20, 21, 22 }; //jeżeli godzina jest taka, jak w tej kolekcji, aplikacji wolno odpalać testy w dni robocze
 
         public struct ActionsSettings
         {
