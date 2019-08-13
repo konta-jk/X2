@@ -12,6 +12,7 @@ namespace X2
     static class Prefs
     {
         public static Preferences Settings;
+        
 
         static string ReadSettingsFile(string fileName)
         {
@@ -37,6 +38,13 @@ namespace X2
         public static void ReadFromFile(string fileName)
         {
             Settings = GetSettingsContent(fileName);
+
+            //w miarę możliwości pozbyć się tego i korzystać z customErrorDict bez użycia Dictionary
+            Settings.customErrors = new Dictionary<string, string>();
+            foreach (Preferences.CustomError err in Settings.customErrorDict)
+            {
+                Settings.customErrors.Add(err.key, err.value);
+            }
         }
 
         [DataContract]
@@ -76,7 +84,16 @@ namespace X2
 
             //słownik cięzko zdeserializować, obejść to (wymienić słownik na coś innego) 
             //[DataMember] public Dictionary<int, int> customErrors
+            [DataMember] public List<CustomError> customErrorDict;
 
+            [DataContract]
+            public class CustomError
+            {
+                [DataMember] public string key;
+                [DataMember] public string value;
+            }
+
+            public Dictionary<string, string> customErrors;
         }
 
         
