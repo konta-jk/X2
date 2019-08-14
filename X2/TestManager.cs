@@ -57,7 +57,7 @@ namespace X2
             string query = @"INSERT INTO dps.dpsdynamic.QA_TEST_RESULT (IdPlan, IdBatch, TestResult, DurationSeconds, DateTime, LogPath, ScreenshotsPath) " +
                 @"VALUES (" + currentTestPlan + @", " + currentBatch +  @", 'FAIL', " + ((int)((DateTime.Now - currentTestStart).TotalSeconds)).ToString() + @", '" + currentTestStart.ToString() + @"', '" + currentTestStuff.logger.GetFolderPath() + @"', '-1')";
 
-            new ReaderWriterDataBase().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable); //docelowo showExcMsg = false 
+            new ReaderWriterDataBase().TryQueryToDataTable(Prefs.Settings.connectionString, query, false, out DataTable dataTable); //docelowo showExcMsg = false 
 
             if (currentTestStuff.killDriver)
             {
@@ -101,7 +101,7 @@ namespace X2
             string query = @"INSERT INTO dps.dpsdynamic.QA_TEST_RESULT (IdPlan, IdBatch, TestResult, DurationSeconds, DateTime, LogPath, ScreenshotsPath) " +
                 @"VALUES (" + currentTestPlan + @", " + currentBatch + @", '" + successStr + @"', " + ((int)((DateTime.Now - currentTestStart).TotalSeconds)).ToString() + @", '" + currentTestStart.ToString() + @"', '" + currentTestStuff.logger.GetFolderPath() + @"', '-1')";
 
-            new ReaderWriterDataBase().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable); 
+            new ReaderWriterDataBase().TryQueryToDataTable(Prefs.Settings.connectionString, query, false, out DataTable dataTable); 
         }
 
         private void StartTest()
@@ -176,7 +176,7 @@ namespace X2
                 order by A2.IdBatch, A2.OrderInBatch";
                 
 
-            string result = new ReaderWriterDataBase().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable); //msg flase
+            string result = new ReaderWriterDataBase().TryQueryToDataTable(Prefs.Settings.connectionString, query, false, out DataTable dataTable); //msg flase
 
             if (result != "ok")
             {
@@ -217,7 +217,7 @@ namespace X2
         {
             string query = "select Description, Command, Text, XPath from dps.dpsdynamic.QA_TEST_STEP A1 " +
                 "join dps.dpsdynamic.QA_TEST_STEP_IN_PLAN A2 on A1.IdStep = A2.IdStep where A2.IdPlan = '" + testPlan.ToString() + "' order by A2.OrderInTest";
-            string result = new ReaderWriterDataBase().TryQueryToDataTable(Settings.connectionString, query, false, out DataTable dataTable);
+            string result = new ReaderWriterDataBase().TryQueryToDataTable(Prefs.Settings.connectionString, query, false, out DataTable dataTable);
 
             return dataTable;
         }        

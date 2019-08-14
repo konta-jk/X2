@@ -150,7 +150,7 @@ namespace X2
             }
             else
             {
-                if (Settings.appActiveHours.Contains(DateTime.Now.Hour))
+                if (Prefs.Settings.appActiveHours.Contains(DateTime.Now.Hour))
                 {
                     return true;
                 }

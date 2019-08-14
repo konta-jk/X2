@@ -38,7 +38,7 @@ namespace X2
         }
 
         int catchCount = 0;
-        int catchLimit = Settings.catchLimit; //do settingsów
+        int catchLimit = Prefs.Settings.catchLimit; //do settingsów
 
         public string Operation(Structs.TestStep testStep1)
         {
@@ -49,7 +49,7 @@ namespace X2
                 opActions.KeepMaximized(testStep1); //wielkość okna chrome, ważne dla niezawodności opetarions
 
                 result = PerformOperation(testStep1);
-                opActions.Sleep(Settings.sleepAfterOperation);
+                opActions.Sleep(Prefs.Settings.sleepAfterOperation);
                 catchCount = 0;
             }
             
@@ -99,10 +99,10 @@ namespace X2
             {
                 catchCount++;
                 testStuff.Log("Exception caught \"ElementNotInteractableException\" in step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next: sleep, retry.");
-                opActions.Sleep(Settings.sleepAfterElementNotInteractible);
+                opActions.Sleep(Prefs.Settings.sleepAfterElementNotInteractible);
                 if (catchCount < catchLimit)
                 {
-                    if (Settings.allowTryHelps)
+                    if (Prefs.Settings.allowTryHelps)
                     {
                         opActions.TryHelpNonInteractible(testStep1, catchCount); //znajduje interaktywnego rodzica i najeżdża na niego kursorem
                     }
@@ -119,11 +119,11 @@ namespace X2
             {                
                 catchCount += 1; 
                 testStuff.Log("Exception caught \"NoSuchElementException\" in test step " + testStep1.stepDescription + ". Catch number " + catchCount.ToString() + ". Next actions: sleep, retry.");                
-                opActions.Sleep(Settings.sleepAfterNoSuchElement); //do tego dochodzi implicit wait, więc łącznie 40,3 s x 10... wtf
+                opActions.Sleep(Prefs.Settings.sleepAfterNoSuchElement); //do tego dochodzi implicit wait, więc łącznie 40,3 s x 10... wtf
                     
-                if (catchCount < Settings.noSuchElementCatchLimit)
+                if (catchCount < Prefs.Settings.noSuchElementCatchLimit)
                 {
-                    if(Settings.allowTryHelps)
+                    if(Prefs.Settings.allowTryHelps)
                     {
                         opActions.TryHelpNoSuchElement(catchCount); //scrolluje
                     }

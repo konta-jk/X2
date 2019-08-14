@@ -37,7 +37,7 @@ namespace X2
 
             if (testStuff.killDriver)
             {
-                Thread.Sleep(TimeSpan.FromMilliseconds(Settings.killDriverDelay)); //aby uzytkownik mógł sie przyjrzeć zakończeniu przed zamknięciem przeglądarki; do settingsów
+                Thread.Sleep(TimeSpan.FromMilliseconds(Prefs.Settings.killDriverDelay)); //aby uzytkownik mógł sie przyjrzeć zakończeniu przed zamknięciem przeglądarki; do settingsów
                 testStuff.TearDownTest();
             }
 
@@ -131,7 +131,7 @@ namespace X2
         private void StartTest()
         {
             DialogResult dialogResult = 
-                MessageBox.Show(Settings.singleModeInitMessage,
+                MessageBox.Show(Prefs.Settings.singleModeInitMessage,
                 "Cześć!", MessageBoxButtons.OKCancel, MessageBoxIcon.Information);
             if (dialogResult != DialogResult.OK)
             {
@@ -223,7 +223,7 @@ namespace X2
             UpdateResult();
             if (testStuff.killDriver)
             {
-                Thread.Sleep(TimeSpan.FromMilliseconds(Settings.killDriverDelay)); //aby uzytkownik mógł sie przyjrzeć zakończeniu przed zamknięciem przeglądarki; do settingsów
+                Thread.Sleep(TimeSpan.FromMilliseconds(Prefs.Settings.killDriverDelay)); //aby uzytkownik mógł sie przyjrzeć zakończeniu przed zamknięciem przeglądarki; do settingsów
                 testStuff.TearDownTest();
             }
 

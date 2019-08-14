@@ -17,11 +17,12 @@ namespace X2
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            
+            string path = System.Reflection.Assembly.GetEntryAssembly().Location;
+            path = path.Substring(0, path.LastIndexOf('\\'));            
 
-            Prefs.ReadFromFile("Preferences.json");
-            Prefs.Preferences DELETEME1 = Prefs.Settings; //debug
-            int DELETEME = 0; //debug
+            Prefs.ReadFromFile(path + "\\Preferences.json"); //musi byc full path! inaczej działa dla usera, ale nie dla systemu w startup
+            //Prefs.Preferences DELETEME1 = Prefs.Settings; //debug
+            //int DELETEME = 0; //debug
 
             switch (Prefs.Settings.applicationMode)
             {
