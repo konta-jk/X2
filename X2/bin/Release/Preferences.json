@@ -16,7 +16,7 @@
   },
   
   "allowTryHelps": "true",
-  "appActiveHours": [ "4", "5", "19", "20", "21", "22" ],
+  "appActiveHours": [ "4", "5" ],
   "catchLimit": "10",  
   
   "customErrorDict": 
