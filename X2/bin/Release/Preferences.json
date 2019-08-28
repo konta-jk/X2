@@ -1,0 +1,48 @@
+{  
+  "applicationMode": "batch",
+  "connectionString": "Data Source=taris\\endorcopy;User id=sa;Password=sa;",
+  
+  "actionsSettings": 
+  {
+	"opActionClickRetarded": "10000",
+	"opActionClickJSInitialSleep": "1000",
+	"opActionClickJSFinalSleep": "20000",
+    "opActionWaitForTimeout": "40000",
+    "opActionWaitForSleep": "500",
+    "opActionScrollSleep": "1000",
+    "opActionRefreshUntilSleep": "4000",
+    "opActionRefreshUntilTimeout": "180000",
+    "elementFinderTimeout": "3000"
+  },
+  
+  "allowTryHelps": "true",
+  "appActiveHours": [ "4", "5" ],
+  "catchLimit": "10",  
+  
+  "customErrorDict": 
+  [
+    {
+	  "key": "CP7 żółty toster",
+	  "value": "<div class=\"simple-notification warn has-icon ng-trigger ng-trigger-enterLeave ng-animating\">"
+	},	
+	{
+	  "key": "CP7 błędy walidacji MV",
+	  "value": "<div _ngcontent-c8=\"\" class=\"row alert alert-danger ng-tns-c8-3 ng-star-inserted\"><b _ngcontent-c8=\"\" class=\"ng-tns-c8-3\">Błędy walidacji:</b>"
+	},
+	{
+	  "key": "CP7 czerwony toster",
+	  "value": "<div class=\"simple-notification error has-icon ng-trigger ng-trigger-enterLeave\""
+	}
+  ],
+  
+  "disableNotifications": "false",
+  "implicitWait": "15000",
+  "killDriverDelay": "2000",
+  "logWithScreenshots": "true",
+  "maximumDriveRatioToLogWithSs": "0.8",  
+  "noSuchElementCatchLimit": "6",
+  "singleModeInitMessage" : "Kiedy rozpocznie się test, Selenium otworzy nowe okno przeglądarki Chrome. Podnieś wtedy ręce do góry.\r\nPraca na komputerze, na którym Selenium przeprowadza test, nie jest zalecana. Nie należy dotykać automatycznie sterowanego okna przeglądarki.\r\nMożliwe przyczyny błędów w przebiegu testu:\r\n1. Zaburzenia wprowadzone przez użytkownika komputera\r\n2. Błędy w scenariuszu\r\n3. Zmiany w testowanym procesie, np. xpath\r\n4. Błędy w procesie",
+  "sleepAfterElementNotInteractible": "1000",
+  "sleepAfterNoSuchElement": "300",
+  "sleepAfterOperation": "400"
+}

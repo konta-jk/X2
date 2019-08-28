@@ -88,7 +88,7 @@ namespace X2
 
 
                 driver.Manage().Window.Maximize();
-                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromMilliseconds(Settings.implicitWait);
+                driver.Manage().Timeouts().ImplicitWait = TimeSpan.FromMilliseconds(Prefs.Settings.implicitWait);
 
 
                 
@@ -115,7 +115,7 @@ namespace X2
             canSaveScreenshots = CanSaveScreenshots();
             if (!canSaveScreenshots)
             {
-                Log("Can't save screenshots, available disk space < " + Math.Round(100 * (1 - Settings.maximumDriveRatioToLogWithSs), 0).ToString() + "%");
+                Log("Can't save screenshots, available disk space < " + Math.Round(100 * (1 - Prefs.Settings.maximumDriveRatioToLogWithSs), 0).ToString() + "%");
             }
 
             initialWindowSize = driver.Manage().Window.Size;
@@ -147,7 +147,7 @@ namespace X2
         public void Log(string text)
         {
             logger.Log(text);
-            if(Settings.logWithScreenshots && canSaveScreenshots)
+            if(Prefs.Settings.logWithScreenshots && canSaveScreenshots)
             {
                 Screenshot(text);
             }
@@ -160,7 +160,7 @@ namespace X2
             DriveInfo driveInfo = DriveInfo.GetDrives().Where(t => t.ToString() == drive).First();
             float ratio = (float)((float)driveInfo.AvailableFreeSpace / (float)driveInfo.TotalSize); //tara bum, lesson learned          
 
-            if (ratio < Settings.maximumDriveRatioToLogWithSs)
+            if (ratio < Prefs.Settings.maximumDriveRatioToLogWithSs)
             {
                 return true;
             }

@@ -16,10 +16,14 @@ namespace X2
 
         static string ReadSettingsFile(string fileName)
         {
+        
             using (StreamReader streamReader = new StreamReader(fileName, Encoding.UTF8))
             {
                 return streamReader.ReadToEnd();
             }
+
+
+            
         }
 
         static Preferences GetSettingsContent(string fileName)

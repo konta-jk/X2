@@ -86,7 +86,7 @@ namespace X2
         {
             if(testStep1.operationText.Contains("Retarded"))
             {
-                Sleep(Settings.ActionsSettings.opActionClickRetarded);
+                Sleep(Prefs.Settings.actionsSettings.opActionClickRetarded);
             }
 
 
@@ -102,9 +102,9 @@ namespace X2
             element.Click();            
 
             //sprawdzenie wystąpienia błędu zdefiniowanego przez uzytkownika (jako fragment html)            
-            if ((Settings.customErrors.Count > 0) && (testStep1.operationText.Contains("Err")))
+            if ((Prefs.Settings.customErrors.Count > 0) && (testStep1.operationText.Contains("Err")))
             {
-                Sleep(Settings.sleepAfterOperation);
+                Sleep(Prefs.Settings.sleepAfterOperation);
                 string customError = CustomErrorDetected();
                 if (customError != "no")
                 {
@@ -411,7 +411,7 @@ namespace X2
         //mam nadziję, że zbędne i do wyeliminowania
         public string OpActionClickJS(Structs.TestStep testStep1)
         {
-            Sleep(Settings.ActionsSettings.opActionClickJSInitialSleep);
+            Sleep(Prefs.Settings.actionsSettings.opActionClickJSInitialSleep);
 
             IJavaScriptExecutor js = (IJavaScriptExecutor)testStuff.driver;
 
@@ -422,7 +422,7 @@ namespace X2
             //element.Click();
             js.ExecuteScript("arguments[0].click();", element);
 
-            Sleep(Settings.ActionsSettings.opActionClickJSFinalSleep);
+            Sleep(Prefs.Settings.actionsSettings.opActionClickJSFinalSleep);
 
             return "ok";
         }
@@ -433,7 +433,7 @@ namespace X2
         //3. oczekiwania aż pojawi się element (ew. tekst)
         public string OpActionWaitFor(Structs.TestStep testStep1)
         {
-            int timeOut = Settings.ActionsSettings.opActionWaitForTimeout;
+            int timeOut = Prefs.Settings.actionsSettings.opActionWaitForTimeout;
             TimeSpan whileDuration = new TimeSpan(0, 0, 0);
             DateTime startTime = DateTime.Now;
             string expectedText = "";
@@ -489,7 +489,7 @@ namespace X2
                         }
                     }
                 }
-                Sleep(Settings.ActionsSettings.opActionWaitForSleep);
+                Sleep(Prefs.Settings.actionsSettings.opActionWaitForSleep);
                 whileDuration = DateTime.Now - startTime;
             }
 
@@ -505,7 +505,7 @@ namespace X2
 
         public string OpActionScroll(Structs.TestStep testStep1)
         {
-            Sleep(Settings.ActionsSettings.opActionScrollSleep);
+            Sleep(Prefs.Settings.actionsSettings.opActionScrollSleep);
             IJavaScriptExecutor js = (IJavaScriptExecutor)testStuff.driver;
             string destination = testStep1.operationText;
 
@@ -610,8 +610,8 @@ namespace X2
         //w kroku jako text należy podać stałe teksty odzielone podwójnymi przecinkami albo zmienne obramowane podwójnymi nawiasami kwadratowymi
         public string OpActionRefreshUntil(Structs.TestStep testStep1)
         {
-            int duration = Settings.ActionsSettings.opActionRefreshUntilSleep;
-            int timeout = Settings.ActionsSettings.opActionRefreshUntilTimeout; 
+            int duration = Prefs.Settings.actionsSettings.opActionRefreshUntilSleep;
+            int timeout = Prefs.Settings.actionsSettings.opActionRefreshUntilTimeout; 
             DateTime start = DateTime.Now;
             TimeSpan whileDuration = new TimeSpan(0, 0, 0);
 
@@ -724,7 +724,7 @@ namespace X2
         {
             string pageSource = testStuff.driver.PageSource;
 
-            foreach (KeyValuePair<string, string> s in Settings.customErrors)
+            foreach (KeyValuePair<string, string> s in Prefs.Settings.customErrors)
             {
                 if (pageSource.Contains(s.Value))
                 {
@@ -789,7 +789,7 @@ namespace X2
         private IWebElement ElementFinder(Structs.TestStep testStep1)
         {
             DateTime start = DateTime.Now;
-            int timeout = Settings.ActionsSettings.elementFinderTimeout; //ms, do settings
+            int timeout = Prefs.Settings.actionsSettings.elementFinderTimeout; //ms, do settings
             TimeSpan whileDuration = TimeSpan.FromMilliseconds(0);
 
             List<IWebElement> elements = new List<IWebElement>();

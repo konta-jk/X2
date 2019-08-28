@@ -8,7 +8,7 @@
     <ProjectGuid>{23C44EEC-2F9E-45FA-BC07-24696F124890}</ProjectGuid>
     <OutputType>WinExe</OutputType>
     <RootNamespace>X2</RootNamespace>
-    <AssemblyName>QA Cat</AssemblyName>
+    <AssemblyName>QACat</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>
@@ -133,7 +133,6 @@
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Settings.cs" />
     <Compile Include="Structs.cs" />
     <Compile Include="QATest.cs" />
     <Compile Include="TestPlanFromDataTable.cs" />
