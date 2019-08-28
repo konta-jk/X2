@@ -64,3 +64,4 @@ C:\Git repositories\X2 R1\X2\X2\obj\Debug\QA Cat.application
 C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.csproj.CopyComplete
 C:\Git repositories\X2 R1\X2\X2\obj\Debug\QA Cat.exe
 C:\Git repositories\X2 R1\X2\X2\obj\Debug\QA Cat.pdb
+C:\Git repositories\X2 R1\X2\X2\obj\Debug\X2.csprojAssemblyReference.cache

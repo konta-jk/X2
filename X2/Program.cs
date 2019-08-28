@@ -17,11 +17,12 @@ namespace X2
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
 
-            
+            string path = System.Reflection.Assembly.GetEntryAssembly().Location.ToString();
+            path = path.Substring(0, path.LastIndexOf('\\'));
+            path += "\\Preferences.json";
 
-            Prefs.ReadFromFile("Preferences.json");
-            Prefs.Preferences DELETEME1 = Prefs.Settings; //debug
-            int DELETEME = 0; //debug
+            Prefs.ReadFromFile(path);
+            
 
             switch (Prefs.Settings.applicationMode)
             {
