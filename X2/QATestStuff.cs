@@ -73,6 +73,8 @@ namespace X2
             chromeOptions.AddAdditionalCapability(CapabilityType.AcceptSslCertificates, true, true); //współpraca z google
             chromeOptions.AddArgument("start-maximized"); //błąd po dodaniu maximize przy każdej akcji i interwencji uzytkownika
 
+            
+
             try
             {
                 //próby zmuszenia do współpracy z win7:
@@ -82,9 +84,17 @@ namespace X2
                 service.EnableVerboseLogging = true;
                 //driver = new ChromeDriver(service, chromeOptions); 
                 */
-                
 
-                driver = new ChromeDriver(chromeOptions); 
+                string path = System.Reflection.Assembly.GetEntryAssembly().Location;
+                path = path.Substring(0, path.LastIndexOf('\\'));
+
+
+                driver = new ChromeDriver(path, chromeOptions, new TimeSpan(0, 0, 0, 0, 180000)); //próba uniknięcia problemu z http request timed out
+
+                //driver = new ChromeDriver(chromeOptions);  //tak zawsze bylo - sprzed próby
+
+
+                
 
 
                 driver.Manage().Window.Maximize();
