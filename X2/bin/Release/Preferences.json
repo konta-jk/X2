@@ -38,6 +38,7 @@
   "disableNotifications": "false",
   "implicitWait": "15000",
   "killDriverDelay": "2000",
+  "logAllOperations": "true",
   "logWithScreenshots": "true",
   "maximumDriveRatioToLogWithSs": "0.8",  
   "noSuchElementCatchLimit": "6",

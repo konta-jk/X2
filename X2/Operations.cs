@@ -49,8 +49,16 @@ namespace X2
                 opActions.KeepMaximized(testStep1); //wielkość okna chrome, ważne dla niezawodności opetarions
 
                 result = PerformOperation(testStep1);
+
+                if (Prefs.Settings.logAllOperations) 
+                {
+                    testStuff.Log(testStep1.stepDescription);
+                }
+
                 opActions.Sleep(Prefs.Settings.sleepAfterOperation);
                 catchCount = 0;
+
+                
             }
             
             catch (NoAlertPresentException)

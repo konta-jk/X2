@@ -67,6 +67,7 @@ namespace X2
             [DataMember] public bool logWithScreenshots = true; //SCREENSHOTY
             [DataMember] public float maximumDriveRatioToLogWithSs = 0.8f;
             [DataMember] public int killDriverDelay = 2000;
+            [DataMember] public bool logAllOperations = false;
             [DataMember] public int[] appActiveHours = new int[] { 10004, 10005, 100019, 100020, 100021, 100022 };
             [DataMember] public ActionsSettings actionsSettings;
 
