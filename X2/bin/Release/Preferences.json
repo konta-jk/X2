@@ -1,5 +1,5 @@
 {  
-  "applicationMode": "batch",
+  "applicationMode": "single",
   "connectionString": "Data Source=taris\\endorcopy;User id=sa;Password=sa;",
   
   "actionsSettings": 
@@ -7,11 +7,11 @@
 	"opActionClickRetarded": "10000",
 	"opActionClickJSInitialSleep": "1000",
 	"opActionClickJSFinalSleep": "20000",
-    "opActionWaitForTimeout": "40000",
+    "opActionWaitForTimeout": "80000",
     "opActionWaitForSleep": "500",
     "opActionScrollSleep": "1000",
     "opActionRefreshUntilSleep": "4000",
-    "opActionRefreshUntilTimeout": "180000",
+    "opActionRefreshUntilTimeout": "360000",
     "elementFinderTimeout": "3000"
   },
   
@@ -36,7 +36,7 @@
   ],
   
   "disableNotifications": "false",
-  "implicitWait": "15000",
+  "implicitWait": "20000",
   "killDriverDelay": "2000",
   "logAllOperations": "true",
   "logWithScreenshots": "true",

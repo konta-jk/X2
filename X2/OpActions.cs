@@ -55,6 +55,23 @@ namespace X2
             element.SendKeys(text + "\t"); //ważne - z \t chodzi o zejście z pola; użytkownik też dostałby błąd, gdyby nie zszedł z pola z regułą            
         }
 
+        //desperacka próba obejścia formatowanego pola na liczbę (sgb adres rok zameldowania)
+        public string OpActionSendKeysJS(Structs.TestStep testStep1)
+        {
+            IJavaScriptExecutor js = (IJavaScriptExecutor)testStuff.driver;
+
+            IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
+
+            ScrollAndMoveTo(element, testStuff.driver);
+
+            string elementId = element.GetAttribute("id");
+
+            js.ExecuteScript("document.getElementById('" + elementId + "').setAttribute('value', '" + testStep1.operationText + "')");
+
+            return "ok";
+        }
+
+
         public void OpActionGoToUrl(Structs.TestStep testStep1)
         {
             testStuff.driver.Navigate().GoToUrl(testStep1.operationText);

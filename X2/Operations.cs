@@ -167,6 +167,10 @@ namespace X2
                     result = "ok";
                     break;
 
+                case "typeJS":
+                    result = opActions.OpActionSendKeysJS(testStep1);                    
+                    break;
+
                 case "sendKeys": //"SendEnumKey":                    
                     result = opActions.OpActionSendEnumKey(testStep1); ;
                     break;
