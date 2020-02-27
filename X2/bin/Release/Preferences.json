@@ -42,7 +42,7 @@
   "logWithScreenshots": "true",
   "maximumDriveRatioToLogWithSs": "0.8",  
   "noSuchElementCatchLimit": "6",
-  "singleModeInitMessage" : "Kiedy rozpocznie się test, Selenium otworzy nowe okno przeglądarki Chrome. Podnieś wtedy ręce do góry.\r\nPraca na komputerze, na którym Selenium przeprowadza test, nie jest zalecana. Nie należy dotykać automatycznie sterowanego okna przeglądarki.\r\nMożliwe przyczyny błędów w przebiegu testu:\r\n1. Zaburzenia wprowadzone przez użytkownika komputera\r\n2. Błędy w scenariuszu\r\n3. Zmiany w testowanym procesie, np. xpath\r\n4. Błędy w procesie",
+  "singleModeInitMessage" : "Kiedy rozpocznie się test, Selenium otworzy nowe okno przeglądarki Chrome.\r\nPraca na komputerze, na którym Selenium przeprowadza test, nie jest zalecana. Nie należy dotykać automatycznie sterowanego okna przeglądarki.",
   "sleepAfterElementNotInteractible": "1000",
   "sleepAfterNoSuchElement": "300",
   "sleepAfterOperation": "400"
