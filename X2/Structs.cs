@@ -76,6 +76,12 @@ namespace X2
             public string ToCsvString()
             {
                 string s = "[timeStamp], [stepDescription], [result]\r\n";
+
+                if(testStepResults == null)
+                {
+                    return s;
+                }
+
                 foreach (Structs.TestStepResult stepResult in testStepResults)
                 {
                     s += stepResult.timeStamp.ToString("HH:mm:ss") + ", " + stepResult.stepDescription + ", " + stepResult.result + "\r\n";

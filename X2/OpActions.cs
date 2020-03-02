@@ -106,7 +106,6 @@ namespace X2
                 Sleep(Prefs.Settings.actionsSettings.opActionClickRetarded);
             }
 
-
             BrowserFocus();
 
             //dodane ze względu na problemy - czasem nie klika i nie zgłasza błędu
@@ -115,7 +114,12 @@ namespace X2
             //IWebElement element = testStuff.driver.FindElement(By.XPath(testStep1.xpath));
             IWebElement element = ElementFinder(testStep1);
 
-            ScrollAndMoveTo(element, testStuff.driver); 
+            ScrollAndMoveTo(element, testStuff.driver);
+
+
+            //HighlightElement(element); //debug, usunąć
+
+
             element.Click();            
 
             //sprawdzenie wystąpienia błędu zdefiniowanego przez uzytkownika (jako fragment html)            

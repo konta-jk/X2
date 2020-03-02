@@ -168,7 +168,10 @@ namespace X2
             string exeFolderPath = System.Reflection.Assembly.GetEntryAssembly().Location.ToString();
             string drive = exeFolderPath.Substring(0, exeFolderPath.LastIndexOf(':')) + @":\";
             DriveInfo driveInfo = DriveInfo.GetDrives().Where(t => t.ToString() == drive).First();
-            float ratio = (float)((float)driveInfo.AvailableFreeSpace / (float)driveInfo.TotalSize); //tara bum, lesson learned          
+            float ratio = 1.0f - ((float)((float)driveInfo.AvailableFreeSpace / (float)driveInfo.TotalSize));
+
+            Console.WriteLine("ratio = " + ratio.ToString() + 
+                "; prefs max ratio = " + Prefs.Settings.maximumDriveRatioToLogWithSs.ToString());
 
             if (ratio < Prefs.Settings.maximumDriveRatioToLogWithSs)
             {

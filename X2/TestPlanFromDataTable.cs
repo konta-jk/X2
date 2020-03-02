@@ -17,8 +17,16 @@ namespace X2
 
             for (int i = 0; i < testPlanTable.Rows.Count; i++)
             {
-                
                 DataRow row = testPlanTable.Rows[i];
+
+                if (row[0].ToString() == "")
+                {
+                    MessageBox.Show("Wiersz " + (i + 1).ToString() + 
+                        " scenariusza testu jest pusty. Test zostanie przeprowadzony z wczytanymi krokami testowymi: " 
+                        + i.ToString() + ".", "Uwaga", MessageBoxButtons.OK, MessageBoxIcon.Exclamation, 
+                        MessageBoxDefaultButton.Button1, MessageBoxOptions.DefaultDesktopOnly);
+                    break;
+                }
 
                 //pominięcie komentarzy
                 if ((row[0].ToString()[0] == '[') && (row[0].ToString()[row[0].ToString().Length - 1] == ']'))
@@ -39,6 +47,17 @@ namespace X2
         {
             if ((dataTable != null) && (dataTable.Rows.Count > 0) && (dataTable.Columns.Count == 4))
             {
+
+                //Console.WriteLine("DEBUG data table contents");
+                foreach(DataRow row in dataTable.Rows)
+                {
+                    //Console.WriteLine(row[0].ToString() + "; " + row[1].ToString() + "; " + row[2].ToString() + "; " + row[3].ToString() + "; ");
+                    //if(row[0] is null)
+
+                }
+
+
+
                 return true;
 
                 //rozbudować o:

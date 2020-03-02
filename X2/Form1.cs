@@ -138,7 +138,6 @@ namespace X2
                 return;
             }
 
-            
 
             QATestStuff.QATestStuffOptions stuffOptions = new QATestStuff.QATestStuffOptions();
             stuffOptions.killDriver = checkBox1.Checked;
